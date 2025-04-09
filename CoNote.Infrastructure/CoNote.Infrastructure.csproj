@@ -8,17 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Middlewares\" />
-    <Folder Include="Utilities\Token\Interfaces\" />
-    <Folder Include="Utilities\Token\Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoNote.Core\CoNote.Core.csproj" />
+    <ProjectReference Include="..\CoNote.Data\CoNote.Data.csproj" />
   </ItemGroup>
 
 </Project>

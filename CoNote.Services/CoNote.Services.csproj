@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoNote.Data\CoNote.Data.csproj" />
     <ProjectReference Include="..\CoNote.Infrastructure\CoNote.Infrastructure.csproj" />
   </ItemGroup>
 

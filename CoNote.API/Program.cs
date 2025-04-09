@@ -1,9 +1,10 @@
 using CoNote.API;
 using CoNote.Data.Context;
+using CoNote.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Envoriment
+//Environment
 var env = builder.Environment;
 builder.Configuration
     .SetBasePath(env.ContentRootPath)
@@ -37,6 +38,8 @@ app.UseCors(options =>
 );
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseAuthentication();
 
