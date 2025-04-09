@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.API", "CoNote.API\CoNote.API.csproj", "{92E96D14-F8C9-4D20-98B6-F8DDF602E5E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Services", "CoNote.Services\CoNote.Services.csproj", "{66E574B1-DC3A-4E23-9E64-640E6546B619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Infrastructure", "CoNote.Infrastructure\CoNote.Infrastructure.csproj", "{BF2E2B1E-D5A1-4862-A0BA-1A47C5191527}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Data", "CoNote.Data\CoNote.Data.csproj", "{71A8E454-233F-4E5E-8B94-241360D2763A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Core", "CoNote.Core\CoNote.Core.csproj", "{DBA1694F-3E16-4540-8E1A-E6806428209F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92E96D14-F8C9-4D20-98B6-F8DDF602E5E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92E96D14-F8C9-4D20-98B6-F8DDF602E5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92E96D14-F8C9-4D20-98B6-F8DDF602E5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92E96D14-F8C9-4D20-98B6-F8DDF602E5E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66E574B1-DC3A-4E23-9E64-640E6546B619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66E574B1-DC3A-4E23-9E64-640E6546B619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66E574B1-DC3A-4E23-9E64-640E6546B619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66E574B1-DC3A-4E23-9E64-640E6546B619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF2E2B1E-D5A1-4862-A0BA-1A47C5191527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF2E2B1E-D5A1-4862-A0BA-1A47C5191527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF2E2B1E-D5A1-4862-A0BA-1A47C5191527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF2E2B1E-D5A1-4862-A0BA-1A47C5191527}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71A8E454-233F-4E5E-8B94-241360D2763A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71A8E454-233F-4E5E-8B94-241360D2763A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71A8E454-233F-4E5E-8B94-241360D2763A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71A8E454-233F-4E5E-8B94-241360D2763A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
