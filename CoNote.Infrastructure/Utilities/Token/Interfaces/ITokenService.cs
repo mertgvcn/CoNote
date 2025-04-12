@@ -3,5 +3,5 @@
 namespace CoNote.Infrastructure.Utilities.Token.Interfaces;
 public interface ITokenService
 {
-    Task<GenerateTokenResponseModel> GenerateTokenAsync(GenerateTokenRequestModel request);
+    Task<GenerateTokenResponseModel> GenerateTokenAsync(GenerateTokenRequestModel request, CancellationToken cancellationToken);
 }

@@ -1,0 +1,14 @@
+:root {
+    --primary-color: #0077CC;
+    --primary-color-dark: #0066af;
+    --primary-color-light: #C6E0F3;
+    --secondary-color: #00C094;
+    --background-color: #f0f0f0;
+    --kibana-background-color: #F7F8FC;
+    --foreground-color: #ffffff;
+    --border-color: #d6d6d6;
+    --text-color: #242424;
+    --muted-text-color: #797979;
+    --box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    --border-radius: 0.25rem;
+  }

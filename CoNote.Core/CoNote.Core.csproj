@@ -9,12 +9,11 @@
 
   <ItemGroup>
     <Compile Remove="Helpers\**" />
+    <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="Settings\**" />
     <None Remove="Helpers\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Settings\" />
+    <None Remove="Settings\**" />
   </ItemGroup>
 
   <ItemGroup>

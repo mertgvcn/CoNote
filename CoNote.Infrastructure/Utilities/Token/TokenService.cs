@@ -17,11 +17,11 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public Task<GenerateTokenResponseModel> GenerateTokenAsync(GenerateTokenRequestModel request)
+    public Task<GenerateTokenResponseModel> GenerateTokenAsync(GenerateTokenRequestModel request, CancellationToken cancellationToken)
     {
         var TokenExpireDate = DateTime.UtcNow.AddHours(6);
 
-        var secret = _configuration["AppSettings:Secret"];
+        var secret = _configuration["JWT:Secret"];
         if (secret == null)
         {
             throw new SecretKeyIsNotConfiguredException();
@@ -35,8 +35,8 @@ public class TokenService : ITokenService
         };
 
         JwtSecurityToken jwt = new JwtSecurityToken(
-                issuer: _configuration["AppSettings:ValidIssuer"],
-                audience: _configuration["AppSettings:ValidAudience"],
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
                 claims: claims,
                 notBefore: DateTime.UtcNow,
                 expires: TokenExpireDate,
@@ -45,8 +45,8 @@ public class TokenService : ITokenService
 
         return Task.FromResult(new GenerateTokenResponseModel
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(jwt),
-            TokenExpireDate = TokenExpireDate
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
+            AccessTokenExpireDate = TokenExpireDate
         });
     }
 }

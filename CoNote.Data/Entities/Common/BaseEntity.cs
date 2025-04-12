@@ -3,6 +3,6 @@
 public abstract class BaseEntity
 {
     public long Id { get; init; }
-    public string CreatedBy { get; init; } = default!;
+    public string CreatedBy { get; set; } = default!;
     public DateTime CreatedAt { get; init; } = DateTime.Now;
 }

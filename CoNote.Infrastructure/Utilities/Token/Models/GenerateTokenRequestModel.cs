@@ -1,5 +1,5 @@
 ﻿namespace CoNote.Infrastructure.Utilities.Token.Models;
-public class GenerateTokenRequestModel
+public record GenerateTokenRequestModel
 {
-    public required string UserId { get; set; }
+    public required string UserId { get; init; }
 }

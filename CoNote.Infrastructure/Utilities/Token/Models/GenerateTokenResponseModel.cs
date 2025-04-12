@@ -1,6 +1,6 @@
 ﻿namespace CoNote.Infrastructure.Utilities.Token.Models;
-public class GenerateTokenResponseModel
+public record GenerateTokenResponseModel
 {
-    public required string Token { get; set; }
-    public required DateTime TokenExpireDate { get; set; }
+    public required string AccessToken { get; init; }
+    public required DateTime AccessTokenExpireDate { get; init; }
 }
