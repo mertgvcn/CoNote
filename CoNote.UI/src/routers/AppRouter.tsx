@@ -18,13 +18,12 @@ const AppRouter = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
 
       <Route element={<AuthLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
       </Route>
-
-      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
