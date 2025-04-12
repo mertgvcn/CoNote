@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 //Components
 import ProtectedRoute from "../features/auth/ProtectedRoute";
 
-const MainLayout = () => {
+const AuthLayout = () => {
   return (
     <ProtectedRoute>
       <Box>
@@ -13,4 +13,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default AuthLayout;

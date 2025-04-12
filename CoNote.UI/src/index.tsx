@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom/client';
-//components
-import App from './App';
-import { Toaster } from 'react-hot-toast';
 //theming
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
+//components
+import { Toaster } from 'react-hot-toast';
+import App from './App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

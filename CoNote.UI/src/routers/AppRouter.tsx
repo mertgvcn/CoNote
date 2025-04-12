@@ -1,15 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 //Layouts
 import PublicLayout from "../layouts/PublicLayout";
-import MainLayout from "../layouts/MainLayout";
+import AuthLayout from "../layouts/AuthLayout";
 //Global Routes
-import NotFoundPage from "../pages/NotFound/NotFoundPage";
+import NotFoundPage from "../pages/common/NotFound/NotFoundPage";
 //Public Routes
-import LandingPage from "../pages/Landing/LandingPage";
-import LoginPage from "../pages/Login/LoginPage";
-import RegisterPage from "../pages/Register/RegisterPage";
+import LandingPage from "../pages/public/Landing/LandingPage";
+import LoginPage from "../pages/public/Login/LoginPage";
+import RegisterPage from "../pages/public/Register/RegisterPage";
 //Protected Routes
-import DashboardPage from "../pages/Dashboard/DashboardPage";
+import DashboardPage from "../pages/auth/Dashboard/DashboardPage";
 
 const AppRouter = () => {
   return (
@@ -20,7 +20,7 @@ const AppRouter = () => {
         <Route path="/register" element={<RegisterPage />} />
       </Route>
 
-      <Route element={<MainLayout />}>
+      <Route element={<AuthLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
       </Route>
 
