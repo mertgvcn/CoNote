@@ -4,6 +4,7 @@ import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
 //models
 import { UserLoginRequest } from "../../api/Authentication/models/UserLoginRequest";
 import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResponse";
+import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
 
 const isAuthenticated = (): boolean => {
   return !!getCookie("access_token");
@@ -18,6 +19,11 @@ const login = async (params: UserLoginRequest) => {
   return data;
 };
 
+const register = async (params: UserRegisterRequest) => {
+  const response = await AuthenticationAPI.Register(params);
+  return response.data;
+};
+
 const logout = (): void => {
   deleteCookie("access_token");
   window.location.href = "/login";
@@ -25,6 +31,7 @@ const logout = (): void => {
 
 export const authService = {
   login,
+  register,
   logout,
   isAuthenticated
 };

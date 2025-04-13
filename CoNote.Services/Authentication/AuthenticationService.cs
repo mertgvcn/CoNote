@@ -30,6 +30,11 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest request, CancellationToken cancellationToken)
     {
+        request = request with
+        {
+            Email = request.Email.Trim()
+        };
+
         var user = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
@@ -50,11 +55,28 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task RegisterUserAsync(UserRegisterRequest request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.FirstName) ||
+            string.IsNullOrWhiteSpace(request.LastName) ||
+            string.IsNullOrWhiteSpace(request.Email) ||
+            string.IsNullOrWhiteSpace(request.Username) ||
+            string.IsNullOrWhiteSpace(request.Password))   
+            throw new ArgumentException("All fields must be filled.");
+
+        request = request with
+        {
+            Email = request.Email.Trim(),
+            Username = request.Username.Trim()
+        };
+
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 
         var existingUser = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
         if (existingUser != null)
-            throw new UserAlreadyExistsException("This user is already exists");
+            throw new UserAlreadyExistsException("This email is already exists");
+
+        var existingUsername = await _userRepository.GetUserByUsernameAsync(request.Username, cancellationToken);
+        if (existingUsername != null)
+            throw new UserAlreadyExistsException("This username is already exists");
 
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
