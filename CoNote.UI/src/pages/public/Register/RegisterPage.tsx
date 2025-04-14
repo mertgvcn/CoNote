@@ -74,8 +74,6 @@ const RegisterPage = () => {
 
   return (
     <>
-      <Navbar isAuthenticated={false} />
-
       <Box
         display="flex"
         justifyContent="center"

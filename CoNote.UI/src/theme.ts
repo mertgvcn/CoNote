@@ -66,6 +66,7 @@ const theme = createTheme({
       fontFamily: `'Inter', sans-serif`,
       button: {
         textTransform: "none",
+        fontSize: 15,
       }
     },
     components: {
