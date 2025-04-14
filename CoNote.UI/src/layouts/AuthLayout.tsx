@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import ProtectedRoute from "../features/auth/ProtectedRoute";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
+import PageWrapper from "../components/layout/PageWrapper";
 
 const AuthLayout = () => {
   return (
@@ -12,8 +13,12 @@ const AuthLayout = () => {
         <Navbar />
         <Stack direction="row">
           <Container maxWidth="xl" disableGutters>
-            <Sidebar />
-            <Outlet />
+            <PageWrapper>
+              <Stack direction="row">
+                <Sidebar />
+                <Outlet />
+              </Stack>
+            </PageWrapper>
           </Container>
         </Stack>
       </Stack>

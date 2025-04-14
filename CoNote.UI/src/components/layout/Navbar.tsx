@@ -8,13 +8,14 @@ import {
   Box,
   Button,
   Container,
+  IconButton,
   Link,
   Stack,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { LocalLibrary } from "@mui/icons-material";
+import { LocalLibrary, Menu } from "@mui/icons-material";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -44,7 +45,7 @@ const Navbar = () => {
       }}
     >
       <Container maxWidth="xl" disableGutters>
-        <Toolbar sx={{ gap: 4 }}>
+        <Toolbar sx={{ gap: { xs: 2, md: 4 } }}>
           <Link href="/" underline="none">
             <Stack
               direction="row"
@@ -59,23 +60,35 @@ const Navbar = () => {
             </Stack>
           </Link>
 
-          <Stack direction="row" spacing={2} alignItems="center" flex={1}>
-            {isAuthenticated && (
-              <>
-                <Typography variant="h6" color="secondary" fontWeight={600}>
-                  Dashboard
-                </Typography>
-                <Typography variant="h6" color="secondary" fontWeight={600}>
-                  Workspaces
-                </Typography>
-                <Button variant="contained" color="secondary">
-                  Create
-                </Button>
-              </>
-            )}
-          </Stack>
+          <Box display="flex" flex={1}>
+            <Stack
+              display={{ xs: "none", md: "flex" }}
+              direction="row"
+              spacing={2}
+              alignItems="center"
+            >
+              {isAuthenticated && (
+                <>
+                  <Typography variant="h6" color="secondary" fontWeight={600}>
+                    Dashboard
+                  </Typography>
+                  <Typography variant="h6" color="secondary" fontWeight={600}>
+                    Workspaces
+                  </Typography>
+                  <Button variant="contained" color="secondary">
+                    Create
+                  </Button>
+                </>
+              )}
+            </Stack>
+          </Box>
 
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack
+            display={{ xs: "none", md: "flex" }}
+            direction="row"
+            spacing={2}
+            alignItems="center"
+          >
             {!isAuthenticated && (
               <>
                 <Button component={RouterLink} to="/login" variant="text">
@@ -97,6 +110,12 @@ const Navbar = () => {
               </Button>
             )}
           </Stack>
+
+          <Box display={{ xs: "block", md: "none" }}>
+            <IconButton size="medium" edge="start" color="secondary">
+              <Menu />
+            </IconButton>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>
