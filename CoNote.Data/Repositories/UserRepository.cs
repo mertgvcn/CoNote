@@ -24,4 +24,16 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
             .Where(x => x.Email == email)
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<bool> UserExistsByUsernameAsync(string username, CancellationToken cancellationToken)
+    {
+        return await GetAll().AnyAsync(a => a.Username == username, cancellationToken);
+    }
+
+    public async Task<User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
+    {
+        return await GetAll()
+            .Where(x => x.Username == username)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

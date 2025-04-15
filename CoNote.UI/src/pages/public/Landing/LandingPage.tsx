@@ -1,7 +1,7 @@
-const LandingPage = () => {
-  return (
-    <div>LandingPage</div>
-  )
-}
+import { Box } from "@mui/material";
 
-export default LandingPage
+const LandingPage = () => {
+  return <Box>LandingPage</Box>;
+};
+
+export default LandingPage;

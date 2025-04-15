@@ -52,9 +52,13 @@ public class AuthenticationService : IAuthenticationService
     {
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 
-        var existingUser = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
-        if (existingUser != null)
-            throw new UserAlreadyExistsException("This user is already exists");
+        var existingEmail = await _userRepository.UserExistsByEmailAsync(request.Email, cancellationToken);
+        if (existingEmail == true)
+            throw new UserAlreadyExistsException("This email is already exists");
+
+        var existingUsername = await _userRepository.UserExistsByUsernameAsync(request.Username, cancellationToken);
+        if (existingUsername == true)
+            throw new UserAlreadyExistsException("This username is already exists");
 
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
