@@ -28,8 +28,10 @@ const RegisterPage = () => {
   ) => {
     try {
       await authService.register(values);
-      actions.resetForm();
-      navigate("/login");
+      setTimeout(() => {
+        actions.resetForm();
+        navigate("/login");
+      }, 2000);
     } catch (error: any) {}
   };
 
