@@ -1,9 +1,12 @@
-import React, { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 //models
-import { UserRegisterRequest } from "../../../api/Authentication/models/UserRegisterRequest";
+import { RegisterForm } from "../../../features/auth/models/RegisterForm";
+//schemas
+import { RegisterFormSchema } from "../../../features/auth/schemas/RegisterFormSchema";
 //utils
 import { authService } from "../../../features/auth/authService";
+import toast from "react-hot-toast";
+import { FormikHelpers, useFormik } from "formik";
 //icons
 import { AccountBox, Email, Lock, Person } from "@mui/icons-material";
 //components
@@ -19,31 +22,40 @@ import {
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<UserRegisterRequest>({
-    FirstName: "",
-    LastName: "",
-    Email: "",
-    Username: "",
-    Password: "",
+  const handleRegister = async (
+    values: RegisterForm,
+    actions: FormikHelpers<RegisterForm>
+  ) => {
+    try {
+      await authService.register(values);
+      actions.resetForm();
+      navigate("/login");
+    } catch (error: any) {}
+  };
+
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useFormik<RegisterForm>({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: RegisterFormSchema,
+    onSubmit: handleRegister,
   });
 
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    await authService.register(formData);
-    navigate("/login");
-  };
-
   return (
-    <Box sx={{ display: "flex", justifyContent: "center" }} >
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Stack direction="column" minWidth={320} paddingX={2} width={400}>
         <Stack direction="column" mt={10}>
           <Typography variant="h5" fontWeight="bold" color="textSecondary">
@@ -58,9 +70,12 @@ const RegisterPage = () => {
           <Stack direction="column" gap={3} mt={4}>
             <TextField
               label="First Name"
-              name="FirstName"
-              value={formData.FirstName}
+              name="firstName"
+              value={values.firstName}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.firstName && Boolean(errors.firstName)}
+              helperText={touched.firstName && errors.firstName}
               fullWidth
               size="small"
               slotProps={{
@@ -76,9 +91,12 @@ const RegisterPage = () => {
 
             <TextField
               label="Last Name"
-              name="LastName"
-              value={formData.LastName}
+              name="lastName"
+              value={values.lastName}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.lastName && Boolean(errors.lastName)}
+              helperText={touched.lastName && errors.lastName}
               fullWidth
               size="small"
               slotProps={{
@@ -94,9 +112,12 @@ const RegisterPage = () => {
 
             <TextField
               label="Username"
-              name="Username"
-              value={formData.Username}
+              name="username"
+              value={values.username}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.username && Boolean(errors.username)}
+              helperText={touched.username && errors.username}
               fullWidth
               size="small"
               slotProps={{
@@ -112,9 +133,12 @@ const RegisterPage = () => {
 
             <TextField
               label="Email"
-              name="Email"
-              value={formData.Email}
+              name="email"
+              value={values.email}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
               fullWidth
               size="small"
               slotProps={{
@@ -130,10 +154,13 @@ const RegisterPage = () => {
 
             <TextField
               label="Password"
-              name="Password"
+              name="password"
               type="password"
-              value={formData.Password}
+              value={values.password}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.password && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
               fullWidth
               size="small"
               slotProps={{
@@ -149,9 +176,13 @@ const RegisterPage = () => {
 
             <TextField
               label="Confirm Password"
+              name="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={values.confirmPassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+              helperText={touched.confirmPassword && errors.confirmPassword}
               fullWidth
               size="small"
               slotProps={{
@@ -167,7 +198,13 @@ const RegisterPage = () => {
           </Stack>
 
           <Stack direction="column" gap={1} mt={4}>
-            <Button type="submit" fullWidth size="medium" variant="contained">
+            <Button
+              type="submit"
+              fullWidth
+              size="medium"
+              variant="contained"
+              disabled={isSubmitting}
+            >
               Register
             </Button>
 

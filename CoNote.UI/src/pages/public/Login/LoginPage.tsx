@@ -1,9 +1,12 @@
-import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 //models
-import { UserLoginRequest } from "../../../api/Authentication/models/UserLoginRequest";
+import { LoginForm } from "../../../features/auth/models/LoginForm";
+//schemas
+import { LoginFormSchema } from "../../../features/auth/schemas/LoginFormSchema";
 //utils
 import { authService } from "../../../features/auth/authService";
+import toast from "react-hot-toast";
+import { FormikHelpers, useFormik } from "formik";
 //icons
 import { Email, Lock } from "@mui/icons-material";
 //components
@@ -19,25 +22,28 @@ import {
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<UserLoginRequest>({
-    Email: "",
-    Password: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleLogin = async (
+    values: LoginForm,
+    actions: FormikHelpers<LoginForm>
+  ) => {
+    try {
+      await authService.login(values);
+      setTimeout(() => {
+        actions.resetForm();
+        navigate("/dashboard");
+      }, 2000);
+    } catch (error: any) {}
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    await authService.login(formData);
-    navigate("/dashboard");
-  };
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+    useFormik<LoginForm>({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      validationSchema: LoginFormSchema,
+      onSubmit: handleLogin,
+    });
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -55,9 +61,12 @@ const LoginPage = () => {
           <Stack direction="column" gap={3} mt={4}>
             <TextField
               label="Email"
-              name="Email"
-              value={formData.Email}
+              name="email"
+              value={values.email}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
               fullWidth
               size="small"
               slotProps={{
@@ -73,10 +82,13 @@ const LoginPage = () => {
 
             <TextField
               label="Password"
-              name="Password"
+              name="password"
               type="password"
-              value={formData.Password}
+              value={values.password}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.password && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
               fullWidth
               size="small"
               slotProps={{
