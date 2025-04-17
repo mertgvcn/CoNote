@@ -35,7 +35,7 @@ const LoginPage = () => {
     } catch (error: any) {}
   };
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+  const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } =
     useFormik<LoginForm>({
       initialValues: {
         email: "",
@@ -104,7 +104,7 @@ const LoginPage = () => {
           </Stack>
 
           <Stack direction="column" gap={1} mt={4}>
-            <Button type="submit" fullWidth size="medium" variant="contained">
+            <Button type="submit" fullWidth size="medium" variant="contained" disabled={isSubmitting}>
               Login
             </Button>
 
