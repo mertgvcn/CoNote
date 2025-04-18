@@ -2,20 +2,27 @@ import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 //utils
 import { authService } from "../../features/auth/authService";
+//icons
+import {
+  LocalLibrary,
+  Menu,
+  Notifications,
+  Person,
+} from "@mui/icons-material";
 //components
 import {
   AppBar,
   Box,
   Button,
   Container,
-  IconButton,
   Link,
   Stack,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { LocalLibrary, Menu } from "@mui/icons-material";
+import Searchbar from "../ui/Searchbar";
+import IconButton from "../ui/IconButton";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -69,15 +76,7 @@ const Navbar = () => {
             >
               {isAuthenticated && (
                 <>
-                  <Typography variant="h6" color="secondary" fontWeight={600}>
-                    Dashboard
-                  </Typography>
-                  <Typography variant="h6" color="secondary" fontWeight={600}>
-                    Workspaces
-                  </Typography>
-                  <Button variant="contained" color="secondary">
-                    Create
-                  </Button>
+
                 </>
               )}
             </Stack>
@@ -86,7 +85,7 @@ const Navbar = () => {
           <Stack
             display={{ xs: "none", md: "flex" }}
             direction="row"
-            spacing={2}
+            spacing={1}
             alignItems="center"
           >
             {!isAuthenticated && (
@@ -105,14 +104,20 @@ const Navbar = () => {
               </>
             )}
             {isAuthenticated && (
-              <Button color="error" variant="contained" onClick={handleLogout}>
-                Logout
-              </Button>
+              <>
+                <Searchbar showTooltip/>
+                <IconButton size="small" variant="outlined" tooltipTitle="Notifications">
+                  <Notifications />
+                </IconButton>
+                <IconButton size="small" variant="outlined" tooltipTitle="Account settings">
+                  <Person />
+                </IconButton>
+              </>
             )}
           </Stack>
 
           <Box display={{ xs: "block", md: "none" }}>
-            <IconButton size="medium" edge="start" color="secondary">
+            <IconButton size="small" variant="outlined" tooltipTitle="Show menu">
               <Menu />
             </IconButton>
           </Box>
