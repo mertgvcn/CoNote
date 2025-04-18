@@ -1,28 +1,39 @@
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
-import { RenderErrorToast, RenderSuccessToast } from "../../utils/CustomToastManager";
+import {
+  RenderErrorToast,
+  RenderSuccessToast,
+} from "../../utils/CustomToastManager";
 //models
-import { LoginForm } from "./models/LoginForm";
-import { RegisterForm } from "./models/RegisterForm";
 import { UserLoginRequest } from "../../api/Authentication/models/UserLoginRequest";
 import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResponse";
 import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
+import { LoginForm } from "./models/LoginForm";
+import { RegisterForm } from "./models/RegisterForm";
 
-const isAuthenticated = (): boolean => {
-  return !!getCookie("access_token");
+const isAuthenticated = async (): Promise<boolean> => {
+  const token = getCookie("access_token");
+  if (!token) return false;
+
+  try {
+    await AuthenticationAPI.ValidateToken();
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 const login = async (params: LoginForm) => {
   const userLoginRequest: UserLoginRequest = {
-    Email: params.email.trim(),
-    Password: params.password,
+    email: params.email.trim(),
+    password: params.password,
   };
 
   try {
     const response = await AuthenticationAPI.Login(userLoginRequest);
     const data: UserLoginResponse = response.data;
-    setCookie("access_token", data.AccessToken, data.AccessTokenExpireDate);  
+    setCookie("access_token", data.accessToken, data.accessTokenExpireDate);
     RenderSuccessToast("Login successful.");
   } catch (error: any) {
     //TODO: any değiştir
@@ -37,11 +48,11 @@ const login = async (params: LoginForm) => {
 
 const register = async (params: RegisterForm) => {
   const userRegisterRequest: UserRegisterRequest = {
-    FirstName: params.firstName.trim(),
-    LastName: params.lastName.trim(),
-    Username: params.username.trim(),
-    Email: params.email.trim(),
-    Password: params.password,
+    firstName: params.firstName.trim(),
+    lastName: params.lastName.trim(),
+    username: params.username.trim(),
+    email: params.email.trim(),
+    password: params.password,
   };
 
   try {

@@ -29,7 +29,7 @@ const variantStyles = {
     },
   },
   outlined: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.default,
     color: theme.palette.primary.main,
     border: `1px solid ${theme.palette.primary.main}`,
     "&:hover": {
@@ -84,12 +84,12 @@ const IconButton = ({
     <>
       {tooltipTitle ? (
         <Tooltip title={tooltipTitle}>
-          <IconButtonWrapper size={size} variant={variant}>
+          <IconButtonWrapper size={size} variant={variant} onClick={onClick}>
             {children}
           </IconButtonWrapper>
         </Tooltip>
       ) : (
-        <IconButtonWrapper size={size} variant={variant}>
+        <IconButtonWrapper size={size} variant={variant} onClick={onClick}>
           {children}
         </IconButtonWrapper>
       )}

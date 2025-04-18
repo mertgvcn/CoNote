@@ -1,4 +1,4 @@
 export interface UserLoginResponse {
-    AccessToken: string,
-    AccessTokenExpireDate: Date
+    accessToken: string,
+    accessTokenExpireDate: Date
 }

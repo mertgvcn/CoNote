@@ -3,12 +3,12 @@ import { Link as RouterLink } from "react-router-dom";
 //utils
 import { authService } from "../../features/auth/authService";
 //icons
-import {
-  LocalLibrary,
-  Menu,
-  Notifications,
-  Person,
-} from "@mui/icons-material";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LogoutIcon from "@mui/icons-material/Logout";
 //components
 import {
   AppBar,
@@ -17,17 +17,22 @@ import {
   Container,
   Link,
   Stack,
+  Menu,
   Toolbar,
   Typography,
   useTheme,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
 import Searchbar from "../ui/Searchbar";
 import IconButton from "../ui/IconButton";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const theme = useTheme();
-  const isAuthenticated = authService.isAuthenticated();
+  const isAuthenticated = false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +43,16 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const handleLogout = () => {
+    handleClose();
     authService.logout();
   };
 
@@ -60,7 +74,7 @@ const Navbar = () => {
               alignItems="center"
               sx={{ cursor: "pointer" }}
             >
-              <LocalLibrary color="primary" />
+              <LocalLibraryIcon color="primary" />
               <Typography variant="h6" color="primary" fontWeight={600}>
                 CoNote
               </Typography>
@@ -74,11 +88,7 @@ const Navbar = () => {
               spacing={2}
               alignItems="center"
             >
-              {isAuthenticated && (
-                <>
-
-                </>
-              )}
+              {isAuthenticated && <></>}
             </Stack>
           </Box>
 
@@ -105,20 +115,87 @@ const Navbar = () => {
             )}
             {isAuthenticated && (
               <>
-                <Searchbar showTooltip/>
-                <IconButton size="small" variant="outlined" tooltipTitle="Notifications">
-                  <Notifications />
+                <Searchbar showTooltip />
+
+                <IconButton
+                  size="small"
+                  variant="outlined"
+                  tooltipTitle="Notifications"
+                >
+                  <NotificationsIcon />
                 </IconButton>
-                <IconButton size="small" variant="outlined" tooltipTitle="Account settings">
-                  <Person />
+
+                <IconButton
+                  size="small"
+                  variant="outlined"
+                  tooltipTitle="Account settings"
+                  onClick={handleClick}
+                >
+                  <PersonIcon />
                 </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  slotProps={{
+                    paper: {
+                      sx: {
+                        overflow: "visible",
+                        mt: 1.5,
+                        "&::before": {
+                          content: '""',
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          right: 17,
+                          width: 10,
+                          height: 10,
+                          bgcolor: "background.default",
+                          borderLeft: "1px solid rgba(0, 0, 0, 0.15)",
+                          borderTop: "1px solid rgba(0, 0, 0, 0.15)",
+                          transform: "translateY(-50%) rotate(45deg)",
+                          zIndex: 0,
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                      <PersonIcon fontSize="small" />
+                    </ListItemIcon>
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                      <ManageAccountsIcon fontSize="small" />
+                    </ListItemIcon>
+                    Account Settings
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleLogout}
+                    sx={{ color: theme.palette.error.main }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon
+                        fontSize="small"
+                        sx={{ color: theme.palette.error.main }}
+                      />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
               </>
             )}
           </Stack>
 
           <Box display={{ xs: "block", md: "none" }}>
-            <IconButton size="small" variant="outlined" tooltipTitle="Show menu">
-              <Menu />
+            <IconButton
+              size="small"
+              variant="outlined"
+              tooltipTitle="Show menu"
+            >
+              <MenuIcon />
             </IconButton>
           </Box>
         </Toolbar>

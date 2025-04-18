@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using CoNote.Core.Entities;
 using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
@@ -70,5 +71,21 @@ public class AuthenticationService : IAuthenticationService
         await _userRepository.AddAsync(newUser, cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task ValidateTokenAsync(string token, CancellationToken cancellationToken)
+    {
+        if (token == null || token == "")
+            throw new InvalidTokenException("Token is missing");
+
+        var principal = _tokenService.GetPrincipalFromToken(token);
+
+        var userIdClaim = principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out long userId))
+            throw new InvalidTokenException();
+
+        var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
+        if (user == null)
+            throw new InvalidTokenException();
     }
 }
