@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 //utils
-import { authService } from "../features/auth/authService";
 //Layouts
 import PublicLayout from "../layouts/PublicLayout";
 import AuthLayout from "../layouts/AuthLayout";
@@ -14,8 +13,6 @@ import RegisterPage from "../pages/public/Register/RegisterPage";
 import DashboardPage from "../pages/auth/Dashboard/DashboardPage";
 
 const AppRouter = () => {
-  const isAuthenticated = authService.isAuthenticated()
-
   return (
     <Routes>
       <Route element={<PublicLayout />}>

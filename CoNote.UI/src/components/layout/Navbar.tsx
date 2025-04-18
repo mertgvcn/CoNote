@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 //utils
 import { authService } from "../../features/auth/authService";
+//redux
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 //icons
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -32,7 +35,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const theme = useTheme();
-  const isAuthenticated = false;
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const handleScroll = () => {

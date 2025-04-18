@@ -1,3 +1,6 @@
+//redux
+import { store } from "../../app/store";
+import { endSession } from "./authSlice";
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
@@ -11,18 +14,6 @@ import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResp
 import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
 import { LoginForm } from "./models/LoginForm";
 import { RegisterForm } from "./models/RegisterForm";
-
-const isAuthenticated = async (): Promise<boolean> => {
-  const token = getCookie("access_token");
-  if (!token) return false;
-
-  try {
-    await AuthenticationAPI.ValidateToken();
-    return true;
-  } catch {
-    return false;
-  }
-};
 
 const login = async (params: LoginForm) => {
   const userLoginRequest: UserLoginRequest = {
@@ -71,7 +62,21 @@ const register = async (params: RegisterForm) => {
 
 const logout = (): void => {
   deleteCookie("access_token");
+  store.dispatch(endSession());
   window.location.href = "/login";
+};
+
+const isAuthenticated = async (): Promise<boolean> => {
+  const token = getCookie("access_token");
+  if (!token) return false;
+
+  try {
+    await AuthenticationAPI.ValidateToken();
+    return true;
+  } catch {
+    deleteCookie("access_token");
+    return false;
+  }
 };
 
 export const authService = {
@@ -80,3 +85,5 @@ export const authService = {
   logout,
   isAuthenticated,
 };
+
+
