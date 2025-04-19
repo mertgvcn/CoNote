@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoNote.Core.Entities;
+using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
 using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Infrastructure.Utilities.Transaction.Interfaces;
@@ -7,23 +8,26 @@ using CoNote.Services.Sections.Interfaces;
 using CoNote.Services.Sections.Models;
 
 namespace CoNote.Services.Sections;
-public class SectionService: ISectionService
+public class SectionService : ISectionService
 {
     private readonly ISectionRepository _sectionRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IWorkspaceRepository _workspaceRepository;
     private readonly IHttpContextService _httpContextService;
     private readonly ITransactionService _transactionService;
     private readonly IMapper _mapper;
 
     public SectionService(
-    ISectionRepository sectionRepository,
-    IUserRepository userRepository,
-    IHttpContextService httpContextService,
-    ITransactionService transactionService,
-    IMapper mapper)
+        ISectionRepository sectionRepository,
+        IUserRepository userRepository,
+        IWorkspaceRepository workspaceRepository,
+        IHttpContextService httpContextService,
+        ITransactionService transactionService,
+        IMapper mapper)
     {
         _sectionRepository = sectionRepository;
         _userRepository = userRepository;
+        _workspaceRepository = workspaceRepository;
         _httpContextService = httpContextService;
         _transactionService = transactionService;
         _mapper = mapper;
@@ -33,6 +37,24 @@ public class SectionService: ISectionService
     {
         var currentUserId = _httpContextService.GetCurrentUserId();
         var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+
+        if (currentUser == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        if (await _workspaceRepository.WorkspaceExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
+        {
+            throw new WorkspaceNotFoundException();
+        }
+
+        if (request.ParentId.HasValue)
+        {
+            if (await _sectionRepository.SectionExistsByIdAsync(request.ParentId.Value, cancellationToken) == false)
+            {
+                throw new SectionNotFoundException();
+            }
+        }
 
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 

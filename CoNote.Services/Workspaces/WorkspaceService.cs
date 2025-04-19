@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CoNote.Core.Entities;
+using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
 using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Infrastructure.Utilities.Transaction.Interfaces;
@@ -33,6 +34,11 @@ public class WorkspaceService : IWorkspaceService
     {
         var currentUserId = _httpContextService.GetCurrentUserId();
         var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+
+        if (currentUser == null)
+        {
+            throw new UserNotFoundException();
+        }
 
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 

@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Worksheet\" />
-    <Folder Include="Section\" />
-    <Folder Include="User\" />
+    <Compile Remove="Worksheet\**" />
+    <EmbeddedResource Remove="Worksheet\**" />
+    <None Remove="Worksheet\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Users\" />
   </ItemGroup>
 
   <ItemGroup>
