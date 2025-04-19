@@ -152,6 +152,20 @@ const theme = createTheme({
         },
       },
     },
+    MuiMenu: {
+      defaultProps: {
+        autoFocus: false
+      },
+      styleOverrides: {
+        paper: {
+          marginTop: 4,
+          backgroundColor: "#F2F2F0",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
+          border: "1px solid rgba(0, 0, 0, 0.15)",
+          color: "#0C1626"
+        },
+      },
+    },
   },
 });
 

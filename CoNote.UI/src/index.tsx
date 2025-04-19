@@ -1,20 +1,25 @@
-import ReactDOM from 'react-dom/client';
+import ReactDOM from "react-dom/client";
+//redux
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 //theming
-import { CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
 //components
-import { Toaster } from 'react-hot-toast';
-import App from './App';
+import { Toaster } from "react-hot-toast";
+import App from "./App";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
 root.render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <Toaster />
-    <App />
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Toaster />
+      <App />
+    </ThemeProvider>
+  </Provider>
 );

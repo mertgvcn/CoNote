@@ -1,11 +1,15 @@
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useEffect } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../app/store";
+import { validateToken } from "../../../features/auth/authSlice";
 //models
 import { LoginForm } from "../../../features/auth/models/LoginForm";
 //schemas
 import { LoginFormSchema } from "../../../features/auth/schemas/LoginFormSchema";
 //utils
 import { authService } from "../../../features/auth/authService";
-import toast from "react-hot-toast";
 import { FormikHelpers, useFormik } from "formik";
 //icons
 import { Email, Lock } from "@mui/icons-material";
@@ -21,6 +25,10 @@ import {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated, loading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handleLogin = async (
     values: LoginForm,
@@ -28,22 +36,33 @@ const LoginPage = () => {
   ) => {
     try {
       await authService.login(values);
-      setTimeout(() => {
-        actions.resetForm();
-        navigate("/dashboard");
-      }, 2000);
+      dispatch(validateToken());
+      actions.resetForm();
     } catch (error: any) {}
   };
 
-  const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } =
-    useFormik<LoginForm>({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema: LoginFormSchema,
-      onSubmit: handleLogin,
-    });
+  useEffect(() => {
+    if (isAuthenticated && !loading) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, loading]);
+
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useFormik<LoginForm>({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: LoginFormSchema,
+    onSubmit: handleLogin,
+  });
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -104,7 +123,13 @@ const LoginPage = () => {
           </Stack>
 
           <Stack direction="column" gap={1} mt={4}>
-            <Button type="submit" fullWidth size="medium" variant="contained" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              fullWidth
+              size="medium"
+              variant="contained"
+              disabled={isSubmitting}
+            >
               Login
             </Button>
 
@@ -125,3 +150,6 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
+}

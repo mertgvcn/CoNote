@@ -7,9 +7,6 @@ public class InvitationConfiguration : IEntityTypeConfiguration<Invitation>
 {
     public void Configure(EntityTypeBuilder<Invitation> builder)
     {
-        builder.Property(i => i.Status)
-            .HasConversion<string>();
-
         builder.HasOne(i => i.Workspace)
             .WithMany(w => w.Invitations)
             .HasForeignKey(i => i.WorkspaceId)

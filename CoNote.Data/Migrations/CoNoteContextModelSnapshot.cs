@@ -129,9 +129,8 @@ namespace CoNote.Data.Migrations
                     b.Property<long?>("StyleId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Width")
                         .HasColumnType("integer");
@@ -219,9 +218,8 @@ namespace CoNote.Data.Migrations
                     b.Property<long>("SenderId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<long>("WorkspaceId")
                         .HasColumnType("bigint");
@@ -279,9 +277,8 @@ namespace CoNote.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -297,9 +294,8 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ObjectType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ObjectType")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -395,9 +391,8 @@ namespace CoNote.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("ComponentType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ComponentType")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");

@@ -7,7 +7,5 @@ public class ComponentConfiguration : IEntityTypeConfiguration<Component>
 {
     public void Configure(EntityTypeBuilder<Component> builder)
     {
-        builder.Property(e => e.Type)
-            .HasConversion<string>();
     }
 }

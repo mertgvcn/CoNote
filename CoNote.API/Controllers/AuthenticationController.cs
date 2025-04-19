@@ -33,4 +33,13 @@ public class AuthenticationController : ControllerBase
         await _authenticationService.RegisterUserAsync(request, _cancellationToken);
         return Ok();
     }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult> ValidateToken()
+    {
+        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+        await _authenticationService.ValidateTokenAsync(token, _cancellationToken);
+        return Ok();
+    }
 }

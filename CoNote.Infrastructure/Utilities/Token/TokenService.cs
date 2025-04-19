@@ -49,4 +49,26 @@ public class TokenService : ITokenService
             AccessTokenExpireDate = TokenExpireDate
         });
     }
+
+    public ClaimsPrincipal GetPrincipalFromToken(string token)
+    {
+        var secret = _configuration["JWT:Secret"];
+        if (secret == null)
+        {
+            throw new SecretKeyIsNotConfiguredException();
+        }
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero,
+            ValidateLifetime = true
+        };
+
+        return tokenHandler.ValidateToken(token, validationParameters, out _);
+    }
 }

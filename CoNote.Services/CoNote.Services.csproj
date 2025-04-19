@@ -10,7 +10,6 @@
   <ItemGroup>
     <Folder Include="Worksheet\" />
     <Folder Include="Section\" />
-    <Folder Include="Workspace\" />
     <Folder Include="User\" />
   </ItemGroup>
 

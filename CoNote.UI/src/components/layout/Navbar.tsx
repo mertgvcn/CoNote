@@ -2,36 +2,50 @@ import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 //utils
 import { authService } from "../../features/auth/authService";
+//redux
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+//icons
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LogoutIcon from "@mui/icons-material/Logout";
 //components
 import {
   AppBar,
   Box,
   Button,
   Container,
-  IconButton,
   Link,
   Stack,
+  Menu,
   Toolbar,
   Typography,
   useTheme,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
-import { LocalLibrary, Menu } from "@mui/icons-material";
+import Searchbar from "../ui/Searchbar";
+import IconButton from "../ui/IconButton";
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const theme = useTheme();
-  const isAuthenticated = authService.isAuthenticated();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleLogout = () => {
+    handleClose();
     authService.logout();
   };
 
@@ -41,7 +55,8 @@ const Navbar = () => {
       color="default"
       elevation={0}
       sx={{
-        borderBottom: scrolled ? `1px solid ${theme.palette.divider}` : "none",
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
       <Container maxWidth="xl" disableGutters>
@@ -53,7 +68,7 @@ const Navbar = () => {
               alignItems="center"
               sx={{ cursor: "pointer" }}
             >
-              <LocalLibrary color="primary" />
+              <LocalLibraryIcon color="primary" />
               <Typography variant="h6" color="primary" fontWeight={600}>
                 CoNote
               </Typography>
@@ -67,26 +82,14 @@ const Navbar = () => {
               spacing={2}
               alignItems="center"
             >
-              {isAuthenticated && (
-                <>
-                  <Typography variant="h6" color="secondary" fontWeight={600}>
-                    Dashboard
-                  </Typography>
-                  <Typography variant="h6" color="secondary" fontWeight={600}>
-                    Workspaces
-                  </Typography>
-                  <Button variant="contained" color="secondary">
-                    Create
-                  </Button>
-                </>
-              )}
+              {isAuthenticated && <></>}
             </Stack>
           </Box>
 
           <Stack
             display={{ xs: "none", md: "flex" }}
             direction="row"
-            spacing={2}
+            spacing={1}
             alignItems="center"
           >
             {!isAuthenticated && (
@@ -105,15 +108,88 @@ const Navbar = () => {
               </>
             )}
             {isAuthenticated && (
-              <Button color="error" variant="contained" onClick={handleLogout}>
-                Logout
-              </Button>
+              <>
+                <Searchbar showTooltip />
+
+                <IconButton
+                  size="small"
+                  variant="outlined"
+                  tooltipTitle="Notifications"
+                >
+                  <NotificationsIcon />
+                </IconButton>
+
+                <IconButton
+                  size="small"
+                  variant="outlined"
+                  tooltipTitle="Account settings"
+                  onClick={handleClick}
+                >
+                  <PersonIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  slotProps={{
+                    paper: {
+                      sx: {
+                        overflow: "visible",
+                        mt: 1.5,
+                        "&::before": {
+                          content: '""',
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          right: 17,
+                          width: 10,
+                          height: 10,
+                          bgcolor: "background.default",
+                          borderLeft: `1px solid ${theme.palette.divider}`,
+                          borderTop: `1px solid ${theme.palette.divider}`,
+                          transform: "translateY(-50%) rotate(45deg)",
+                          zIndex: 0,
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                      <PersonIcon fontSize="small" />
+                    </ListItemIcon>
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                      <ManageAccountsIcon fontSize="small" />
+                    </ListItemIcon>
+                    Account Settings
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleLogout}
+                    sx={{ color: theme.palette.error.main }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon
+                        fontSize="small"
+                        sx={{ color: theme.palette.error.main }}
+                      />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
             )}
           </Stack>
 
           <Box display={{ xs: "block", md: "none" }}>
-            <IconButton size="medium" edge="start" color="secondary">
-              <Menu />
+            <IconButton
+              size="small"
+              variant="outlined"
+              tooltipTitle="Show menu"
+            >
+              <MenuIcon />
             </IconButton>
           </Box>
         </Toolbar>

@@ -18,6 +18,10 @@ class AuthenticationAPI extends BaseAPI {
   public async Register(params: UserRegisterRequest): Promise<AxiosResponse> {
     return await this.post(this.controllerExtension + "/Register", params);
   }
+
+  public async ValidateToken(): Promise<AxiosResponse> {
+    return await this.get(this.controllerExtension + "/ValidateToken");
+  }
 }
 
 export default new AuthenticationAPI();
