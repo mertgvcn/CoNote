@@ -1,6 +1,7 @@
 ﻿using CoNote.Core.Entities;
 using CoNote.Data.Context;
 using CoNote.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Repositories;
 public sealed class WorkspaceRepository : BaseRepository<Workspace>, IWorkspaceRepository
@@ -10,5 +11,10 @@ public sealed class WorkspaceRepository : BaseRepository<Workspace>, IWorkspaceR
     public WorkspaceRepository(CoNoteContext context) : base(context)
     {
         _context = context;
+    }
+
+    public async Task<bool> WorkspaceExistsByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using CoNote.Services.Authentication;
 using CoNote.Services.Authentication.Interfaces;
+using CoNote.Services.Worksheets;
+using CoNote.Services.Worksheets.Interfaces;
 using CoNote.Services.Workspaces;
 using CoNote.Services.Workspaces.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,5 +21,6 @@ public static class Registration
     {
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IWorkspaceService, WorkspaceService>();
+        services.AddScoped<IWorksheetService, WorksheetService>();
     }
 }
