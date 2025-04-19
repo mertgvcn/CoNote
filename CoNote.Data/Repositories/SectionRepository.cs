@@ -1,6 +1,7 @@
 ﻿using CoNote.Core.Entities;
 using CoNote.Data.Context;
 using CoNote.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Repositories;
 public sealed class SectionRepository : BaseRepository<Section>, ISectionRepository
@@ -10,5 +11,10 @@ public sealed class SectionRepository : BaseRepository<Section>, ISectionReposit
     public SectionRepository(CoNoteContext context) : base(context)
     {
         _context = context;
+    }
+
+    public async Task<bool> SectionExistsByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }
 }
