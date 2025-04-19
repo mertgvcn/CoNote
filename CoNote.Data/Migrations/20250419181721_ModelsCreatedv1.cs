@@ -38,8 +38,8 @@ namespace CoNote.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EditedBy = table.Column<string>(type: "text", nullable: false),
                     EditedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Action = table.Column<string>(type: "text", nullable: false),
-                    ObjectType = table.Column<string>(type: "text", nullable: false),
+                    Action = table.Column<int>(type: "integer", nullable: false),
+                    ObjectType = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
@@ -56,7 +56,7 @@ namespace CoNote.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EditedBy = table.Column<string>(type: "text", nullable: false),
                     EditedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ComponentType = table.Column<string>(type: "text", nullable: false),
+                    ComponentType = table.Column<int>(type: "integer", nullable: false),
                     StyleJson = table.Column<string>(type: "text", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
@@ -244,7 +244,7 @@ namespace CoNote.Data.Migrations
                     SenderId = table.Column<long>(type: "bigint", nullable: false),
                     ReceiverId = table.Column<long>(type: "bigint", nullable: false),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
@@ -467,7 +467,7 @@ namespace CoNote.Data.Migrations
                     Width = table.Column<int>(type: "integer", nullable: true),
                     Height = table.Column<int>(type: "integer", nullable: true),
                     ZIndex = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     ContentJson = table.Column<string>(type: "text", nullable: true),
                     IsLocked = table.Column<bool>(type: "boolean", nullable: false),
                     StyleId = table.Column<long>(type: "bigint", nullable: true),

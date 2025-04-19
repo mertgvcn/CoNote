@@ -13,19 +13,19 @@ namespace CoNote.Services.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
-    private readonly ITransactionService _transactionService;
     private readonly ITokenService _tokenService;
+    private readonly ITransactionService _transactionService;
     private readonly IMapper _mapper;
 
     public AuthenticationService(
         IUserRepository userRepository,
-        ITransactionService transactionService,
         ITokenService tokenService,
+        ITransactionService transactionService,
         IMapper mapper)
     {
         _userRepository = userRepository;
-        _transactionService = transactionService;
         _tokenService = tokenService;
+        _transactionService = transactionService;
         _mapper = mapper;
     }
 

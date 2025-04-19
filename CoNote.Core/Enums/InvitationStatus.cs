@@ -1,7 +1,7 @@
 ﻿namespace CoNote.Core.Enums;
 public enum InvitationStatus
 {
-    Pending,
-    Accepted,
-    Rejected
+    Pending = 0,
+    Accepted = 1,
+    Rejected = 2,
 }

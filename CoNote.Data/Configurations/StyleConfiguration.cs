@@ -7,7 +7,5 @@ public class StyleConfiguration : IEntityTypeConfiguration<Style>
 {
     public void Configure(EntityTypeBuilder<Style> builder)
     {
-        builder.Property(e => e.ComponentType)
-            .HasConversion<string>();
     }
 }

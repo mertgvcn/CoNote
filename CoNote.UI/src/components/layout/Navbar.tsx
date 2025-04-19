@@ -31,20 +31,10 @@ import Searchbar from "../ui/Searchbar";
 import IconButton from "../ui/IconButton";
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const theme = useTheme();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -65,7 +55,8 @@ const Navbar = () => {
       color="default"
       elevation={0}
       sx={{
-        borderBottom: scrolled ? `1px solid ${theme.palette.divider}` : "none",
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
       <Container maxWidth="xl" disableGutters>
@@ -154,8 +145,8 @@ const Navbar = () => {
                           width: 10,
                           height: 10,
                           bgcolor: "background.default",
-                          borderLeft: "1px solid rgba(0, 0, 0, 0.15)",
-                          borderTop: "1px solid rgba(0, 0, 0, 0.15)",
+                          borderLeft: `1px solid ${theme.palette.divider}`,
+                          borderTop: `1px solid ${theme.palette.divider}`,
                           transform: "translateY(-50%) rotate(45deg)",
                           zIndex: 0,
                         },
