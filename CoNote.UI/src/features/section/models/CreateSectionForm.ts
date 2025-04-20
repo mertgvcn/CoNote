@@ -1,7 +1,7 @@
-export interface CreateWorksheetRequest {
+export interface CreateSectionForm {
     name: string;
     description: string;
     workspaceId: number;
-    sectionId?: number;
+    parentId?: number;
   }
   

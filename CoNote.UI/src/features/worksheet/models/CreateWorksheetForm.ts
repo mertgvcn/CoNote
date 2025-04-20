@@ -1,4 +1,4 @@
-export interface CreateWorksheetRequest {
+export interface CreateWorksheetForm {
     name: string;
     description: string;
     workspaceId: number;
