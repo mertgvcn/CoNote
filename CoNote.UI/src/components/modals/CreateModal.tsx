@@ -15,7 +15,10 @@ import {
   styled,
   Stack,
   Typography,
+  TextField,
+  Divider,
 } from "@mui/material";
+import theme from "../../theme";
 
 const CreateOptionBox = styled(Stack)<{ isSelected: boolean }>(
   ({ theme, isSelected }) => ({
@@ -56,7 +59,7 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle variant="h5" color="secondary">
-        Create
+        {/* Create */}
       </DialogTitle>
       <IconButton
         onClick={onClose}
@@ -112,11 +115,60 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
           </Stack>
         </Stack>
 
-        {selectedCreateOption === "Workspace" && (
-          <Stack direction="column" spacing={2}>
+        <Divider sx={{ marginY: theme.spacing(2) }} />
 
-          </Stack>
-        )}
+        <Stack direction="column" spacing={1}>
+          <Typography variant="subtitle1">
+            {selectedCreateOption} Informations
+          </Typography>
+          {selectedCreateOption === "Workspace" && (
+            <Stack direction="column" spacing={2}>
+              <TextField label="Name" name="name" fullWidth size="small" />
+              <TextField
+                label="Description"
+                name="description"
+                fullWidth
+                size="small"
+              />
+            </Stack>
+          )}
+
+          {selectedCreateOption === "Section" && (
+            <Stack direction="column" spacing={2}>
+              <TextField label="Name" name="name" fullWidth size="small" />
+              <TextField
+                label="Description"
+                name="description"
+                fullWidth
+                size="small"
+              />
+              <TextField
+                label="Workspace"
+                name="description"
+                fullWidth
+                size="small"
+              />
+            </Stack>
+          )}
+
+          {selectedCreateOption === "Worksheet" && (
+            <Stack direction="column" spacing={2}>
+              <TextField label="Name" name="name" fullWidth size="small" />
+              <TextField
+                label="Description"
+                name="description"
+                fullWidth
+                size="small"
+              />
+              <TextField
+                label="Workspace"
+                name="description"
+                fullWidth
+                size="small"
+              />
+            </Stack>
+          )}
+        </Stack>
       </DialogContent>
 
       <DialogActions>
