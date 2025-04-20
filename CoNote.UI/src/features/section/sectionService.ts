@@ -28,3 +28,7 @@ export const CreateSection = async (params: CreateSectionForm) => {
     throw error;
   }
 };
+
+export const sectionService = {
+  CreateSection,
+};

@@ -20,6 +20,13 @@ public class WorkspaceController : ControllerBase
         _cancellationToken = cancellationTokenService.CancellationToken;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<WorkspaceView>>> GetCurrentUserWorkspaces()
+    {
+        var response = await _workspaceService.GetCurrentUserWorkspacesAsync(_cancellationToken);
+        return response;
+    }
+
     [HttpPost]
     public async Task<ActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest request)
     {

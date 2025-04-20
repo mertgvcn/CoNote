@@ -1,4 +1,4 @@
 export interface CreateWorkspaceRequest {
   name: string;
-  description: string;
+  description?: string;
 }

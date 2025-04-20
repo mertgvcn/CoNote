@@ -11,4 +11,12 @@ public sealed class WorkspaceMemberRepository : BaseRepository<WorkspaceMember>,
     {
         _context = context;
     }
+
+    public IQueryable<Workspace> GetWorkspacesByUserId(long userId)
+    {
+        return GetAll()
+           .Where(wm => wm.UserId == userId)
+           .Select(wm => wm.Workspace)
+           .Where(w => !w.IsDeleted);
+    }
 }

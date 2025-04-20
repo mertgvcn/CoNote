@@ -26,3 +26,7 @@ export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
     throw error;
   }
 };
+
+export const workspaceService = {
+  CreateWorkspace,
+};

@@ -1,6 +1,6 @@
 export interface CreateSectionForm {
     name: string;
-    description: string;
+    description?: string;
     workspaceId: number;
     parentId?: number;
   }

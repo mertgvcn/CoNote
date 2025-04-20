@@ -1,6 +1,6 @@
 export interface CreateWorksheetRequest {
     name: string;
-    description: string;
+    description?: string;
     workspaceId: number;
     sectionId?: number;
   }

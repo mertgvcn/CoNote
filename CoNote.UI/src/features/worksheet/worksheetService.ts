@@ -28,3 +28,7 @@ export const CreateWorksheet = async (params: CreateWorksheetForm) => {
     throw error;
   }
 };
+
+export const worksheetService = {
+  CreateWorksheet,
+};
