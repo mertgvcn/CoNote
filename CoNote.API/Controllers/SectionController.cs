@@ -20,6 +20,13 @@ public class SectionController : ControllerBase
         _cancellationToken = cancellationTokenService.CancellationToken;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetSectionTreeByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var result = await _sectionService.GetSectionTreeByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult> CreateSection([FromBody] CreateSectionRequest request)
     {

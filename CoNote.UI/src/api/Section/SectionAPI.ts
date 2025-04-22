@@ -10,6 +10,15 @@ class SectionAPI extends BaseAPI {
     super();
   }
 
+  public async GetSectionTreeByWorkspaceId(
+    workspaceId: number
+  ): Promise<AxiosResponse> {
+    return await this.get(
+      this.controllerExtension + "/GetSectionTreeByWorkspaceId",
+      { workspaceId }
+    );
+  }
+
   public async CreateSection(
     params: CreateSectionRequest
   ): Promise<AxiosResponse> {

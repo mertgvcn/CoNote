@@ -10,6 +10,12 @@ class WorkspaceAPI extends BaseAPI {
     super();
   }
 
+  public async GetCurrentUserWorkspaces(): Promise<AxiosResponse> {
+    return await this.get(
+      this.controllerExtension + "/GetCurrentUserWorkspaces"
+    );
+  }
+
   public async CreateWorkspace(
     params: CreateWorkspaceRequest
   ): Promise<AxiosResponse> {
