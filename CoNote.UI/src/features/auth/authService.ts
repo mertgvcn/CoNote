@@ -1,9 +1,10 @@
 //redux
 import { store } from "../../app/store";
-import { endSession, validateToken } from "./authSlice";
+import { endSession } from "./authSlice";
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
+import { initializeAppData } from "../../app/initializeAppData";
 import {
   RenderErrorToast,
   RenderSuccessToast,
@@ -25,7 +26,7 @@ const login = async (params: LoginForm) => {
     const response = await AuthenticationAPI.Login(userLoginRequest);
     const data: UserLoginResponse = response.data;
     setCookie("access_token", data.accessToken, data.accessTokenExpireDate);
-    store.dispatch(validateToken());
+    await store.dispatch(initializeAppData());
     RenderSuccessToast("Login successful.");
   } catch (error: any) {
     //TODO: any değiştir
@@ -64,7 +65,6 @@ const register = async (params: RegisterForm) => {
 const logout = (): void => {
   deleteCookie("access_token");
   store.dispatch(endSession());
-  window.location.href = "/login";
 };
 
 const isAuthenticated = async (): Promise<boolean> => {

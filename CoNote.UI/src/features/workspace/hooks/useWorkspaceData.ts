@@ -14,7 +14,7 @@ export const useWorkspacesData = () => {
   const loading = useSelector(selectWorkspaceLoading);
 
   useEffect(() => {
-    dispatch(getCurrentUserWorkspaces());
+    if (workspaces.length === 0) dispatch(getCurrentUserWorkspaces());
   }, [dispatch]);
 
   return { workspaces, loading };

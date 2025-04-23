@@ -2,33 +2,22 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 //redux
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import {
+  selectAuthIsAuthenticated,
+  selectAuthLoading,
+} from "../../features/auth/authSlice";
 //components
-import { Box, CircularProgress } from "@mui/material";
+import Loading from "../../components/ui/Loading";
 
 interface Props {
   children: ReactNode;
 }
 
 const PublicRoute = ({ children }: Props) => {
-  const { isAuthenticated, loading } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const isAuthenticated = useSelector(selectAuthIsAuthenticated);
+  const loading = useSelector(selectAuthLoading);
 
-  if (loading)
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "calc(100vh - 64.8px)",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+  if (loading) return <Loading />;
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;

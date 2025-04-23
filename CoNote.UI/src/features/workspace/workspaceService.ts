@@ -1,3 +1,6 @@
+//redux
+import { store } from "../../app/store";
+import { getCurrentUserWorkspaces } from "./workspaceSlice";
 //utils
 import WorkspaceAPI from "../../api/Workspace/WorkspaceAPI";
 import {
@@ -23,6 +26,7 @@ export const GetCurrentUserWorkspaces = async () => {
 };
 
 export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
+  //TODO: Buraya mapping eklenebilir
   var createWorkspaceRequest: CreateWorkspaceRequest = {
     name: params.name,
     description: params.description,
@@ -30,6 +34,7 @@ export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
 
   try {
     await WorkspaceAPI.CreateWorkspace(createWorkspaceRequest);
+    await store.dispatch(getCurrentUserWorkspaces())
     RenderSuccessToast("Workspace created.");
   } catch (error: any) {
     if (error.response) {

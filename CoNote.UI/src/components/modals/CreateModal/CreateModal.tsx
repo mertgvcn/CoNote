@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
-import theme from "../../theme";
+import theme from "../../../theme";
+//redux
+import { useSelector } from "react-redux";
+import { workspaceSelectors } from "../../../features/workspace/workspaceSlice";
 //models
-import { StructureType } from "../../models/enums/StructureType";
-import { CreateWorkspaceForm } from "../../features/workspace/models/CreateWorkspaceForm";
-import { CreateSectionForm } from "../../features/section/models/CreateSectionForm";
-import { CreateWorksheetForm } from "../../features/worksheet/models/CreateWorksheetForm";
-import { WorkspaceView } from "../../features/workspace/models/WorkspaceView";
+import { StructureType } from "../../../models/enums/StructureType";
+import { CreateWorkspaceForm } from "../../../features/workspace/models/CreateWorkspaceForm";
+import { CreateSectionForm } from "../../../features/section/models/CreateSectionForm";
+import { CreateWorksheetForm } from "../../../features/worksheet/models/CreateWorksheetForm";
 //schemas
-import { CreateWorkspaceFormSchema } from "../../features/workspace/schemas/CreateWorkspaceFormSchema";
-import { CreateSectionFormSchema } from "../../features/section/schemas/CreateSectionFormSchema";
-import { CreateWorksheetFormSchema } from "../../features/worksheet/schemas/CreateWorksheetFormSchema";
+import { CreateWorkspaceFormSchema } from "../../../features/workspace/schemas/CreateWorkspaceFormSchema";
+import { CreateSectionFormSchema } from "../../../features/section/schemas/CreateSectionFormSchema";
+import { CreateWorksheetFormSchema } from "../../../features/worksheet/schemas/CreateWorksheetFormSchema";
 //utils
-import { workspaceService } from "../../features/workspace/workspaceService";
-import { sectionService } from "../../features/section/sectionService";
+import { workspaceService } from "../../../features/workspace/workspaceService";
+import { sectionService } from "../../../features/section/sectionService";
+import { worksheetService } from "../../../features/worksheet/worksheetService";
 import { useFormik } from "formik";
-import { RenderErrorToast } from "../../utils/CustomToastManager";
+import { RenderErrorToast } from "../../../utils/CustomToastManager";
 //icons
 import CloseIcon from "@mui/icons-material/Close";
 import ArticleIcon from "@mui/icons-material/Article";
@@ -36,7 +39,6 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { RichTreeView, TreeViewBaseItem } from "@mui/x-tree-view";
-import { worksheetService } from "../../features/worksheet/worksheetService";
 
 interface CreateModalProps {
   open: boolean;
@@ -45,11 +47,10 @@ interface CreateModalProps {
 
 //TODO: Burayı ileride componentlere böl
 const CreateModal = ({ open, onClose }: CreateModalProps) => {
+  const workspaces = useSelector(workspaceSelectors.selectAll);
+
   const [selectedCreateOption, setSelectedCreateOption] =
     useState<StructureType | null>(null);
-  const [currentUserWorkspaces, setCurrentUserWorkspaces] = useState<
-    WorkspaceView[]
-  >([]);
   const [currentWorkspaceSections, setCurrentWorkspaceSections] = useState<
     TreeViewBaseItem[]
   >([]);
@@ -59,14 +60,12 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
   const [selectedParentSectionId, setSelectedParentSectionId] = useState<
     number | undefined
   >(undefined);
-  const [autoCompleteLoading, setAutoCompleteLoading] = useState(false);
 
   useEffect(() => {
     if (
       selectedCreateOption === StructureType.Section ||
       selectedCreateOption === StructureType.Worksheet
     ) {
-      fetchWorkspaces();
       setSelectedWorkspaceId(null);
       setSelectedParentSectionId(undefined);
     }
@@ -79,18 +78,6 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
       setCurrentWorkspaceSections([]);
     }
   }, [selectedWorkspaceId]);
-
-  const fetchWorkspaces = async () => {
-    setAutoCompleteLoading(true);
-    try {
-      const result = await workspaceService.GetCurrentUserWorkspaces();
-      setCurrentUserWorkspaces(result);
-    } catch (error) {
-      console.error("Error fetching workspaces", error);
-    } finally {
-      setAutoCompleteLoading(false);
-    }
-  };
 
   const fetchSections = async () => {
     try {
@@ -338,19 +325,17 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
                   />
                   <Autocomplete
                     size="small"
-                    options={currentUserWorkspaces}
+                    options={workspaces}
                     getOptionLabel={(option) => option.name}
                     isOptionEqualToValue={(option, value) =>
                       option.id === value.id
                     }
-                    loading={autoCompleteLoading}
                     onChange={(event, newValue) => {
                       setSelectedWorkspaceId(newValue?.id ?? null);
                     }}
                     value={
-                      currentUserWorkspaces.find(
-                        (ws) => ws.id === selectedWorkspaceId
-                      ) ?? null
+                      workspaces.find((ws) => ws.id === selectedWorkspaceId) ??
+                      null
                     }
                     renderInput={(params) => (
                       <TextField {...params} label="Workspace" />
@@ -403,19 +388,17 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
                   />
                   <Autocomplete
                     size="small"
-                    options={currentUserWorkspaces}
+                    options={workspaces}
                     getOptionLabel={(option) => option.name}
                     isOptionEqualToValue={(option, value) =>
                       option.id === value.id
                     }
-                    loading={autoCompleteLoading}
                     onChange={(event, newValue) => {
                       setSelectedWorkspaceId(newValue?.id ?? null);
                     }}
                     value={
-                      currentUserWorkspaces.find(
-                        (ws) => ws.id === selectedWorkspaceId
-                      ) ?? null
+                      workspaces.find((ws) => ws.id === selectedWorkspaceId) ??
+                      null
                     }
                     renderInput={(params) => (
                       <TextField {...params} label="Workspace" />

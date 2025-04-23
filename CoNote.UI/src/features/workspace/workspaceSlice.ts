@@ -2,6 +2,7 @@ import {
   createSlice,
   createAsyncThunk,
   createEntityAdapter,
+  EntityState,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 //models
@@ -14,9 +15,10 @@ export const workspaceAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-const initialState = workspaceAdapter.getInitialState({
-  loading: false,
-});
+export const workspaceInitialState =
+  workspaceAdapter.getInitialState({
+    loading: false,
+  });
 
 export const getCurrentUserWorkspaces = createAsyncThunk(
   "workspace/getCurrentUserWorkspaces",
@@ -28,7 +30,7 @@ export const getCurrentUserWorkspaces = createAsyncThunk(
 
 const workspaceSlice = createSlice({
   name: "workspace",
-  initialState,
+  initialState: workspaceInitialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

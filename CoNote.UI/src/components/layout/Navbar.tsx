@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 //utils
 import { authService } from "../../features/auth/authService";
 //redux
@@ -31,6 +31,8 @@ import Searchbar from "../ui/Searchbar";
 import IconButton from "../ui/IconButton";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const theme = useTheme();
@@ -47,6 +49,7 @@ const Navbar = () => {
   const handleLogout = () => {
     handleClose();
     authService.logout();
+    navigate("/")
   };
 
   return (
