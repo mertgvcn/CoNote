@@ -1,4 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import theme from "../../theme";
+//models
+import { StructureType } from "../../models/enums/StructureType";
+import { CreateWorkspaceForm } from "../../features/workspace/models/CreateWorkspaceForm";
+import { CreateSectionForm } from "../../features/section/models/CreateSectionForm";
+import { CreateWorksheetForm } from "../../features/worksheet/models/CreateWorksheetForm";
+import { WorkspaceView } from "../../models/views/WorkspaceView";
+//schemas
+import { CreateWorkspaceFormSchema } from "../../features/workspace/schemas/CreateWorkspaceFormSchema";
+import { CreateSectionFormSchema } from "../../features/section/schemas/CreateSectionFormSchema";
+import { CreateWorksheetFormSchema } from "../../features/worksheet/schemas/CreateWorksheetFormSchema";
+//utils
+import { workspaceService } from "../../features/workspace/workspaceService";
+import { sectionService } from "../../features/section/sectionService";
+import { useFormik } from "formik";
+import { RenderErrorToast } from "../../utils/CustomToastManager";
 //icons
 import CloseIcon from "@mui/icons-material/Close";
 import ArticleIcon from "@mui/icons-material/Article";
@@ -15,27 +31,12 @@ import {
   styled,
   Stack,
   Typography,
+  TextField,
+  Divider,
+  Autocomplete,
 } from "@mui/material";
-
-const CreateOptionBox = styled(Stack)<{ isSelected: boolean }>(
-  ({ theme, isSelected }) => ({
-    flex: 1,
-    color: isSelected
-      ? theme.palette.primary.main
-      : theme.palette.secondary.main,
-    padding: theme.spacing(2),
-    gap: theme.spacing(1),
-    border: `1px solid ${
-      isSelected ? theme.palette.primary.main : theme.palette.secondary.main
-    }`,
-    borderRadius: theme.shape.borderRadius,
-    cursor: "pointer",
-    "&:hover": {
-      color: theme.palette.primary.main,
-      borderColor: theme.palette.primary.main,
-    },
-  })
-);
+import { RichTreeView, TreeViewBaseItem } from "@mui/x-tree-view";
+import { worksheetService } from "../../features/worksheet/worksheetService";
 
 interface CreateModalProps {
   open: boolean;
@@ -43,23 +44,159 @@ interface CreateModalProps {
 }
 
 const CreateModal = ({ open, onClose }: CreateModalProps) => {
-  const [selectedCreateOption, setSelectedCreateOption] = useState<
-    "Workspace" | "Section" | "Worksheet"
-  >("Workspace");
+  const [selectedCreateOption, setSelectedCreateOption] =
+    useState<StructureType | null>(null);
+  const [currentUserWorkspaces, setCurrentUserWorkspaces] = useState<
+    WorkspaceView[]
+  >([]);
+  const [currentWorkspaceSections, setCurrentWorkspaceSections] = useState<
+    TreeViewBaseItem[]
+  >([]);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<number | null>(
+    null
+  );
+  const [selectedParentSectionId, setSelectedParentSectionId] = useState<
+    number | undefined
+  >(undefined);
+  const [autoCompleteLoading, setAutoCompleteLoading] = useState(false);
 
-  const handleCreate = () => {
-    // Workspace oluşturma işlemi
-    console.log("Workspace oluşturuluyor:");
-    onClose(); // Modal'ı kapat
+  useEffect(() => {
+    if (
+      selectedCreateOption === StructureType.Section ||
+      selectedCreateOption === StructureType.Worksheet
+    ) {
+      fetchWorkspaces();
+      setSelectedWorkspaceId(null);
+      setSelectedParentSectionId(undefined);
+    }
+  }, [selectedCreateOption]);
+
+  useEffect(() => {
+    if (selectedWorkspaceId) {
+      fetchSections();
+    } else {
+      setCurrentWorkspaceSections([]);
+    }
+  }, [selectedWorkspaceId]);
+
+  const fetchWorkspaces = async () => {
+    setAutoCompleteLoading(true);
+    try {
+      const result = await workspaceService.GetCurrentUserWorkspaces();
+      setCurrentUserWorkspaces(result);
+    } catch (error) {
+      console.error("Error fetching workspaces", error);
+    } finally {
+      setAutoCompleteLoading(false);
+    }
   };
 
+  const fetchSections = async () => {
+    try {
+      const result = await sectionService.GetSectionTreeByWorkspaceId(
+        selectedWorkspaceId!
+      );
+      setCurrentWorkspaceSections(result);
+    } catch (error) {
+      console.error("Error fetching workspaces", error);
+    }
+  };
+
+  const handleCreateWorkspace = async (values: CreateWorkspaceForm) => {
+    try {
+      await workspaceService.CreateWorkspace(values);
+      handleClose();
+    } catch (error) {
+      console.error("Workspace creation error", error);
+    }
+  };
+
+  const handleCreateSection = async (values: CreateSectionForm) => {
+    if (!selectedWorkspaceId) {
+      RenderErrorToast("Workspace is required.");
+      return;
+    }
+
+    const request: CreateSectionForm = {
+      ...values,
+      workspaceId: selectedWorkspaceId,
+      parentId: selectedParentSectionId,
+    };
+
+    try {
+      await sectionService.CreateSection(request);
+      handleClose();
+    } catch (error) {
+      console.error("Section creation error", error);
+    }
+  };
+
+  const handleCreateWorksheet = async (values: CreateWorksheetForm) => {
+    if (!selectedWorkspaceId) {
+      RenderErrorToast("Workspace is required.");
+      return;
+    }
+
+    const request: CreateWorksheetForm = {
+      ...values,
+      workspaceId: selectedWorkspaceId,
+      sectionId: selectedParentSectionId,
+    };
+
+    try {
+      await worksheetService.CreateWorksheet(request);
+      handleClose();
+    } catch (error) {
+      console.error("Worksheet creation error", error);
+    }
+  };
+
+  const handleClose = () => {
+    createWorkspaceFormik.resetForm();
+    createSectionFormik.resetForm();
+    createWorksheetFormik.resetForm();
+    setSelectedCreateOption(null);
+    setSelectedWorkspaceId(null);
+    setSelectedParentSectionId(undefined);
+    onClose();
+  };
+
+  const createWorkspaceFormik = useFormik<CreateWorkspaceForm>({
+    initialValues: {
+      name: "",
+      description: "",
+    },
+    validationSchema: CreateWorkspaceFormSchema,
+    onSubmit: handleCreateWorkspace,
+  });
+
+  const createSectionFormik = useFormik<CreateSectionForm>({
+    initialValues: {
+      name: "",
+      description: "",
+      workspaceId: 0,
+    },
+    validationSchema: CreateSectionFormSchema,
+    onSubmit: handleCreateSection,
+  });
+
+  const createWorksheetFormik = useFormik<CreateWorksheetForm>({
+    initialValues: {
+      name: "",
+      description: "",
+      workspaceId: 0,
+    },
+    validationSchema: CreateWorksheetFormSchema,
+    onSubmit: handleCreateWorksheet,
+  });
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
+    <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogTitle variant="h5" color="secondary">
-        Create
+        {/* Create */}
       </DialogTitle>
       <IconButton
-        onClick={onClose}
+        onClick={handleClose}
         size="medium"
         color="secondary"
         sx={{
@@ -81,8 +218,8 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
               direction={{ xs: "row", sm: "column" }}
               alignItems={{ xs: "start", sm: "center" }}
               justifyContent={{ xs: "start", sm: "center" }}
-              isSelected={selectedCreateOption === "Workspace"}
-              onClick={() => setSelectedCreateOption("Workspace")}
+              isSelected={selectedCreateOption === StructureType.Workspace}
+              onClick={() => setSelectedCreateOption(StructureType.Workspace)}
             >
               <ArticleIcon />
               <Typography variant="body1">Workspace</Typography>
@@ -92,8 +229,8 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
               direction={{ xs: "row", sm: "column" }}
               alignItems={{ xs: "start", sm: "center" }}
               justifyContent={{ xs: "start", sm: "center" }}
-              isSelected={selectedCreateOption === "Section"}
-              onClick={() => setSelectedCreateOption("Section")}
+              isSelected={selectedCreateOption === StructureType.Section}
+              onClick={() => setSelectedCreateOption(StructureType.Section)}
             >
               <FolderIcon />
               <Typography variant="body1">Section</Typography>
@@ -103,8 +240,8 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
               direction={{ xs: "row", sm: "column" }}
               alignItems={{ xs: "start", sm: "center" }}
               justifyContent={{ xs: "start", sm: "center" }}
-              isSelected={selectedCreateOption === "Worksheet"}
-              onClick={() => setSelectedCreateOption("Worksheet")}
+              isSelected={selectedCreateOption === StructureType.Worksheet}
+              onClick={() => setSelectedCreateOption(StructureType.Worksheet)}
             >
               <InsertDriveFileIcon />
               <Typography variant="body1">Worksheet</Typography>
@@ -112,18 +249,207 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
           </Stack>
         </Stack>
 
-        {selectedCreateOption === "Workspace" && (
-          <Stack direction="column" spacing={2}>
+        {selectedCreateOption && (
+          <>
+            <Divider sx={{ marginY: theme.spacing(2) }} />
 
-          </Stack>
+            <Stack direction="column" spacing={1}>
+              <Typography variant="subtitle1">
+                {selectedCreateOption} Informations
+              </Typography>
+
+              {selectedCreateOption === StructureType.Workspace && (
+                <Stack direction="column" spacing={2}>
+                  <TextField
+                    label="Name"
+                    name="name"
+                    value={createWorkspaceFormik.values.name}
+                    onChange={createWorkspaceFormik.handleChange}
+                    onBlur={createWorkspaceFormik.handleBlur}
+                    error={
+                      createWorkspaceFormik.touched.name &&
+                      Boolean(createWorkspaceFormik.errors.name)
+                    }
+                    helperText={
+                      createWorkspaceFormik.touched.name &&
+                      createWorkspaceFormik.errors.name
+                    }
+                    fullWidth
+                    size="small"
+                  />
+                  <TextField
+                    label="Description"
+                    name="description"
+                    value={createWorkspaceFormik.values.description}
+                    onChange={createWorkspaceFormik.handleChange}
+                    onBlur={createWorkspaceFormik.handleBlur}
+                    error={
+                      createWorkspaceFormik.touched.description &&
+                      Boolean(createWorkspaceFormik.errors.description)
+                    }
+                    helperText={
+                      createWorkspaceFormik.touched.description &&
+                      createWorkspaceFormik.errors.description
+                    }
+                    fullWidth
+                    size="small"
+                    multiline
+                    maxRows={4}
+                  />
+                </Stack>
+              )}
+
+              {selectedCreateOption === StructureType.Section && (
+                <Stack direction="column" spacing={2}>
+                  <TextField
+                    label="Name"
+                    name="name"
+                    value={createSectionFormik.values.name}
+                    onChange={createSectionFormik.handleChange}
+                    onBlur={createSectionFormik.handleBlur}
+                    error={
+                      createSectionFormik.touched.name &&
+                      Boolean(createSectionFormik.errors.name)
+                    }
+                    helperText={
+                      createSectionFormik.touched.name &&
+                      createSectionFormik.errors.name
+                    }
+                    fullWidth
+                    size="small"
+                  />
+                  <TextField
+                    label="Description"
+                    name="description"
+                    value={createSectionFormik.values.description}
+                    onChange={createSectionFormik.handleChange}
+                    onBlur={createSectionFormik.handleBlur}
+                    error={
+                      createSectionFormik.touched.description &&
+                      Boolean(createSectionFormik.errors.description)
+                    }
+                    helperText={
+                      createSectionFormik.touched.description &&
+                      createSectionFormik.errors.description
+                    }
+                    fullWidth
+                    size="small"
+                  />
+                  <Autocomplete
+                    size="small"
+                    options={currentUserWorkspaces}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
+                    loading={autoCompleteLoading}
+                    onChange={(event, newValue) => {
+                      setSelectedWorkspaceId(newValue?.id ?? null);
+                    }}
+                    value={
+                      currentUserWorkspaces.find(
+                        (ws) => ws.id === selectedWorkspaceId
+                      ) ?? null
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} label="Workspace" />
+                    )}
+                  />
+                  <RichTreeView
+                    items={currentWorkspaceSections}
+                    onItemClick={(event, itemId) =>
+                      setSelectedParentSectionId(Number(itemId))
+                    }
+                  />
+                </Stack>
+              )}
+
+              {selectedCreateOption === StructureType.Worksheet && (
+                <Stack direction="column" spacing={2}>
+                  <TextField
+                    label="Name"
+                    name="name"
+                    value={createWorksheetFormik.values.name}
+                    onChange={createWorksheetFormik.handleChange}
+                    onBlur={createWorksheetFormik.handleBlur}
+                    error={
+                      createWorksheetFormik.touched.name &&
+                      Boolean(createWorksheetFormik.errors.name)
+                    }
+                    helperText={
+                      createWorksheetFormik.touched.name &&
+                      createWorksheetFormik.errors.name
+                    }
+                    fullWidth
+                    size="small"
+                  />
+                  <TextField
+                    label="Description"
+                    name="description"
+                    value={createWorksheetFormik.values.description}
+                    onChange={createWorksheetFormik.handleChange}
+                    onBlur={createWorksheetFormik.handleBlur}
+                    error={
+                      createWorksheetFormik.touched.description &&
+                      Boolean(createWorksheetFormik.errors.description)
+                    }
+                    helperText={
+                      createWorksheetFormik.touched.description &&
+                      createWorksheetFormik.errors.description
+                    }
+                    fullWidth
+                    size="small"
+                  />
+                  <Autocomplete
+                    size="small"
+                    options={currentUserWorkspaces}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
+                    loading={autoCompleteLoading}
+                    onChange={(event, newValue) => {
+                      setSelectedWorkspaceId(newValue?.id ?? null);
+                    }}
+                    value={
+                      currentUserWorkspaces.find(
+                        (ws) => ws.id === selectedWorkspaceId
+                      ) ?? null
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} label="Workspace" />
+                    )}
+                  />
+                  <RichTreeView
+                    items={currentWorkspaceSections}
+                    onItemClick={(event, itemId) =>
+                      setSelectedParentSectionId(Number(itemId))
+                    }
+                  />
+                </Stack>
+              )}
+            </Stack>
+          </>
         )}
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleCreate} color="primary" variant="contained">
+        <Button
+          onClick={() => {
+            if (selectedCreateOption === StructureType.Workspace) {
+              createWorkspaceFormik.submitForm();
+            } else if (selectedCreateOption === StructureType.Section) {
+              createSectionFormik.submitForm();
+            } else if (selectedCreateOption === StructureType.Worksheet) {
+              createWorksheetFormik.submitForm();
+            }
+          }}
+          color="primary"
+          variant="contained"
+        >
           Create
         </Button>
       </DialogActions>
@@ -132,3 +458,23 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
 };
 
 export default CreateModal;
+
+const CreateOptionBox = styled(Stack)<{ isSelected: boolean }>(
+  ({ theme, isSelected }) => ({
+    flex: 1,
+    color: isSelected
+      ? theme.palette.primary.main
+      : theme.palette.secondary.main,
+    padding: theme.spacing(2),
+    gap: theme.spacing(1),
+    border: `1px solid ${
+      isSelected ? theme.palette.primary.main : theme.palette.secondary.main
+    }`,
+    borderRadius: theme.shape.borderRadius,
+    cursor: "pointer",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main,
+    },
+  })
+);

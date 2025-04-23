@@ -354,7 +354,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")
@@ -483,7 +482,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")
@@ -569,7 +567,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")

@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }: Props) {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
-          height: "100%",
+          height: "calc(100vh - 64.8px)",
         }}
       >
         <CircularProgress />

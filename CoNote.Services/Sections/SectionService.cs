@@ -6,6 +6,7 @@ using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Infrastructure.Utilities.Transaction.Interfaces;
 using CoNote.Services.Sections.Interfaces;
 using CoNote.Services.Sections.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Services.Sections;
 public class SectionService : ISectionService
@@ -65,4 +66,36 @@ public class SectionService : ISectionService
         await _sectionRepository.AddAsync(section, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
+
+    public async Task<List<SectionTreeViewModel>> GetSectionTreeByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
+    {
+        var allSections = _sectionRepository.GetSectionsByWorkspaceId(workspaceId);
+
+        return await BuildSectionTree(allSections, cancellationToken);
+    }
+
+    private async Task<List<SectionTreeViewModel>> BuildSectionTree(IQueryable<Section> allSections, CancellationToken cancellationToken, long? parentId = null)
+    { //TODO: Algoritmayý geliþtir
+        var sections = await allSections
+            .Where(s => s.ParentId == parentId)
+            .Include(s => s.Children)
+            .ToListAsync(cancellationToken);
+
+        var sectionTree = new List<SectionTreeViewModel>();
+
+        foreach (var section in sections)
+        {
+            var sectionTreeViewModel = new SectionTreeViewModel
+            {
+                Id = section.Id,
+                Label = section.Name,
+                Children = await BuildSectionTree(allSections, cancellationToken, section.Id)
+            };
+
+            sectionTree.Add(sectionTreeViewModel);
+        }
+
+        return sectionTree;
+    }
+
 }

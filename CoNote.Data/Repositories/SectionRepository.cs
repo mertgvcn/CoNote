@@ -17,4 +17,9 @@ public sealed class SectionRepository : BaseRepository<Section>, ISectionReposit
     {
         return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }
+
+    public IQueryable<Section> GetSectionsByWorkspaceId(long workspaceId)
+    {
+        return GetAll().Where(s => s.WorkspaceId == workspaceId);
+    }
 }

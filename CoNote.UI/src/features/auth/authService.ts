@@ -9,11 +9,11 @@ import {
   RenderSuccessToast,
 } from "../../utils/CustomToastManager";
 //models
+import { LoginForm } from "./models/LoginForm";
+import { RegisterForm } from "./models/RegisterForm";
 import { UserLoginRequest } from "../../api/Authentication/models/UserLoginRequest";
 import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResponse";
 import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
-import { LoginForm } from "./models/LoginForm";
-import { RegisterForm } from "./models/RegisterForm";
 
 const login = async (params: LoginForm) => {
   const userLoginRequest: UserLoginRequest = {
@@ -85,5 +85,3 @@ export const authService = {
   logout,
   isAuthenticated,
 };
-
-
