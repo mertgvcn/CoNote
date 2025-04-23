@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 //utils
 import { authService } from "./authService";
 
@@ -43,6 +44,10 @@ const authSlice = createSlice({
     });
   },
 });
+
+export const selectAuthIsAuthenticated = (state: RootState) =>
+  state.auth.isAuthenticated;
+export const selectAuthLoading = (state: RootState) => state.auth.loading;
 
 export const { endSession } = authSlice.actions;
 export default authSlice.reducer;

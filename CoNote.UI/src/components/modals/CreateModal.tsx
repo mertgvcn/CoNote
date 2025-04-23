@@ -5,7 +5,7 @@ import { StructureType } from "../../models/enums/StructureType";
 import { CreateWorkspaceForm } from "../../features/workspace/models/CreateWorkspaceForm";
 import { CreateSectionForm } from "../../features/section/models/CreateSectionForm";
 import { CreateWorksheetForm } from "../../features/worksheet/models/CreateWorksheetForm";
-import { WorkspaceView } from "../../models/views/WorkspaceView";
+import { WorkspaceView } from "../../features/workspace/models/WorkspaceView";
 //schemas
 import { CreateWorkspaceFormSchema } from "../../features/workspace/schemas/CreateWorkspaceFormSchema";
 import { CreateSectionFormSchema } from "../../features/section/schemas/CreateSectionFormSchema";
@@ -43,6 +43,7 @@ interface CreateModalProps {
   onClose: () => void;
 }
 
+//TODO: Burayı ileride componentlere böl
 const CreateModal = ({ open, onClose }: CreateModalProps) => {
   const [selectedCreateOption, setSelectedCreateOption] =
     useState<StructureType | null>(null);

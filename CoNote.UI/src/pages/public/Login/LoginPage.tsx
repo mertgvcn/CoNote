@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 //redux
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../app/store";
-import { validateToken } from "../../../features/auth/authSlice";
+import { useSelector } from "react-redux";
+import {
+  selectAuthIsAuthenticated,
+  selectAuthLoading,
+} from "../../../features/auth/authSlice";
 //models
 import { LoginForm } from "../../../features/auth/models/LoginForm";
 //schemas
@@ -25,10 +27,8 @@ import {
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, loading } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const isAuthenticated = useSelector(selectAuthIsAuthenticated);
+  const loading = useSelector(selectAuthLoading);
 
   const handleLogin = async (
     values: LoginForm,
@@ -36,7 +36,6 @@ const LoginPage = () => {
   ) => {
     try {
       await authService.login(values);
-      dispatch(validateToken());
       actions.resetForm();
     } catch (error: any) {}
   };

@@ -13,12 +13,12 @@ const AuthLayout = () => {
         <Navbar />
         <Stack direction="row">
           <Container maxWidth="xl" disableGutters>
-            <PageWrapper>
-              <Stack direction="row">
-                <Sidebar />
+            <Stack direction="row">
+              <Sidebar />
+              <PageWrapper>
                 <Outlet />
-              </Stack>
-            </PageWrapper>
+              </PageWrapper>
+            </Stack>
           </Container>
         </Stack>
       </Stack>
