@@ -7,6 +7,7 @@ const PageWrapperStyled = styled(Box)(({ theme }) => ({
   margin: 0,
   padding: theme.spacing(2),
   boxSizing: "border-box",
+  overflowX: "hidden"
 }));
 
 type PageWrapperPropsType = {

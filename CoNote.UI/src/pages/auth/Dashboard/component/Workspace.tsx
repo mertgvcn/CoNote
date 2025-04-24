@@ -19,6 +19,7 @@ const Workspace = ({ workspace }: WorkspacePropTypes) => {
         <Typography gutterBottom variant="h5" component="div">
           {workspace.name}
         </Typography>
+        
         {workspace.description && (
           <Typography variant="body2" sx={{ color: "grey.500" }}>
             {workspace.description}
