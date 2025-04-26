@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import {
   selectWorkspaceLoading,
   workspaceSelectors,
-} from "../../../features/workspace/workspaceSlice";
+} from "../../../features/workspace/slices/workspaceSlice";
 //components
 import { Button, Stack, Typography } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
-import Workspace from "./component/Workspace";
+import WorkspaceCard from "./component/WorkspaceCard";
 import Carousel from "../../../components/ui/Carousel/Carousel";
 
 const DashboardPage = () => {
@@ -36,7 +36,7 @@ const DashboardPage = () => {
         </Stack>
         <Carousel disableGap>
           {workspaces.map((workspace, index: number) => (
-            <Workspace workspace={workspace} key={index} />
+            <WorkspaceCard workspace={workspace} key={index} />
           ))}
         </Carousel>
       </Stack>
@@ -56,7 +56,7 @@ const DashboardPage = () => {
         </Stack>
         <Carousel disableGap>
           {workspaces.map((workspace, index: number) => (
-            <Workspace workspace={workspace} key={index} />
+            <WorkspaceCard workspace={workspace} key={index} />
           ))}
         </Carousel>
       </Stack>
@@ -76,7 +76,7 @@ const DashboardPage = () => {
         </Stack>
         <Carousel disableGap>
           {workspaces.map((workspace, index: number) => (
-            <Workspace workspace={workspace} key={index} />
+            <WorkspaceCard workspace={workspace} key={index} />
           ))}
         </Carousel>
       </Stack>
@@ -96,7 +96,7 @@ const DashboardPage = () => {
         </Stack>
         <Carousel disableGap>
           {workspaces.map((workspace, index: number) => (
-            <Workspace workspace={workspace} key={index} />
+            <WorkspaceCard workspace={workspace} key={index} />
           ))}
         </Carousel>
       </Stack>

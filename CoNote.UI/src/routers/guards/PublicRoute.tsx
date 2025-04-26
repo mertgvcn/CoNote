@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import {
   selectAuthIsAuthenticated,
   selectAuthLoading,
-} from "../../features/auth/authSlice";
+} from "../../features/auth/slices/authSlice";
 //components
 import Loading from "../../components/ui/Loading";
 

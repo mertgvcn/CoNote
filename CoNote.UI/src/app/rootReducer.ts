@@ -3,10 +3,10 @@ import { combineReducers, Reducer } from "@reduxjs/toolkit";
 import authReducer, {
   authInitialState,
   endSession,
-} from "../features/auth/authSlice";
+} from "../features/auth/slices/authSlice";
 import workspaceReducer, {
   workspaceInitialState,
-} from "../features/workspace/workspaceSlice";
+} from "../features/workspace/slices/workspaceSlice";
 
 export const appReducer = combineReducers({
   auth: authReducer,

@@ -6,7 +6,7 @@ import {
   getCurrentUserWorkspaces,
   selectWorkspaceLoading,
   workspaceSelectors,
-} from "../workspaceSlice";
+} from "../slices/workspaceSlice";
 
 export const useWorkspacesData = () => {
   const dispatch = useDispatch<AppDispatch>();

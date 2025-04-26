@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { RootState } from "../../../app/store";
 //utils
-import { authService } from "./authService";
+import { authService } from "../authService";
 
 interface AuthState {
   isAuthenticated: boolean;

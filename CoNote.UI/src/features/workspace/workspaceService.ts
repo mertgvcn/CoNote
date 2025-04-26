@@ -1,6 +1,6 @@
 //redux
 import { store } from "../../app/store";
-import { getCurrentUserWorkspaces } from "./workspaceSlice";
+import { getCurrentUserWorkspaces } from "./slices/workspaceSlice";
 //utils
 import WorkspaceAPI from "../../api/Workspace/WorkspaceAPI";
 import {

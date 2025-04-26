@@ -3,7 +3,7 @@ import { WorkspaceView } from "../../../../features/workspace/models/WorkspaceVi
 //components
 import { Typography, styled, Box, Tooltip } from "@mui/material";
 
-const WorkspaceContainer = styled(Box)(({ theme }) => ({
+const WorkspaceCardContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   minWidth: 240,
@@ -31,13 +31,13 @@ const TextContainer = styled(Box)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-type WorkspacePropTypes = {
+type WorkspaceCardPropTypes = {
   workspace: WorkspaceView;
 };
 
-const Workspace = ({ workspace }: WorkspacePropTypes) => {
+const WorkspaceCard = ({ workspace }: WorkspaceCardPropTypes) => {
   return (
-    <WorkspaceContainer>
+    <WorkspaceCardContainer>
       <ImageContainer></ImageContainer>
       <Tooltip title={workspace.name}>
         <TextContainer>
@@ -54,8 +54,8 @@ const Workspace = ({ workspace }: WorkspacePropTypes) => {
           </Typography>
         </TextContainer>
       </Tooltip>
-    </WorkspaceContainer>
+    </WorkspaceCardContainer>
   );
 };
 
-export default Workspace;
+export default WorkspaceCard;

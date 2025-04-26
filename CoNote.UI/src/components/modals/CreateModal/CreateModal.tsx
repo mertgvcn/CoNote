@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import theme from "../../../theme";
 //redux
 import { useSelector } from "react-redux";
-import { workspaceSelectors } from "../../../features/workspace/workspaceSlice";
+import { workspaceSelectors } from "../../../features/workspace/slices/workspaceSlice";
 //models
 import { StructureType } from "../../../models/enums/StructureType";
 import { CreateWorkspaceForm } from "../../../features/workspace/models/CreateWorkspaceForm";

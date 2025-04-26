@@ -1,6 +1,6 @@
 //redux
 import { store } from "../../app/store";
-import { endSession } from "./authSlice";
+import { endSession } from "./slices/authSlice";
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";

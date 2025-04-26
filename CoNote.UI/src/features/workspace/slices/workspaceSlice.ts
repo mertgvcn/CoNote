@@ -2,13 +2,12 @@ import {
   createSlice,
   createAsyncThunk,
   createEntityAdapter,
-  EntityState,
 } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { RootState } from "../../../app/store";
 //models
-import { WorkspaceView } from "./models/WorkspaceView";
+import { WorkspaceView } from "../models/WorkspaceView";
 //utils
-import { workspaceService } from "./workspaceService";
+import { workspaceService } from "../workspaceService";
 
 export const workspaceAdapter = createEntityAdapter({
   selectId: (workspace: WorkspaceView) => workspace.id,

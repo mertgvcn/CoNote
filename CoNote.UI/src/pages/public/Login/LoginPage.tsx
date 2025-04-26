@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import {
   selectAuthIsAuthenticated,
   selectAuthLoading,
-} from "../../../features/auth/authSlice";
+} from "../../../features/auth/slices/authSlice";
 //models
 import { LoginForm } from "../../../features/auth/models/LoginForm";
 //schemas
