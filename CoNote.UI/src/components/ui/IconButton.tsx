@@ -29,7 +29,7 @@ const variantStyles = {
     },
   },
   outlined: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.default,
     color: theme.palette.primary.main,
     border: `1px solid ${theme.palette.primary.main}`,
     "&:hover": {
@@ -41,7 +41,7 @@ const variantStyles = {
     backgroundColor: "inherit",
     color: theme.palette.primary.main,
     "&:hover": {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
       color: theme.palette.primary.dark,
     },
   },

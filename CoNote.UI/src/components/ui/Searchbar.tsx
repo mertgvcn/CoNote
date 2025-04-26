@@ -7,7 +7,7 @@ const Search = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   minHeight: 32,
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.background.default,
   color: theme.palette.primary.main,
   border: `1px solid ${theme.palette.primary.main}`,
   borderRadius: theme.shape.borderRadius,

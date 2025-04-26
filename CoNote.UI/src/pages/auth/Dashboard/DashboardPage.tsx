@@ -5,9 +5,10 @@ import {
   workspaceSelectors,
 } from "../../../features/workspace/workspaceSlice";
 //components
-import { Box, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
 import Workspace from "./component/Workspace";
+import Carousel from "../../../components/ui/Carousel/Carousel";
 
 const DashboardPage = () => {
   const workspaces = useSelector(workspaceSelectors.selectAll);
@@ -18,26 +19,86 @@ const DashboardPage = () => {
   }
 
   return (
-    <Stack direction="column" spacing={4}>
-      <Stack direction="column" spacing={2}>
-        <Typography variant="h4">Owned Workspaces</Typography>
-        {workspaces.map((workspace, index: number) => (
-          <Box key={index} px={1}>
-            <Workspace workspace={workspace} />
-          </Box>
-        ))}
+    <Stack direction="column" spacing={6}>
+      {/* //TODO: Page başlığı eklenebilir "Dashboard" gibi */}
+      <Stack direction="column">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography variant="h5" fontWeight={"600"} ml={1}>
+            Owned Workspaces
+          </Typography>
+          <Button variant="text" color="secondary" size="small">
+            See all
+          </Button>
+        </Stack>
+        <Carousel disableGap>
+          {workspaces.map((workspace, index: number) => (
+            <Workspace workspace={workspace} key={index} />
+          ))}
+        </Carousel>
       </Stack>
-      <Stack direction="column" spacing={2}>
-        <Typography variant="h4">Joined Workspaces</Typography>
-        <Stack direction="row" spacing={2}></Stack>
+
+      <Stack direction="column">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography variant="h5" fontWeight={"600"} ml={1}>
+            Joined Workspaces
+          </Typography>
+          <Button variant="text" color="secondary" size="small">
+            See all
+          </Button>
+        </Stack>
+        <Carousel disableGap>
+          {workspaces.map((workspace, index: number) => (
+            <Workspace workspace={workspace} key={index} />
+          ))}
+        </Carousel>
       </Stack>
-      <Stack direction="column" spacing={2}>
-        <Typography variant="h4">Last Visited</Typography>
-        <Stack direction="row" spacing={2}></Stack>
+
+      <Stack direction="column">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography variant="h5" fontWeight={"600"} ml={1}>
+            Last Visited
+          </Typography>
+          <Button variant="text" color="secondary" size="small">
+            See all
+          </Button>
+        </Stack>
+        <Carousel disableGap>
+          {workspaces.map((workspace, index: number) => (
+            <Workspace workspace={workspace} key={index} />
+          ))}
+        </Carousel>
       </Stack>
-      <Stack direction="column" spacing={2}>
-        <Typography variant="h4">Favorite Workspaces</Typography>
-        <Stack direction="row" spacing={2}></Stack>
+
+      <Stack direction="column">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography variant="h5" fontWeight={"600"} ml={1}>
+            Favorite Workspaces
+          </Typography>
+          <Button variant="text" color="secondary" size="small">
+            See all
+          </Button>
+        </Stack>
+        <Carousel disableGap>
+          {workspaces.map((workspace, index: number) => (
+            <Workspace workspace={workspace} key={index} />
+          ))}
+        </Carousel>
       </Stack>
     </Stack>
   );
