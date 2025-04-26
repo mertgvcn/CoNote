@@ -11,6 +11,7 @@ import LoginPage from "../pages/public/Login/LoginPage";
 import RegisterPage from "../pages/public/Register/RegisterPage";
 //Protected Routes
 import DashboardPage from "../pages/auth/Dashboard/DashboardPage";
+import WorkspaceDetailsPage from "../pages/auth/WorkspaceDetails/WorkspaceDetailsPage";
 
 const AppRouter = () => {
   return (
@@ -25,6 +26,7 @@ const AppRouter = () => {
       <Route element={<AuthLayout />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/workspace/:id" element={<WorkspaceDetailsPage />} />
       </Route>  
     </Routes>
   );

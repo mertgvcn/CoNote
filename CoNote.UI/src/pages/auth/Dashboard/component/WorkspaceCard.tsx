@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 //models
 import { WorkspaceView } from "../../../../features/workspace/models/WorkspaceView";
 //components
@@ -36,8 +37,14 @@ type WorkspaceCardPropTypes = {
 };
 
 const WorkspaceCard = ({ workspace }: WorkspaceCardPropTypes) => {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate(`/workspace/${workspace.id}`)
+  }
+
   return (
-    <WorkspaceCardContainer>
+    <WorkspaceCardContainer onClick={handleClick}>
       <ImageContainer></ImageContainer>
       <Tooltip title={workspace.name}>
         <TextContainer>
