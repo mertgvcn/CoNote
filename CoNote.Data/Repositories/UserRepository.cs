@@ -13,24 +13,24 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
         _context = context;
     }
 
-    public async Task<bool> UserExistsByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return await GetAll().AnyAsync(a => a.Email == email, cancellationToken);
     }
 
-    public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return await GetAll()
             .Where(x => x.Email == email)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<bool> UserExistsByUsernameAsync(string username, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByUsernameAsync(string username, CancellationToken cancellationToken)
     {
         return await GetAll().AnyAsync(a => a.Username == username, cancellationToken);
     }
 
-    public async Task<User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
+    public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken)
     {
         return await GetAll()
             .Where(x => x.Username == username)

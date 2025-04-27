@@ -31,7 +31,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
+        var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             throw new InvalidCredentialsException();
@@ -53,11 +53,11 @@ public class AuthenticationService : IAuthenticationService
     {
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 
-        var existingEmail = await _userRepository.UserExistsByEmailAsync(request.Email, cancellationToken);
+        var existingEmail = await _userRepository.ExistsByEmailAsync(request.Email, cancellationToken);
         if (existingEmail == true)
             throw new UserAlreadyExistsException("This email is already exists");
 
-        var existingUsername = await _userRepository.UserExistsByUsernameAsync(request.Username, cancellationToken);
+        var existingUsername = await _userRepository.ExistsByUsernameAsync(request.Username, cancellationToken);
         if (existingUsername == true)
             throw new UserAlreadyExistsException("This username is already exists");
 

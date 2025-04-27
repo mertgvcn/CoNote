@@ -13,13 +13,19 @@ public sealed class SectionRepository : BaseRepository<Section>, ISectionReposit
         _context = context;
     }
 
-    public async Task<bool> SectionExistsByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByIdAsync(long id, CancellationToken cancellationToken)
     {
         return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }
 
-    public IQueryable<Section> GetSectionsByWorkspaceId(long workspaceId)
+    public IQueryable<Section> GetListByWorkspaceId(long workspaceId)
     {
         return GetAll().Where(s => s.WorkspaceId == workspaceId);
+    }
+
+    public IQueryable<Section> GetListByWorkspaceAndParentId(long workspaceId, long? parentId)
+    {
+        return GetListByWorkspaceId(workspaceId)
+            .Where(s => s.ParentId == parentId);
     }
 }

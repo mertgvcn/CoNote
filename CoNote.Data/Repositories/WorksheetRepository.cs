@@ -11,6 +11,12 @@ public sealed class WorksheetRepository : BaseRepository<Worksheet>, IWorksheetR
     {
         _context = context;
     }
+
+    public IQueryable<Worksheet> GetListByWorkspaceAndSectionId(long workspaceId, long? sectionId)
+    {
+        return GetAll()
+            .Where(w => w.WorkspaceId == workspaceId && w.SectionId == sectionId);
+    }
 }
 
 

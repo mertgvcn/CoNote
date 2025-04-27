@@ -46,14 +46,14 @@ public class WorksheetService : IWorksheetService
             throw new UserNotFoundException();
         }
 
-        if (await _workspaceRepository.WorkspaceExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
+        if (await _workspaceRepository.ExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
         {
             throw new WorkspaceNotFoundException();
         }
 
         if (request.SectionId.HasValue)
         {
-            if (await _sectionRepository.SectionExistsByIdAsync(request.SectionId.Value, cancellationToken) == false)
+            if (await _sectionRepository.ExistsByIdAsync(request.SectionId.Value, cancellationToken) == false)
             {
                 throw new SectionNotFoundException();
             }

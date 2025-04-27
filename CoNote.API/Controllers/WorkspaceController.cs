@@ -27,6 +27,34 @@ public class WorkspaceController : ControllerBase
         return response;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<StructureView>>> GetStructureByWorkspaceAndSectionId([FromQuery] long workspaceId, [FromQuery] long? sectionId)
+    {
+        var response = await _workspaceService.GetStructureByWorkspaceAndSectionIdAsync(workspaceId, sectionId, _cancellationToken);
+        return response;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<MemberView>>> GetMembersByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var response = await _workspaceService.GetMembersByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return response;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<InvitationView>>> GetInvitationsByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var response = await _workspaceService.GetInvitationsByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return response;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<SettingsView>> GetSettingsByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var response = await _workspaceService.GetSettingsByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return response;
+    }
+
     [HttpPost]
     public async Task<ActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest request)
     {

@@ -69,33 +69,39 @@ const theme = createTheme({
       fontWeight: 700,
       lineHeight: 1.05,
       letterSpacing: "-0.5px",
+      userSelect: "none",
     },
     h2: {
       fontSize: "2.5rem",
       fontWeight: 700,
       lineHeight: 1.1,
       letterSpacing: "-0.5px",
+      userSelect: "none",
     },
     h3: {
       fontSize: "2rem",
       fontWeight: 600,
       lineHeight: 1.1,
       letterSpacing: "-0.25px",
+      userSelect: "none",
     },
     h4: {
       fontSize: "1.5rem",
       fontWeight: 400,
       lineHeight: 1.3,
+      userSelect: "none",
     },
     h5: {
       fontSize: "1.25rem",
       fontWeight: 400,
       lineHeight: 1.4,
+      userSelect: "none",
     },
     h6: {
       fontSize: "1.125rem",
       fontWeight: 400,
       lineHeight: 1.5,
+      userSelect: "none",
     },
     subtitle1: {
       fontSize: "1rem",
@@ -118,6 +124,7 @@ const theme = createTheme({
     button: {
       fontSize: "0.9375rem",
       textTransform: "none",
+      userSelect: "none",
     },
   },
   components: {
@@ -154,7 +161,7 @@ const theme = createTheme({
     },
     MuiMenu: {
       defaultProps: {
-        autoFocus: false
+        autoFocus: false,
       },
       styleOverrides: {
         paper: {
@@ -162,7 +169,7 @@ const theme = createTheme({
           backgroundColor: "#F2F2F0",
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
           border: "1px solid rgba(0, 0, 0, 0.15)",
-          color: "#0C1626"
+          color: "#0C1626",
         },
       },
     },

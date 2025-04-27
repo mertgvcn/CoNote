@@ -44,14 +44,14 @@ public class SectionService : ISectionService
             throw new UserNotFoundException();
         }
 
-        if (await _workspaceRepository.WorkspaceExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
+        if (await _workspaceRepository.ExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
         {
             throw new WorkspaceNotFoundException();
         }
 
         if (request.ParentId.HasValue)
         {
-            if (await _sectionRepository.SectionExistsByIdAsync(request.ParentId.Value, cancellationToken) == false)
+            if (await _sectionRepository.ExistsByIdAsync(request.ParentId.Value, cancellationToken) == false)
             {
                 throw new SectionNotFoundException();
             }
@@ -69,7 +69,7 @@ public class SectionService : ISectionService
 
     public async Task<List<SectionTreeViewModel>> GetSectionTreeByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
     {
-        var allSections = _sectionRepository.GetSectionsByWorkspaceId(workspaceId);
+        var allSections = _sectionRepository.GetListByWorkspaceId(workspaceId);
 
         return await BuildSectionTree(allSections, cancellationToken);
     }

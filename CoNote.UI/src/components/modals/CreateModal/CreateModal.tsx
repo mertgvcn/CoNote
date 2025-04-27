@@ -237,13 +237,13 @@ const CreateModal = ({ open, onClose }: CreateModalProps) => {
           </Stack>
         </Stack>
 
-        {selectedCreateOption && (
+        {selectedCreateOption != null && (
           <>
             <Divider sx={{ marginY: theme.spacing(2) }} />
 
             <Stack direction="column" spacing={1}>
               <Typography variant="subtitle1">
-                {selectedCreateOption} Informations
+                {StructureType[selectedCreateOption]} Informations
               </Typography>
 
               {selectedCreateOption === StructureType.Workspace && (
