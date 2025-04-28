@@ -43,6 +43,7 @@ const workspaceSlice = createSlice({
       .addCase(getCurrentUserWorkspaces.rejected, (state) => {
         state.loading = false;
       });
+      //TODO: Buraya CreateWorkspace'i koyup fulfilled olunca addOne kullansak ne olur?
   },
 });
 

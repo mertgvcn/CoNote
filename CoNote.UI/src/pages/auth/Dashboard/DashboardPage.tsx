@@ -13,10 +13,8 @@ import Carousel from "../../../components/ui/Carousel/Carousel";
 const DashboardPage = () => {
   const workspaces = useSelector(workspaceSelectors.selectAll);
   const loading = useSelector(selectWorkspaceLoading);
-
-  if (loading) {
-    return <Loading />;
-  }
+  
+  if (loading) return <Loading />;
 
   return (
     <Stack direction="column" spacing={6}>

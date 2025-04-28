@@ -25,6 +25,76 @@ export const GetCurrentUserWorkspaces = async () => {
   }
 };
 
+export const GetStructureByWorkspaceAndSectionId = async (
+  workspaceId: number,
+  sectionId?: number
+) => {
+  try {
+    var response = await WorkspaceAPI.GetStructureByWorkspaceAndSectionId(
+      workspaceId,
+      sectionId
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching structure of workspace."
+      );
+    }
+    throw error;
+  }
+};
+
+export const GetMembersByWorkspaceId = async (workspaceId: number) => {
+  try {
+    var response = await WorkspaceAPI.GetMembersByWorkspaceId(workspaceId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching members of workspace."
+      );
+    }
+    throw error;
+  }
+};
+
+export const GetInvitationsByWorkspaceId = async (workspaceId: number) => {
+  try {
+    var response = await WorkspaceAPI.GetInvitationsByWorkspaceId(workspaceId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching invitations of workspace."
+      );
+    }
+    throw error;
+  }
+};
+
+export const GetSettingsByWorkspaceId = async (workspaceId: number) => {
+  try {
+    var response = await WorkspaceAPI.GetSettingsByWorkspaceId(workspaceId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching settings of workspace."
+      );
+    }
+    throw error;
+  }
+};
+
 export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
   //TODO: Buraya mapping eklenebilir
   var createWorkspaceRequest: CreateWorkspaceRequest = {
@@ -34,7 +104,7 @@ export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
 
   try {
     await WorkspaceAPI.CreateWorkspace(createWorkspaceRequest);
-    await store.dispatch(getCurrentUserWorkspaces())
+    await store.dispatch(getCurrentUserWorkspaces());
     RenderSuccessToast("Workspace created.");
   } catch (error: any) {
     if (error.response) {
@@ -48,5 +118,9 @@ export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
 
 export const workspaceService = {
   GetCurrentUserWorkspaces,
+  GetStructureByWorkspaceAndSectionId,
+  GetMembersByWorkspaceId,
+  GetInvitationsByWorkspaceId,
+  GetSettingsByWorkspaceId,
   CreateWorkspace,
 };
