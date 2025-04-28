@@ -2,7 +2,7 @@ import { SearchRounded } from "@mui/icons-material";
 import { Box, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const Search = styled(Box)(({ theme }) => ({
+const NavSearch = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -21,7 +21,7 @@ const Search = styled(Box)(({ theme }) => ({
   transition: "background-color,color 0.2s ease",
 }));
 
-const SearchIconWrapper = styled(Box)(({ theme }) => ({
+const NavSearchIconWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -30,7 +30,7 @@ const SearchIconWrapper = styled(Box)(({ theme }) => ({
   boxSizing: "border-box",
 }));
 
-const SearchInputWrapper = styled(Box)(({ theme }) => ({
+const NavSearchInputWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   height: "100%",
@@ -38,32 +38,32 @@ const SearchInputWrapper = styled(Box)(({ theme }) => ({
   boxSizing: "border-box",
 }));
 
-type SearchbarPropTypes = {
+type NavSearchbarPropTypes = {
   showTooltip?: boolean;
 };
 
-const Searchbar = ({ showTooltip = false }: SearchbarPropTypes) => {
+const NavSearchbar = ({ showTooltip = false }: NavSearchbarPropTypes) => {
   return (
     <>
       {showTooltip ? (
         <Tooltip title="Search for anything">
-          <Search>
-            <SearchIconWrapper>
+          <NavSearch>
+            <NavSearchIconWrapper>
               <SearchRounded />
-            </SearchIconWrapper>
-            <SearchInputWrapper>Search...</SearchInputWrapper>
-          </Search>
+            </NavSearchIconWrapper>
+            <NavSearchInputWrapper>Search...</NavSearchInputWrapper>
+          </NavSearch>
         </Tooltip>
       ) : (
-        <Search>
-          <SearchIconWrapper>
+        <NavSearch>
+          <NavSearchIconWrapper>
             <SearchRounded />
-          </SearchIconWrapper>
-          <SearchInputWrapper>Search...</SearchInputWrapper>
-        </Search>
+          </NavSearchIconWrapper>
+          <NavSearchInputWrapper>Search...</NavSearchInputWrapper>
+        </NavSearch>
       )}
     </>
   );
 };
 
-export default Searchbar;
+export default NavSearchbar;

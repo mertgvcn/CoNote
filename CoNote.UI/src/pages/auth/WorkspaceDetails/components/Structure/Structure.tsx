@@ -1,9 +1,18 @@
-import React from 'react'
+import { useState } from "react";
+//components
+import { Stack } from "@mui/material";
+import { Search } from "@mui/icons-material";
 
 const Structure = () => {
-  return (
-    <div>Structure</div>
-  )
-}
+  const [searchText, setSearchText] = useState<string>("");
 
-export default Structure
+  return (
+    <Stack direction="column" gap={2}>
+      <Stack direction="row">
+        
+      </Stack>
+    </Stack>
+  );
+};
+
+export default Structure;
