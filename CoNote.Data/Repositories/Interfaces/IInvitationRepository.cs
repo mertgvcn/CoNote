@@ -3,4 +3,5 @@
 namespace CoNote.Data.Repositories.Interfaces;
 public interface IInvitationRepository : IBaseRepository<Invitation>
 {
+    IQueryable<Invitation> GetListByWorkspaceId(long workspaceId);
 }

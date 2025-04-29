@@ -209,7 +209,7 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("ReceiverId")
+                    b.Property<long?>("ReceiverId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("RoleId")
@@ -219,6 +219,9 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<long>("WorkspaceId")
@@ -733,8 +736,7 @@ namespace CoNote.Data.Migrations
                     b.HasOne("CoNote.Core.Entities.User", "Receiver")
                         .WithMany("ReceivedInvitations")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CoNote.Core.Entities.Role", "Role")
                         .WithMany()

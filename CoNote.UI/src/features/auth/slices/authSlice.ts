@@ -1,15 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../../app/store";
 //utils
-import { authService } from "./authService";
+import { authService } from "../authService";
 
 interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
 }
 
-const initialState: AuthState = {
+export const authInitialState: AuthState = {
   isAuthenticated: false,
-  loading: true,
+  loading: false,
 };
 
 export const validateToken = createAsyncThunk(
@@ -22,12 +23,9 @@ export const validateToken = createAsyncThunk(
 
 const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: authInitialState,
   reducers: {
-    endSession: (state) => {
-      state.isAuthenticated = false;
-      state.loading = false;
-    },
+    endSession: () => {},
   },
   extraReducers: (builder) => {
     builder.addCase(validateToken.pending, (state) => {
@@ -43,6 +41,10 @@ const authSlice = createSlice({
     });
   },
 });
+
+export const selectAuthIsAuthenticated = (state: RootState) =>
+  state.auth.isAuthenticated;
+export const selectAuthLoading = (state: RootState) => state.auth.loading;
 
 export const { endSession } = authSlice.actions;
 export default authSlice.reducer;

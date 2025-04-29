@@ -3,6 +3,7 @@
 namespace CoNote.Data.Repositories.Interfaces;
 public interface ISectionRepository : IBaseRepository<Section>
 {
-    Task<bool> SectionExistsByIdAsync(long id, CancellationToken cancellationToken);
-    IQueryable<Section> GetSectionsByWorkspaceId(long workspaceId);
+    Task<bool> ExistsByIdAsync(long id, CancellationToken cancellationToken);
+    IQueryable<Section> GetListByWorkspaceId(long workspaceId);
+    IQueryable<Section> GetListByWorkspaceAndParentId(long workspaceId, long? parentId);
 }

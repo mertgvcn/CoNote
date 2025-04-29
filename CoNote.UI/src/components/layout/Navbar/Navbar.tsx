@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 //utils
-import { authService } from "../../features/auth/authService";
+import { authService } from "../../../features/auth/authService";
 //redux
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../../app/store";
 //icons
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -27,10 +27,12 @@ import {
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import Searchbar from "../ui/Searchbar";
-import IconButton from "../ui/IconButton";
+import NavSearchbar from "./components/NavSearchbar";
+import IconButton from "../../ui/IconButton";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const theme = useTheme();
@@ -47,6 +49,7 @@ const Navbar = () => {
   const handleLogout = () => {
     handleClose();
     authService.logout();
+    navigate("/")
   };
 
   return (
@@ -109,7 +112,7 @@ const Navbar = () => {
             )}
             {isAuthenticated && (
               <>
-                <Searchbar showTooltip />
+                <NavSearchbar showTooltip />
 
                 <IconButton
                   size="small"

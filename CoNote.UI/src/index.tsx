@@ -7,6 +7,7 @@ import { CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 //components
+import AppInitializer from "./app/AppInitializer";
 import { Toaster } from "react-hot-toast";
 import App from "./App";
 
@@ -16,6 +17,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
+    <AppInitializer />
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Toaster />

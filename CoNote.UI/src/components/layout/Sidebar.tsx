@@ -22,7 +22,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import { useState } from "react";
-import CreateModal from "../modals/CreateModal";
+import CreateModal from "../modals/CreateModal/CreateModal";
 
 const ToggleButtonWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -74,19 +74,6 @@ const Sidebar = () => {
                 <DashboardIcon />
               </ListItemIcon>
               <ListItemText color="secondary.main">Dashboard</ListItemText>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigate("/workspaces");
-              }}
-            >
-              <ListItemIcon color="secondary.main">
-                <ArticleIcon />
-              </ListItemIcon>
-              <ListItemText color="secondary.main">Workspaces</ListItemText>
             </ListItemButton>
           </ListItem>
 

@@ -1,68 +1,83 @@
-import { SearchRounded } from "@mui/icons-material";
-import { Box, Tooltip } from "@mui/material";
-import { styled } from "@mui/material/styles";
+//icons
+import SearchIcon from "@mui/icons-material/Search";
+//components
+import { styled, Box, useTheme } from "@mui/material";
 
-const Search = styled(Box)(({ theme }) => ({
+const SearchContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  minHeight: 32,
-  backgroundColor: theme.palette.background.default,
-  color: theme.palette.primary.main,
-  border: `1px solid ${theme.palette.primary.main}`,
+  width: "100%",
+  height: 38.25,
+  border: `1px solid`,
   borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.background.default,
   padding: `0px ${theme.spacing(0.5)}`,
   boxSizing: "border-box",
-  "&:hover": {
-    color: theme.palette.primary.dark,
-    borderColor: theme.palette.primary.dark,
-  },
-  cursor: "pointer",
   transition: "background-color,color 0.2s ease",
 }));
 
-const SearchIconWrapper = styled(Box)(({ theme }) => ({
+const SearchbarIconContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   height: "100%",
-  padding: theme.spacing(0.5),
+  padding: `0px ${theme.spacing(0.5)}`,
   boxSizing: "border-box",
 }));
 
-const SearchInputWrapper = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+const SearchbarInput = styled("input")(({ theme }) => ({
   height: "100%",
-  width: "160px",
-  boxSizing: "border-box",
+  width: "100%",
+  border: "none",
+  outline: "none",
+  color: theme.palette.text.primary,
+  backgroundColor: "transparent",
+  fontSize: "1rem",
+  borderRadius: theme.shape.borderRadius,
+  "&::placeholder": {
+    color: theme.palette.text.disabled,
+  },
 }));
 
-type SearchbarPropTypes = {
-  showTooltip?: boolean;
+type SearchbarPropsType = {
+  value: string;
+  onChange?: any;
+  color?: "primary" | "secondary"; 
+  //TODO: Size ekle small, medium, large
 };
 
-const Searchbar = ({ showTooltip = false }: SearchbarPropTypes) => {
+const Searchbar = (props: SearchbarPropsType) => {
+  const { value, onChange, color = "primary" } = props;
+
+  const theme = useTheme();
+
+  const themeMainColor =
+    color === "primary"
+      ? theme.palette.primary.main
+      : theme.palette.secondary.main;
+
+  const themeDarkColor =
+    color === "primary"
+      ? theme.palette.primary.dark
+      : theme.palette.secondary.dark;
+
+  const dynamicStyles = {
+    color: themeMainColor,
+    borderColor: themeMainColor,
+    "&:hover": {
+      color: themeDarkColor,
+      borderColor: themeDarkColor,
+    },
+  };
+
   return (
-    <>
-      {showTooltip ? (
-        <Tooltip title="Search for anything">
-          <Search>
-            <SearchIconWrapper>
-              <SearchRounded />
-            </SearchIconWrapper>
-            <SearchInputWrapper>Search...</SearchInputWrapper>
-          </Search>
-        </Tooltip>
-      ) : (
-        <Search>
-          <SearchIconWrapper>
-            <SearchRounded />
-          </SearchIconWrapper>
-          <SearchInputWrapper>Search...</SearchInputWrapper>
-        </Search>
-      )}
-    </>
+    <SearchContainer sx={dynamicStyles}>
+      <SearchbarIconContainer>
+        <SearchIcon />
+      </SearchbarIconContainer>
+      <SearchbarInput placeholder="Search..." />
+    </SearchContainer>
   );
 };
 

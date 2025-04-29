@@ -13,7 +13,7 @@ public sealed class WorkspaceRepository : BaseRepository<Workspace>, IWorkspaceR
         _context = context;
     }
 
-    public async Task<bool> WorkspaceExistsByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByIdAsync(long id, CancellationToken cancellationToken)
     {
         return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }

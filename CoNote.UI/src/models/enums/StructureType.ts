@@ -1,5 +1,5 @@
 export enum StructureType {
-  Workspace = "Workspace",
-  Section = "Section",
-  Worksheet = "Worksheet",
+  Workspace = 0,
+  Section = 1,
+  Worksheet = 2,
 }
