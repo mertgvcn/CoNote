@@ -18,8 +18,8 @@ const Structure = () => {
   const [searchText, setSearchText] = useState<string>(""); //TODO: Arama işlemini çalışır hale getir.
 
   return (
-    <Stack direction="column" gap={1}>
-      <Stack direction="row" gap={1}>
+    <Stack direction="column" gap={2}>
+      <Stack direction="row" gap={2}>
         <Searchbar color="secondary" value={searchText} />
         <Button
           variant="contained"

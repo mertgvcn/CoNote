@@ -12,7 +12,6 @@ import { MemberView } from "../../../models/views/MemberView";
 import { SettingsView } from "../../../models/views/SettingsView";
 //utils
 import { workspaceService } from "../workspaceService";
-import { SettingsView } from "../models/SettingsView";
 
 export const structureAdapter = createEntityAdapter({
   selectId: (structure: StructureView) => structure.id,

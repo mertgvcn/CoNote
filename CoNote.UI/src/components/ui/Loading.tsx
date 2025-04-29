@@ -8,7 +8,7 @@ const Loading = () => {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        height: "calc(100vh - 64.8px)",
+        height: "calc(100vh - 96.8px)",
       }}
     >
       <CircularProgress />
