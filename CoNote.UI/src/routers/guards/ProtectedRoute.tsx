@@ -2,12 +2,7 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 //redux
 import { useSelector } from "react-redux";
-import {
-  selectAuthIsAuthenticated,
-  selectAuthLoading,
-} from "../../features/auth/slices/authSlice";
-//components
-import Loading from "../../components/ui/Loading";
+import { selectAuthIsAuthenticated } from "../../features/auth/slices/authSlice";
 
 interface Props {
   children: ReactNode;
@@ -15,11 +10,6 @@ interface Props {
 
 export default function ProtectedRoute({ children }: Props) {
   const isAuthenticated = useSelector(selectAuthIsAuthenticated);
-  const loading = useSelector(selectAuthLoading);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

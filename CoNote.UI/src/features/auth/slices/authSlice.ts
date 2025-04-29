@@ -3,14 +3,16 @@ import { RootState } from "../../../app/store";
 //utils
 import { authService } from "../authService";
 
-interface AuthState {
+interface AuthInitialStateType {
   isAuthenticated: boolean;
   loading: boolean;
+  isAppInitialized: boolean;
 }
 
-export const authInitialState: AuthState = {
+export const authInitialState: AuthInitialStateType = {
   isAuthenticated: false,
   loading: false,
+  isAppInitialized: false,
 };
 
 export const validateToken = createAsyncThunk(
@@ -25,6 +27,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState: authInitialState,
   reducers: {
+    setIsAppInitialized: (state, action) => {
+      state.isAppInitialized = action.payload;
+    },
     endSession: () => {},
   },
   extraReducers: (builder) => {
@@ -45,6 +50,8 @@ const authSlice = createSlice({
 export const selectAuthIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated;
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
+export const selectAuthIsAppInitialized = (state: RootState) =>
+  state.auth.isAppInitialized;
 
-export const { endSession } = authSlice.actions;
+export const { setIsAppInitialized, endSession } = authSlice.actions;
 export default authSlice.reducer;

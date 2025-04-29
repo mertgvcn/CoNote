@@ -2,6 +2,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
+  EntityState,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
 //models
@@ -10,6 +11,7 @@ import { MemberView } from "../models/MemberView";
 import { InvitationView } from "../models/InvitationView";
 //utils
 import { workspaceService } from "../workspaceService";
+import { SettingsView } from "../models/SettingsView";
 
 export const structureAdapter = createEntityAdapter({
   selectId: (structure: StructureView) => structure.id,
@@ -23,12 +25,22 @@ export const invitationAdapter = createEntityAdapter({
   selectId: (invitation: InvitationView) => invitation.id,
 });
 
-export const workspaceDetailsInitialState = {
+interface WorkspaceDetailsInitialStateType {
+  structure: EntityState<StructureView, number>;
+  members: EntityState<MemberView, number>;
+  invitations: EntityState<InvitationView, number>;
+  settings: SettingsView | null;
+  loading: boolean;
+  clickedSections: number[];
+}
+
+export const workspaceDetailsInitialState: WorkspaceDetailsInitialStateType = {
   structure: structureAdapter.getInitialState(),
   members: memberAdapter.getInitialState(),
   invitations: invitationAdapter.getInitialState(),
   settings: null,
   loading: false,
+  clickedSections: [],
 };
 
 export const getStructureByWorkspaceAndSectionId = createAsyncThunk(
@@ -71,7 +83,16 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
 const workspaceDetailsSlice = createSlice({
   name: "workspaceDetails",
   initialState: workspaceDetailsInitialState,
-  reducers: {},
+  reducers: {
+    updateClickedSections: (state, action) => {
+      state.clickedSections.push(action.payload);
+    },
+    removeClickedSection: (state, action) => {
+      state.clickedSections = state.clickedSections.filter(
+        (sectionId) => sectionId !== action.payload
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Structure
@@ -140,6 +161,10 @@ export const selectWorkspaceDetailsSettings = (state: RootState) =>
   state.workspaceDetails.settings;
 export const selectWorkspaceDetailsLoading = (state: RootState) =>
   state.workspaceDetails.loading;
+export const selectWorkspaceDetailsClickedSections = (state: RootState) =>
+  state.workspaceDetails.clickedSections;
 
-export const {} = workspaceDetailsSlice.actions;
+export const { updateClickedSections, removeClickedSection } =
+  workspaceDetailsSlice.actions;
+
 export default workspaceDetailsSlice.reducer;
