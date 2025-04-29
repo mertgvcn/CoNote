@@ -1,10 +1,14 @@
 //redux
-import { store } from "../../app/store";
-import { endSession } from "./slices/authSlice";
+import { AppDispatch, store } from "../../app/store";
+import {
+  endSession,
+  setIsAppInitialized,
+  validateToken,
+} from "./slices/authSlice";
+import { getCurrentUserWorkspaces } from "../workspace/slices/workspaceSlice";
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
-import { initializeAppData } from "../../app/initializeAppData";
 import {
   RenderErrorToast,
   RenderSuccessToast,
@@ -26,7 +30,7 @@ const login = async (params: LoginForm) => {
     const response = await AuthenticationAPI.Login(userLoginRequest);
     const data: UserLoginResponse = response.data;
     setCookie("access_token", data.accessToken, data.accessTokenExpireDate);
-    await store.dispatch(initializeAppData());
+    await store.dispatch(validateToken());
     RenderSuccessToast("Login successful.");
   } catch (error: any) {
     //TODO: any değiştir
@@ -80,9 +84,20 @@ const isAuthenticated = async (): Promise<boolean> => {
   }
 };
 
+const initializeAppData = () => async (dispatch: AppDispatch) => {
+  const isAuthenticated = (await dispatch(validateToken())).payload;
+
+  if (isAuthenticated) {
+    await dispatch(getCurrentUserWorkspaces());
+  }
+  
+  dispatch(setIsAppInitialized(true));
+};
+
 export const authService = {
   login,
   register,
   logout,
   isAuthenticated,
+  initializeAppData,
 };

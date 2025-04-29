@@ -8,7 +8,7 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import { Box, Stack, styled, Typography, useTheme } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../../app/store";
-import { getStructureByWorkspaceAndSectionId } from "../../../../../../features/workspace/slices/workspaceDetailsSlice";
+import { getStructureByWorkspaceAndSectionId, updateClickedSections } from "../../../../../../features/workspace/slices/workspaceDetailsSlice";
 import { useParams } from "react-router-dom";
 
 const StructureElementContainer = styled(Box)(({ theme }) => ({
@@ -43,14 +43,12 @@ const StructureElementTypographyContainer = styled(Box)(({ theme }) => ({
 
 type StructureElementPropsType = {
   structureElement: StructureView;
-  setClickedSections: React.Dispatch<React.SetStateAction<number[]>>;
   isFirst?: boolean;
   isLast?: boolean;
 };
 
 const StructureElement = ({
   structureElement,
-  setClickedSections,
   isFirst = false,
   isLast = false,
 }: StructureElementPropsType) => {
@@ -73,9 +71,7 @@ const StructureElement = ({
   const handleClick = async () => {
     if (structureElement.type === StructureType.Section) {
       const sectionId = structureElement.id;
-      setClickedSections((prevSections) => {
-        return [...prevSections, sectionId];
-      });
+      dispatch(updateClickedSections(sectionId))
       dispatch(getStructureByWorkspaceAndSectionId({ workspaceId, sectionId }));
     }
   };

@@ -1,11 +1,4 @@
-import { useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-//redux
-import { useSelector } from "react-redux";
-import {
-  selectAuthIsAuthenticated,
-  selectAuthLoading,
-} from "../../../features/auth/slices/authSlice";
 //models
 import { LoginForm } from "../../../features/auth/models/LoginForm";
 //schemas
@@ -27,8 +20,6 @@ import {
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectAuthIsAuthenticated);
-  const loading = useSelector(selectAuthLoading);
 
   const handleLogin = async (
     values: LoginForm,
@@ -37,14 +28,9 @@ const LoginPage = () => {
     try {
       await authService.login(values);
       actions.resetForm();
+      navigate("/dashboard");
     } catch (error: any) {}
   };
-
-  useEffect(() => {
-    if (isAuthenticated && !loading) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, loading]);
 
   const {
     values,
