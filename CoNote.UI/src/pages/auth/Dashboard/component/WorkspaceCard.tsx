@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 //models
-import { WorkspaceView } from "../../../../features/workspace/models/WorkspaceView";
+import { WorkspaceView } from "../../../../models/views/WorkspaceView";
 //components
 import { Typography, styled, Box, Tooltip } from "@mui/material";
 

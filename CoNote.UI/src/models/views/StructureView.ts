@@ -1,4 +1,5 @@
-import { StructureType } from "../../../models/enums/StructureType";
+import { StructureType } from "../enums/StructureType";
+
 
 export interface StructureView {
     id: number;

@@ -6,9 +6,10 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
 //models
-import { StructureView } from "../models/StructureView";
-import { MemberView } from "../models/MemberView";
-import { InvitationView } from "../models/InvitationView";
+import { StructureView } from "../../../models/views/StructureView";
+import { InvitationView } from "../../../models/views/InvitationView";
+import { MemberView } from "../../../models/views/MemberView";
+import { SettingsView } from "../../../models/views/SettingsView";
 //utils
 import { workspaceService } from "../workspaceService";
 import { SettingsView } from "../models/SettingsView";
@@ -79,6 +80,7 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
     return await workspaceService.GetSettingsByWorkspaceId(workspaceId);
   }
 );
+
 
 const workspaceDetailsSlice = createSlice({
   name: "workspaceDetails",

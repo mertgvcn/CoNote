@@ -1,5 +1,6 @@
-import { InvitationStatus } from "../../../models/enums/InvitationStatus";
-import { InvitationType } from "../../../models/enums/InvitationType";
+import { InvitationStatus } from "../enums/InvitationStatus";
+import { InvitationType } from "../enums/InvitationType";
+
 
 export interface InvitationView {
  id: number;
