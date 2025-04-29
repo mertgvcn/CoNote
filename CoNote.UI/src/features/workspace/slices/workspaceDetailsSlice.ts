@@ -12,6 +12,7 @@ import { MemberView } from "../../../models/views/MemberView";
 import { SettingsView } from "../../../models/views/SettingsView";
 //utils
 import { workspaceService } from "../workspaceService";
+import { SettingsView } from "../models/SettingsView";
 
 export const structureAdapter = createEntityAdapter({
   selectId: (structure: StructureView) => structure.id,
@@ -84,7 +85,16 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
 const workspaceDetailsSlice = createSlice({
   name: "workspaceDetails",
   initialState: workspaceDetailsInitialState,
-  reducers: {},
+  reducers: {
+    updateClickedSections: (state, action) => {
+      state.clickedSections.push(action.payload);
+    },
+    removeClickedSection: (state, action) => {
+      state.clickedSections = state.clickedSections.filter(
+        (sectionId) => sectionId !== action.payload
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Structure
@@ -153,6 +163,10 @@ export const selectWorkspaceDetailsSettings = (state: RootState) =>
   state.workspaceDetails.settings;
 export const selectWorkspaceDetailsLoading = (state: RootState) =>
   state.workspaceDetails.loading;
+export const selectWorkspaceDetailsClickedSections = (state: RootState) =>
+  state.workspaceDetails.clickedSections;
 
-export const {} = workspaceDetailsSlice.actions;
+export const { updateClickedSections, removeClickedSection } =
+  workspaceDetailsSlice.actions;
+
 export default workspaceDetailsSlice.reducer;

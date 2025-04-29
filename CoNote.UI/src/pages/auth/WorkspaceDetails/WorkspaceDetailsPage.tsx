@@ -46,7 +46,7 @@ const WorkspaceDetailsPage = () => {
   return (
     <Stack direction="column" spacing={2}>
       <Stack direction="row" spacing={2}>
-        <Box width={224}>
+        <Box minWidth={224}>
           <ImageContainer></ImageContainer>
         </Box>
 

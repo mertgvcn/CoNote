@@ -1,16 +1,21 @@
 import { useState } from "react";
+import {
+  selectWorkspaceDetailsClickedSections,
+  structureSelectors,
+} from "../../../../../features/workspace/slices/workspaceDetailsSlice";
+//redux
+import { useSelector } from "react-redux";
 //components
 import { Button, Stack } from "@mui/material";
 import Searchbar from "../../../../../components/ui/Searchbar";
 import StructureContainer from "./components/StructureContainer";
-import { useSelector } from "react-redux";
-import { structureSelectors } from "../../../../../features/workspace/slices/workspaceDetailsSlice";
 import StructureElement from "./components/StructureElement";
+import GoUpElement from "./components/GoUpElement";
 
 const Structure = () => {
   const structure = useSelector(structureSelectors.selectAll);
+  const clickedSections = useSelector(selectWorkspaceDetailsClickedSections);
   const [searchText, setSearchText] = useState<string>(""); //TODO: Arama işlemini çalışır hale getir.
-  const [clickedSections, setClickedSections] = useState<number[]>([])
 
   return (
     <Stack direction="column" gap={1}>
@@ -27,12 +32,12 @@ const Structure = () => {
       </Stack>
 
       <StructureContainer>
+        {clickedSections.length !== 0 && <GoUpElement isOnlyElement={structure.length === 0} />}
         {structure.map((structureElement, index) => (
           <StructureElement
             structureElement={structureElement}
-            setClickedSections={setClickedSections}
             key={index}
-            isFirst={index === 0}
+            isFirst={clickedSections.length === 0}
             isLast={index === structure.length - 1}
           />
         ))}
