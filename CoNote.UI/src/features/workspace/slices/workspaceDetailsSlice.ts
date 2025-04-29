@@ -2,12 +2,14 @@ import {
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
+  EntityState,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
 //models
-import { StructureView } from "../models/StructureView";
-import { MemberView } from "../models/MemberView";
-import { InvitationView } from "../models/InvitationView";
+import { StructureView } from "../../../models/views/StructureView";
+import { InvitationView } from "../../../models/views/InvitationView";
+import { MemberView } from "../../../models/views/MemberView";
+import { SettingsView } from "../../../models/views/SettingsView";
 //utils
 import { workspaceService } from "../workspaceService";
 
@@ -23,12 +25,22 @@ export const invitationAdapter = createEntityAdapter({
   selectId: (invitation: InvitationView) => invitation.id,
 });
 
-export const workspaceDetailsInitialState = {
+interface WorkspaceDetailsInitialStateType {
+  structure: EntityState<StructureView, number>;
+  members: EntityState<MemberView, number>;
+  invitations: EntityState<InvitationView, number>;
+  settings: SettingsView | null;
+  loading: boolean;
+  clickedSections: number[];
+}
+
+export const workspaceDetailsInitialState: WorkspaceDetailsInitialStateType = {
   structure: structureAdapter.getInitialState(),
   members: memberAdapter.getInitialState(),
   invitations: invitationAdapter.getInitialState(),
   settings: null,
   loading: false,
+  clickedSections: [],
 };
 
 export const getStructureByWorkspaceAndSectionId = createAsyncThunk(
@@ -67,6 +79,7 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
     return await workspaceService.GetSettingsByWorkspaceId(workspaceId);
   }
 );
+
 
 const workspaceDetailsSlice = createSlice({
   name: "workspaceDetails",

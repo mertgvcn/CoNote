@@ -36,7 +36,7 @@ const WorkspaceDetailsPage = () => {
   const [selectedTab, setSelectedTab] = useState<WorkspaceDetailsTab>(
     WorkspaceDetailsTab.Structure
   );
-
+  
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };

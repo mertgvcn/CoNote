@@ -1,5 +1,5 @@
 //models
-import { StructureView } from "../../../../../../features/workspace/models/StructureView";
+import { StructureView } from "../../../../../../models/views/StructureView";
 import { StructureType } from "../../../../../../models/enums/StructureType";
 //icons
 import FolderIcon from "@mui/icons-material/Folder";

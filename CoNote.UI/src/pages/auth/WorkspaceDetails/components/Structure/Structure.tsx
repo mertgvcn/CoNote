@@ -6,8 +6,6 @@ import StructureContainer from "./components/StructureContainer";
 import { useSelector } from "react-redux";
 import { structureSelectors } from "../../../../../features/workspace/slices/workspaceDetailsSlice";
 import StructureElement from "./components/StructureElement";
-import { StructureView } from "../../../../../features/workspace/models/StructureView";
-import { StructureType } from "../../../../../models/enums/StructureType";
 
 const Structure = () => {
   const structure = useSelector(structureSelectors.selectAll);

@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
 //models
-import { WorkspaceView } from "../models/WorkspaceView";
+import { WorkspaceView } from "../../../models/views/WorkspaceView";
 //utils
 import { workspaceService } from "../workspaceService";
 
