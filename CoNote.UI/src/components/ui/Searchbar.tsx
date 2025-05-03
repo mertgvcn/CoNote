@@ -8,7 +8,7 @@ const SearchContainer = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   width: "100%",
-  height: 38.25,
+  height: 40,
   border: `1px solid`,
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.default,

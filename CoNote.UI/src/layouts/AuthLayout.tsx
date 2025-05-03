@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 //Components
 import ProtectedRoute from "../routers/guards/ProtectedRoute";
 import Navbar from "../components/layout/Navbar/Navbar";
-import Sidebar from "../components/layout/Sidebar";
+import Sidebar from "../components/layout/Sidebar/Sidebar";
 import PageWrapper from "../components/layout/PageWrapper";
 
 const AuthLayout = () => {

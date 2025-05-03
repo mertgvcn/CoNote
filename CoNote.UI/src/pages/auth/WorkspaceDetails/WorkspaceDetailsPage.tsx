@@ -13,8 +13,10 @@ import SettingsIcon from "@mui/icons-material/Settings";
 //hooks
 import { useWorkspaceDetails } from "../../../features/workspace/hooks/useWorkspaceDetailsData";
 //components
-import { Box, Stack, styled, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Stack, styled, Typography } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
+import Tabs from "../../../components/ui/Tabs/Tabs";
+import Tab from "../../../components/ui/Tabs/components/Tab";
 import Structure from "./components/Structure/Structure";
 import Members from "./components/Members/Members";
 import Settings from "./components/Settings/Settings";
@@ -36,13 +38,9 @@ const WorkspaceDetailsPage = () => {
   const [selectedTab, setSelectedTab] = useState<WorkspaceDetailsTab>(
     WorkspaceDetailsTab.Structure
   );
-  
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setSelectedTab(newValue);
-  };
 
   if (loading) return <Loading />;
-  
+
   return (
     <Stack direction="column" spacing={2}>
       <Stack direction="row" spacing={2}>
@@ -76,21 +74,30 @@ const WorkspaceDetailsPage = () => {
         </Stack>
       </Stack>
 
-      <Tabs value={selectedTab} onChange={handleTabChange}>
+      <Tabs withBottomBorder>
         <Tab
-          icon={<AccountTreeIcon fontSize="small" />}
-          iconPosition="start"
           label="Structure"
+          muiIcon={<AccountTreeIcon fontSize="small" />}
+          isActive={selectedTab === WorkspaceDetailsTab.Structure}
+          onClick={() => {
+            setSelectedTab(WorkspaceDetailsTab.Structure);
+          }}
         />
         <Tab
-          icon={<GroupsIcon fontSize="small" />}
-          iconPosition="start"
           label="Members"
+          muiIcon={<GroupsIcon fontSize="small" />}
+          isActive={selectedTab === WorkspaceDetailsTab.Members}
+          onClick={() => {
+            setSelectedTab(WorkspaceDetailsTab.Members);
+          }}
         />
         <Tab
-          icon={<SettingsIcon fontSize="small" />}
-          iconPosition="start"
           label="Settings"
+          muiIcon={<SettingsIcon fontSize="small" />}
+          isActive={selectedTab === WorkspaceDetailsTab.Settings}
+          onClick={() => {
+            setSelectedTab(WorkspaceDetailsTab.Settings);
+          }}
         />
       </Tabs>
 

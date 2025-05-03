@@ -73,7 +73,7 @@ const Settings = () => {
           <Button variant="text" color="error" onClick={handleDeleteWorkspace}>
             Delete Workspace
           </Button>
-          <Button variant="contained" type="submit">
+          <Button variant="contained" color="secondary" type="submit">
             Save Changes
           </Button>
         </Stack>
