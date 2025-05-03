@@ -16,7 +16,7 @@ const Members = () => {
   );
 
   return (
-    <Stack direction="row" gap={1}>
+    <Stack direction="row" gap={1} flex={1}>
       <MembersSidebar
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}

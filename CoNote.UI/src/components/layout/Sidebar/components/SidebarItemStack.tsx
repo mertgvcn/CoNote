@@ -9,7 +9,7 @@ type SidebarItemStackPropsType = {
 
 const SidebarItemStack = ({ children, gap = 1 }: SidebarItemStackPropsType) => {
   return (
-    <Stack direction="column" gap={gap} sx={{width: "100%"}}>
+    <Stack direction="column" gap={gap} sx={{ width: "100%" }}>
       {children}
     </Stack>
   );

@@ -49,7 +49,7 @@ const SidebarItem = ({
       : theme.palette.background.default,
     borderRight: isActive ? `4px solid ${colorValue}` : "none",
     boxShadow: isActive ? theme.shadows[2] : "none",
-    padding: muiIcon ? "0px" : theme.spacing(2),
+    padding: muiIcon ? "0px" : `0px ${theme.spacing(2)}`,
     "&:hover": isActive
       ? undefined
       : {

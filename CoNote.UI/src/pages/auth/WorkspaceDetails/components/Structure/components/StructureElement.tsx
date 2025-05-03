@@ -16,12 +16,12 @@ const StructureElementContainer = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   width: "100%",
-  height: 38.25,
+  height: 40,
   backgroundColor: "inherit",
-  color: theme.palette.text.primary,
   padding: `0px ${theme.spacing(2)}`,
   boxSizing: "border-box",
   gap: theme.spacing(2),
+  cursor: "pointer",
   "&:hover": {
     backgroundColor: theme.palette.grey[200],
   },
@@ -88,7 +88,7 @@ const StructureElement = ({
         </StructureElementIconContainer>
 
         <StructureElementTypographyContainer>
-          <Typography variant="body1" color="text.primary">
+          <Typography variant="body1">
             {structureElement.name}
           </Typography>
         </StructureElementTypographyContainer>

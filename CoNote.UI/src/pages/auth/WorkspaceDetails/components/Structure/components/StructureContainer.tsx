@@ -7,7 +7,6 @@ const StructureContainerStyled = styled(Stack)(({ theme }) => ({
   maxHeight: "100%",
   borderRadius: theme.shape.borderRadius,
   border: `1px solid ${theme.palette.secondary.main}`,
-  cursor: "pointer",
 }));
 
 type StructureContainerPropsStyle = {

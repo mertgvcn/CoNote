@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 //components
-import { Box, Stack, styled, useTheme } from "@mui/material";
+import { Box, styled, useTheme } from "@mui/material";
 
 const SidebarContainerStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  minHeight: "100%",
+  height: "100%",
   borderRight: `1px solid ${theme.palette.divider}`,
   boxSizing: "border-box",
 }));

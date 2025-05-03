@@ -7,7 +7,6 @@ const TabContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  height: "100%",
   padding: theme.spacing(2),
   boxSizing: "content-box",
   gap: theme.spacing(1),

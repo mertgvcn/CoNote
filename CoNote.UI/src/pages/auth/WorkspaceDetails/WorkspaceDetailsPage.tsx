@@ -42,7 +42,7 @@ const WorkspaceDetailsPage = () => {
   if (loading) return <Loading />;
 
   return (
-    <Stack direction="column" spacing={2}>
+    <Stack direction="column" spacing={2} height="100%">
       <Stack direction="row" spacing={2}>
         <Box minWidth={224}>
           <ImageContainer></ImageContainer>
