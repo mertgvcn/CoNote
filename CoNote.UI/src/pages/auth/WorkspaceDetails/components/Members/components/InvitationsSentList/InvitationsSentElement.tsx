@@ -1,8 +1,9 @@
 //models
-import { MemberView } from "../../../../../../models/views/MemberView";
+import { InvitationView } from "../../../../../../../models/views/InvitationView";
+import { InvitationStatus } from "../../../../../../../models/enums/InvitationStatus";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
-import EditIcon from "@mui/icons-material/Edit";
+import ClearIcon from "@mui/icons-material/Clear";
 //components
 import {
   Box,
@@ -14,7 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 
-const MemberElementContainer = styled(Box)(({ theme }) => ({
+const InvitationsSentElementContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -29,17 +30,17 @@ const MemberElementContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-type MemberElementPropsType = {
-  memberElement: MemberView;
+type InvitationsSentElementPropsType = {
+  invitationElement: InvitationView;
   isFirst?: boolean;
   isLast?: boolean;
 };
 
-const MemberElement = ({
-  memberElement,
+const InvitationsSentElement = ({
+  invitationElement,
   isFirst = false,
   isLast = false,
-}: MemberElementPropsType) => {
+}: InvitationsSentElementPropsType) => {
   const theme = useTheme();
 
   const dynamicStyle = {
@@ -52,26 +53,45 @@ const MemberElement = ({
     borderBottomRightRadius: isLast ? theme.shape.borderRadius : "0px",
   };
 
+  const getChipColor = (
+    status: InvitationStatus
+  ): "warning" | "success" | "error" => {
+    switch (status) {
+      case InvitationStatus.Pending:
+        return "warning";
+      case InvitationStatus.Accepted:
+        return "success";
+      case InvitationStatus.Rejected:
+        return "error";
+      default:
+        return "warning";
+    }
+  };
+
   return (
-    <MemberElementContainer sx={dynamicStyle}>
+    <InvitationsSentElementContainer sx={dynamicStyle}>
       <Stack direction="row" gap={1} alignItems="center">
         <PersonIcon />
         <Stack direction="column">
-          <Typography variant="body1">{memberElement.fullName}</Typography>
+          <Typography variant="body1">
+            {invitationElement.receiverFullName}
+          </Typography>
           <Typography variant="body2" color="grey.500">
-            @{memberElement.username}
+            @{invitationElement.receiverUsername}
           </Typography>
         </Stack>
       </Stack>
-
       <Stack direction="row" gap={1} alignItems="center">
-        <Chip label={memberElement.roleName} />
+        <Chip
+          label={InvitationStatus[invitationElement.status]}
+          color={getChipColor(invitationElement.status)}
+        />
         <IconButton color="secondary" size="small">
-          <EditIcon />
+          <ClearIcon />
         </IconButton>
       </Stack>
-    </MemberElementContainer>
+    </InvitationsSentElementContainer>
   );
 };
 
-export default MemberElement;
+export default InvitationsSentElement;

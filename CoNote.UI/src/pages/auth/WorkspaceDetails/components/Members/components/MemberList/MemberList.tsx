@@ -1,6 +1,6 @@
 //redux
 import { useSelector } from "react-redux";
-import { memberSelectors } from "../../../../../../features/workspace/slices/workspaceDetailsSlice";
+import { memberSelectors } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
 //components
 import { Box, styled } from "@mui/material";
 import MemberElement from "./MemberElement";

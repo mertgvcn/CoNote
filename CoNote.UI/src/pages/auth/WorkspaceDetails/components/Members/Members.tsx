@@ -5,9 +5,9 @@ import { MembersTab } from "./models/MembersTab";
 import { Button, Stack } from "@mui/material";
 import Searchbar from "../../../../../components/ui/Searchbar";
 import MembersSidebar from "./components/MembersSidebar";
-import MemberList from "./components/MemberList";
-import InvitationsSentList from "./components/InvitationsSentList";
-import RequestsToJoinList from "./components/RequestsToJoinList";
+import MemberList from "./components/MemberList/MemberList";
+import InvitationsSentList from "./components/InvitationsSentList/InvitationsSentList";
+import RequestsToJoinList from "./components/RequestsToJoinList/RequestsToJoinList";
 
 const Members = () => {
   const [searchText, setSearchText] = useState<string>("");
