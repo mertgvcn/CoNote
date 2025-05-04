@@ -5,7 +5,7 @@ import { Box, styled, useTheme } from "@mui/material";
 const SidebarContainerStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  height: "100%",
+  minHeight: "100%",
   borderRight: `1px solid ${theme.palette.divider}`,
   boxSizing: "border-box",
 }));
