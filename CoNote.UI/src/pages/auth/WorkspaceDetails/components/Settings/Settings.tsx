@@ -16,7 +16,7 @@ import {
   Switch,
 } from "@mui/material";
 
-const Settings = () => {
+const Settings = () => { //TODO: Rolleri ayarlama kısmını da burda yap
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector(selectWorkspaceDetailsSettings);
 
