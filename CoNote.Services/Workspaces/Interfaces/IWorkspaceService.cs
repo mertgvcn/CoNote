@@ -7,6 +7,6 @@ public interface IWorkspaceService
     Task<List<StructureView>> GetStructureByWorkspaceAndSectionIdAsync(long workspaceId, long? sectionId, CancellationToken cancellationToken);
     Task<List<MemberView>> GetMembersByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
     Task<List<InvitationView>> GetInvitationsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
-    Task<SettingsView> GetSettingsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
+    Task<WorkspaceSettingsView> GetSettingsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
     Task CreateWorkspaceAsync(CreateWorkspaceRequest request, CancellationToken cancellationToken);
 }

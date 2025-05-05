@@ -9,7 +9,7 @@ import { RootState } from "../../../app/store";
 import { StructureView } from "../../../models/views/StructureView";
 import { InvitationView } from "../../../models/views/InvitationView";
 import { MemberView } from "../../../models/views/MemberView";
-import { SettingsView } from "../../../models/views/SettingsView";
+import { WorkspaceSettingsView } from "../../../models/views/WorkspaceSettingsView";
 //utils
 import { workspaceService } from "../workspaceService";
 
@@ -29,7 +29,7 @@ interface WorkspaceDetailsInitialStateType {
   structure: EntityState<StructureView, number>;
   members: EntityState<MemberView, number>;
   invitations: EntityState<InvitationView, number>;
-  settings: SettingsView | null;
+  settings: WorkspaceSettingsView | null;
   loading: boolean;
   clickedSections: number[];
 }
@@ -79,7 +79,6 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
     return await workspaceService.GetSettingsByWorkspaceId(workspaceId);
   }
 );
-
 
 const workspaceDetailsSlice = createSlice({
   name: "workspaceDetails",

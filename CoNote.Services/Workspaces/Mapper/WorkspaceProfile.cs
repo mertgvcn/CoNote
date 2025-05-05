@@ -49,6 +49,6 @@ public class WorkspaceProfile : Profile
             .ForMember(dest => dest.ReceiverUsername, opt => opt.MapFrom(src => src.Receiver != null ? src.Receiver.Username : null))
             .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
 
-        CreateMap<Workspace, SettingsView>();
+        CreateMap<Workspace, WorkspaceSettingsView>();
     }
 }

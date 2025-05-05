@@ -49,7 +49,7 @@ public class WorkspaceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<SettingsView>> GetSettingsByWorkspaceId([FromQuery] long workspaceId)
+    public async Task<ActionResult<WorkspaceSettingsView>> GetSettingsByWorkspaceId([FromQuery] long workspaceId)
     {
         var response = await _workspaceService.GetSettingsByWorkspaceIdAsync(workspaceId, _cancellationToken);
         return response;

@@ -18,6 +18,15 @@ class WorksheetAPI extends BaseAPI {
       params
     );
   }
+
+  public async GetSettingsByWorksheetId(
+    worksheetId: number
+  ): Promise<AxiosResponse> {
+    return await this.get(
+      this.controllerExtension + "/GetSettingsByWorksheetId",
+      { worksheetId }
+    );
+  }
 }
 
 export default new WorksheetAPI();

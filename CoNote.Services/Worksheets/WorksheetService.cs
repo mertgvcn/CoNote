@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CoNote.Core.Entities;
 using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
@@ -6,6 +7,7 @@ using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Infrastructure.Utilities.Transaction.Interfaces;
 using CoNote.Services.Worksheets.Interfaces;
 using CoNote.Services.Worksheets.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Services.Worksheets;
 public class WorksheetService : IWorksheetService
@@ -67,5 +69,20 @@ public class WorksheetService : IWorksheetService
 
         await _worksheetRepository.AddAsync(worksheet, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
+    }
+
+
+    public async Task<WorksheetSettingsView> GetSettingsByWorksheetIdAsync(long worksheetId, CancellationToken cancellationToken)
+    {
+        var settingsView = await _worksheetRepository.GetById(worksheetId)
+            .ProjectTo<WorksheetSettingsView>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (settingsView == null)
+        {
+            throw new WorksheetNotFoundException();
+        }
+
+        return settingsView;
     }
 }

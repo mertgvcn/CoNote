@@ -26,4 +26,11 @@ public class WorksheetController : ControllerBase
         await _worksheetService.CreateWorksheetAsync(request, _cancellationToken);
         return Ok();
     }
+
+    [HttpGet]
+    public async Task<ActionResult<WorksheetSettingsView>> GetSettingsByWorksheetId([FromQuery] long worksheetId)
+    {
+        var response = await _worksheetService.GetSettingsByWorksheetIdAsync(worksheetId, _cancellationToken);
+        return response;
+    }
 }

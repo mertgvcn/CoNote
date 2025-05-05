@@ -8,5 +8,6 @@ public class WorksheetProfile : Profile
     public WorksheetProfile()
     {
         CreateMap<CreateWorksheetRequest, Worksheet>();
+        CreateMap<Worksheet, WorksheetSettingsView>();
     }
 }

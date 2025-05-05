@@ -1,3 +1,11 @@
+import { useNavigate, useParams } from "react-router-dom";
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../../app/store";
+import {
+  getStructureByWorkspaceAndSectionId,
+  updateClickedSections,
+} from "../../../../../../features/workspace/slices/workspaceDetailsSlice";
 //models
 import { StructureView } from "../../../../../../models/views/StructureView";
 import { StructureType } from "../../../../../../models/enums/StructureType";
@@ -6,10 +14,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 //components
 import { Box, Stack, styled, Typography, useTheme } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../../app/store";
-import { getStructureByWorkspaceAndSectionId, updateClickedSections } from "../../../../../../features/workspace/slices/workspaceDetailsSlice";
-import { useParams } from "react-router-dom";
 
 const StructureElementContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -52,6 +56,7 @@ const StructureElement = ({
   isFirst = false,
   isLast = false,
 }: StructureElementPropsType) => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const workspaceId = Number(id);
 
@@ -71,8 +76,10 @@ const StructureElement = ({
   const handleClick = async () => {
     if (structureElement.type === StructureType.Section) {
       const sectionId = structureElement.id;
-      dispatch(updateClickedSections(sectionId))
+      dispatch(updateClickedSections(sectionId));
       dispatch(getStructureByWorkspaceAndSectionId({ workspaceId, sectionId }));
+    } else if (structureElement.type === StructureType.Worksheet) {
+      navigate(`/worksheet/${structureElement.id}`);
     }
   };
 
@@ -88,9 +95,7 @@ const StructureElement = ({
         </StructureElementIconContainer>
 
         <StructureElementTypographyContainer>
-          <Typography variant="body1">
-            {structureElement.name}
-          </Typography>
+          <Typography variant="body1">{structureElement.name}</Typography>
         </StructureElementTypographyContainer>
       </Stack>
 

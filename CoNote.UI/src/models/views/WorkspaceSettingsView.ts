@@ -1,4 +1,4 @@
-export interface SettingsView {
+export interface WorkspaceSettingsView {
     id: number;
     name: string;
     description?: string;

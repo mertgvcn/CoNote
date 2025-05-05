@@ -96,10 +96,10 @@ public class WorkspaceService : IWorkspaceService
         return invitationViews;
     }
 
-    public async Task<SettingsView> GetSettingsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
+    public async Task<WorkspaceSettingsView> GetSettingsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
     {
         var settingsView = await _workspaceRepository.GetById(workspaceId)
-            .ProjectTo<SettingsView>(_mapper.ConfigurationProvider)
+            .ProjectTo<WorkspaceSettingsView>(_mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(cancellationToken);
 
         if (settingsView == null)

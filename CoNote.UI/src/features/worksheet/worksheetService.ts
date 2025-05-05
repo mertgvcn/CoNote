@@ -29,6 +29,23 @@ export const CreateWorksheet = async (params: CreateWorksheetForm) => {
   }
 };
 
+export const GetSettingsByWorksheetId = async (worksheetId: number) => {
+  try {
+    var response = await WorksheetAPI.GetSettingsByWorksheetId(worksheetId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching settings of worksheet."
+      );
+    }
+    throw error;
+  }
+};
+
 export const worksheetService = {
   CreateWorksheet,
+  GetSettingsByWorksheetId
 };

@@ -1,5 +1,5 @@
-﻿namespace CoNote.Services.Workspaces.Models;
-public record SettingsView
+﻿namespace CoNote.Services.Worksheets.Models;
+public record WorksheetSettingsView
 {
     public long Id { get; set; }
     public string Name { get; set; } = default!;
