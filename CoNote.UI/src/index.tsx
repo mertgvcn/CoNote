@@ -6,6 +6,7 @@ import { store } from "./app/store";
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
+import "./global.css";
 //components
 import { Toaster } from "react-hot-toast";
 import App from "./App";
