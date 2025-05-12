@@ -7,7 +7,7 @@ const NavSearch = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   minHeight: 32,
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
   color: theme.palette.primary.main,
   border: `1px solid ${theme.palette.primary.main}`,
   borderRadius: theme.shape.borderRadius,

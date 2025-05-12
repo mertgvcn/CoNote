@@ -22,12 +22,6 @@ const TestPage = () => {
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}
       />
-      <TextComponent
-        id={2}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
     </Box>
   );
 };

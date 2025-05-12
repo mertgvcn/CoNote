@@ -10,7 +10,13 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
+import { FontSize, FontSizes } from "../../../extensions/tiptap/FontSize";
+import {
+  FontFamily,
+  FontFamilies,
+} from "../../../extensions/tiptap/FontFamily";
 // components
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
 import IconButton from "../../ui/IconButton";
 import ColorPicker from "../../ui/ColorPicker";
@@ -34,21 +40,26 @@ export default function TextComponent({
   const [frame, setFrame] = useState({
     transform: "translate(100px, 100px) rotate(0deg)",
     width: 200,
-    height: 100,
+    height: 24,
   });
+  const [fontSize, setFontSize] = useState(
+    FontSizes.find((size) => size === "16px") || FontSizes[0]
+  );
+  const [fontFamily, setFontFamily] = useState(FontFamilies[0]);
   const [textColor, setTextColor] = useState("#000000");
 
   const editor = useEditor({
-    extensions: [StarterKit, TextStyle, Color],
+    extensions: [StarterKit, TextStyle, Color, FontSize, FontFamily],
     content: "<p>Edit this text</p>",
     editable: true,
     editorProps: {
       attributes: {
         style: `
-          outline: none;
-          height: 100%;
           width: 100%;
-          margin: 0px;
+          height: 100%;
+          white-space: pre-wrap;
+          overflow-wrap: break-word;
+          outline: none;
         `,
       },
     },
@@ -60,10 +71,14 @@ export default function TextComponent({
 
     const handleClickOutside = (event: PointerEvent) => {
       const target = event.target as HTMLElement;
+
       const isInsideText = targetRef.current?.contains(target);
       const isInsideMoveable = !!target.closest(".moveable-control-box");
+      const isInsideMuiSelect =
+        !!target.closest(".MuiPopover-root") ||
+        !!target.closest(".MuiSelect-root");
 
-      if (!isInsideText && !isInsideMoveable) {
+      if (!isInsideText && !isInsideMoveable && !isInsideMuiSelect) {
         setSelectedId(null);
       }
     };
@@ -78,31 +93,31 @@ export default function TextComponent({
     setSelectedId(id);
   };
 
-  const toggleAllBold = () => {
+  const applyTextCommand = (callback: () => void) => {
     editor?.commands.focus();
     editor?.commands.selectAll();
-    editor?.commands.toggleBold();
+    callback();
     editor?.commands.setTextSelection(editor.state.selection.to);
   };
 
-  const toggleAllItalic = () => {
-    editor?.commands.focus();
-    editor?.commands.selectAll();
-    editor?.commands.toggleItalic();
-    editor?.commands.setTextSelection(editor.state.selection.to);
+  const handleChangeFontFamily = (family: string) => {
+    setFontFamily(family);
+    applyTextCommand(() => editor?.commands.setFontFamily(family));
+  };
+
+  const handleChangeFontSize = (size: string) => {
+    setFontSize(size);
+    applyTextCommand(() => editor?.commands.setFontSize(size));
   };
 
   const handleChangeTextColor = (color: string) => {
     setTextColor(color);
-    editor?.commands.focus();
-    editor?.commands.selectAll();
-    editor?.commands.setColor(color);
-    editor?.commands.setTextSelection(editor.state.selection.to);
+    applyTextCommand(() => editor?.commands.setColor(color));
   };
 
   return (
     <>
-      <div
+      <Box
         className="target"
         ref={targetRef}
         onClick={handleClick}
@@ -115,21 +130,79 @@ export default function TextComponent({
       >
         {selectedId === id && (
           <TextEditorContainer>
-            <IconButton onClick={toggleAllBold} variant="outlined" size="small">
+            <Box sx={{ minWidth: 200 }}>
+              <FormControl fullWidth>
+                <InputLabel id="font-family-select-label">
+                  Font Family
+                </InputLabel>
+                <Select
+                  labelId="font-family-select-label"
+                  id="font-family-select"
+                  value={fontFamily}
+                  label="Font Family"
+                  size="small"
+                  onChange={(e) => handleChangeFontFamily(e.target.value)}
+                  MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
+                >
+                  {FontFamilies.map((font) => (
+                    <MenuItem
+                      key={font}
+                      value={font}
+                      style={{ fontFamily: font }}
+                    >
+                      {font}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box sx={{ minWidth: 30 }}>
+              <FormControl fullWidth>
+                <InputLabel id="font-size-select-label">Font Size</InputLabel>
+                <Select
+                  labelId="font-size-select-label"
+                  id="font-size-select"
+                  value={fontSize}
+                  label="Font Size"
+                  size="small"
+                  MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
+                  onChange={(e) => handleChangeFontSize(e.target.value)}
+                >
+                  {FontSizes.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.toggleBold())
+              }
+              variant="outlined"
+              size="medium"
+            >
               <FormatBoldIcon />
             </IconButton>
+
             <IconButton
-              onClick={toggleAllItalic}
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.toggleItalic())
+              }
               variant="outlined"
-              size="small"
+              size="medium"
             >
               <FormatItalicIcon />
             </IconButton>
+
             <ColorPicker value={textColor} onChange={handleChangeTextColor} />
           </TextEditorContainer>
         )}
-        <EditorContent editor={editor} />
-      </div>
+        <EditorContent data-sync-size editor={editor} />
+      </Box>
 
       {selectedId === id && (
         <Moveable
@@ -145,7 +218,7 @@ export default function TextComponent({
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           rotatable
           throttleRotate={0}
-          rotationPosition={"top-right"}
+          rotationPosition={"bottom"}
           onDrag={(e) => {
             const [x, y] = e.beforeTranslate;
             const el = targetRef.current;
@@ -160,12 +233,11 @@ export default function TextComponent({
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            const transform = `translate(${clampedX}px, ${clampedY}px)`;
-            el.style.transform = transform;
+            el.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
 
             setFrame((prev) => ({
               ...prev,
-              transform,
+              transform: el.style.transform,
             }));
           }}
           onResize={(e) => {
@@ -178,54 +250,37 @@ export default function TextComponent({
             let height = e.height;
 
             const compRect = el.getBoundingClientRect();
-            const direction = e.direction;
+            const dir = e.direction;
 
-            if (
-              direction[0] === -1 &&
-              compRect.left + e.delta[0] < bounds.left
-            ) {
+            if (dir[0] === -1 && compRect.left + e.delta[0] < bounds.left)
               width = compRect.right - bounds.left;
-            }
-
-            if (direction[1] === -1 && compRect.top + e.delta[1] < bounds.top) {
+            if (dir[1] === -1 && compRect.top + e.delta[1] < bounds.top)
               height = compRect.bottom - bounds.top;
-            }
-
-            if (
-              direction[0] === 1 &&
-              compRect.right + e.delta[0] > bounds.right
-            ) {
+            if (dir[0] === 1 && compRect.right + e.delta[0] > bounds.right)
               width = bounds.right - compRect.left;
-            }
-
-            if (
-              direction[1] === 1 &&
-              compRect.bottom + e.delta[1] > bounds.bottom
-            ) {
+            if (dir[1] === 1 && compRect.bottom + e.delta[1] > bounds.bottom)
               height = bounds.bottom - compRect.top;
-            }
 
-            const transform = `translate(${x}px, ${y}px)`;
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = transform;
+            el.style.transform = `translate(${x}px, ${y}px)`;
 
-            setFrame({
-              width,
-              height,
-              transform,
-            });
+            const inner = el.querySelector("[data-sync-size]") as HTMLElement;
+            if (inner) {
+              inner.style.width = "100%";
+              inner.style.height = "100%";
+            }
+
+            setFrame({ width, height, transform: el.style.transform });
           }}
           onRotate={(e) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const transform = e.drag.transform;
-            el.style.transform = transform;
-
+            el.style.transform = e.drag.transform;
             setFrame((prev) => ({
               ...prev,
-              transform,
+              transform: el.style.transform,
             }));
           }}
         />

@@ -11,7 +11,7 @@ const SearchContainer = styled(Box)(({ theme }) => ({
   height: 40,
   border: `1px solid`,
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
   padding: `0px ${theme.spacing(0.5)}`,
   boxSizing: "border-box",
   transition: "background-color,color 0.2s ease",

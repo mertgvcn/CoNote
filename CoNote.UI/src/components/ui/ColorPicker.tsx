@@ -1,10 +1,9 @@
 import { styled } from "@mui/material";
-import React from "react";
 
 const ColorPickerStyled = styled("input")(({ theme }) => ({
-  width: 32,
-  height: 32,
-  backgroundColor: theme.palette.background.default,
+  width: 40,
+  height: 40,
+  backgroundColor: theme.palette.background.paper,
   border: `1px solid ${theme.palette.primary.main}`,
   borderRadius: theme.shape.borderRadius,
   cursor: "pointer",
