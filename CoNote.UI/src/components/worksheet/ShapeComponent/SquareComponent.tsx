@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
@@ -9,8 +9,6 @@ type SquareComponentProps = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
-  initialColor?: string;
-  zIndex?: number;
 };
 
 const SquareComponent = ({
@@ -18,41 +16,27 @@ const SquareComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialColor = "#90caf9",
-  zIndex = 1,
 }: SquareComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
-  const [frame, setFrame] = useState({
-    transform: "translate(100px, 100px) rotate(0deg)",
+  const [properties, setProperties] = useState({
     width: 100,
     height: 100,
+    transform: "translate(100px, 100px) rotate(0deg)",
+    fillColor: "#DFB6FD",
+    zIndex: 1,
   });
 
-  const [fillColor, setFillColor] = useState(initialColor);
-  const [currentZIndex, setCurrentZIndex] = useState(zIndex);
-
-  const handleChangeFillColor = (color: string) => {
-    setFillColor(color);
+  const handleClick = () => {
+    setSelectedId(id);
   };
 
-  const handleChangeWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = parseInt(e.target.value);
-    if (!isNaN(newWidth)) {
-      setFrame((prev) => ({
-        ...prev,
-        width: newWidth,
-        height: newWidth,
-      }));
-    }
-  };
-
-  const handleChangeZIndex = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newZIndex = parseInt(e.target.value);
-    if (!isNaN(newZIndex)) {
-      setCurrentZIndex(newZIndex);
-    }
+  const handleChange = (key: keyof typeof properties, value: any) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   useEffect(() => {
@@ -73,9 +57,11 @@ const SquareComponent = ({
       document.removeEventListener("pointerdown", handleClickOutside);
   }, [selectedId, id, setSelectedId]);
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
+  useLayoutEffect(() => {
+    if (selectedId === id) {
+      moveableRef.current?.updateRect();
+    }
+  }, [properties.width, properties.height]);
 
   return (
     <>
@@ -84,10 +70,10 @@ const SquareComponent = ({
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${frame.width}px`,
-          height: `${frame.height}px`,
-          transform: frame.transform,
-          zIndex: currentZIndex,
+          width: `${properties.width}px`,
+          height: `${properties.height}px`,
+          transform: properties.transform,
+          zIndex: properties.zIndex,
         }}
       >
         {selectedId === id && (
@@ -97,51 +83,57 @@ const SquareComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={frame.width}
-              onChange={handleChangeWidth}
-              fullWidth
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
+              value={properties.width}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                  handleChange("width", value);
+                  handleChange("height", value);
                 }
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
-
+            
             <TextField
               label="Z-Index"
               type="number"
               size="small"
               variant="outlined"
-              value={currentZIndex}
-              onChange={handleChangeZIndex}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
+              value={properties.zIndex}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                  handleChange("zIndex", Math.max(1, value));
                 }
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
 
-            <ColorPicker value={fillColor} onChange={handleChangeFillColor} />
+            <ColorPicker
+              value={properties.fillColor}
+              onChange={(color: string) => handleChange("fillColor", color)}
+            />
           </TextEditorContainer>
         )}
 
         <svg
           width="100%"
           height="100%"
-          viewBox="0 0 100 100"
+          viewBox={`0 0 ${properties.width} ${properties.height}`}
           preserveAspectRatio="none"
-          style={{
-            zIndex: currentZIndex,
-          }}
         >
           <rect
             x="0"
             y="0"
-            width={frame.width}
-            height={frame.height}
-            fill={fillColor}
+            width={properties.width}
+            height={properties.height}
+            fill={properties.fillColor}
           />
         </svg>
       </Box>
@@ -156,9 +148,16 @@ const SquareComponent = ({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
+          throttleRotate={1}
           rotationPosition="bottom"
           renderDirections={["nw", "ne", "sw", "se"]}
+          onDragStart={({ inputEvent }) => {
+            const target = inputEvent?.target as HTMLElement;
+            if (target.closest(".text-editor-container")) {
+              inputEvent.stopPropagation();
+              return false;
+            }
+          }}
           onDrag={({ beforeTranslate }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
@@ -168,49 +167,46 @@ const SquareComponent = ({
             const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
-
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            el.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+            const transform = `translate(${clampedX}px, ${clampedY}px)`;
+            el.style.transform = transform;
 
-            setFrame((prev) => ({
+            setProperties((prev) => ({
               ...prev,
-              transform: el.style.transform,
+              transform,
             }));
           }}
-          onResize={({ width, height, drag, direction, delta }) => {
+          onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
             let [x, y] = drag.beforeTranslate;
-            const compRect = el.getBoundingClientRect();
+            const size = Math.min(width, height);
+            el.style.width = `${size}px`;
+            el.style.height = `${size}px`;
+            const transform = `translate(${x}px, ${y}px)`;
+            el.style.transform = transform;
 
-            if (width !== height) {
-              const minDimension = Math.min(width, height);
-              width = height = minDimension;
-            }
-
-            el.style.width = `${width}px`;
-            el.style.height = `${height}px`;
-            el.style.transform = `translate(${x}px, ${y}px)`;
-
-            setFrame({
-              width,
-              height,
-              transform: el.style.transform,
-            });
+            setProperties((prev) => ({
+              ...prev,
+              width: size,
+              height: size,
+              transform,
+            }));
           }}
           onRotate={({ drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            el.style.transform = drag.transform;
+            const transform = drag.transform;
+            el.style.transform = transform;
 
-            setFrame((prev) => ({
+            setProperties((prev) => ({
               ...prev,
-              transform: el.style.transform,
+              transform,
             }));
           }}
         />

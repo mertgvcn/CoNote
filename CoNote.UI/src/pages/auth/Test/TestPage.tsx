@@ -5,7 +5,6 @@ import TextComponent from "../../../components/worksheet/TextComponent/TextCompo
 import ArrowComponent from "../../../components/worksheet/ShapeComponent/ArrowComponent";
 import CrossComponent from "../../../components/worksheet/ShapeComponent/CrossComponent";
 import DiamondComponent from "../../../components/worksheet/ShapeComponent/DiamondComponent";
-import DonutComponent from "../../../components/worksheet/ShapeComponent/DonutComponent";
 import HeartComponent from "../../../components/worksheet/ShapeComponent/HeartComponent";
 import PolygonComponent from "../../../components/worksheet/ShapeComponent/PolygonComponent";
 import MessageComponent from "../../../components/worksheet/ShapeComponent/MessageComponent";
@@ -14,6 +13,7 @@ import RectangleComponent from "../../../components/worksheet/ShapeComponent/Rec
 import SquareComponent from "../../../components/worksheet/ShapeComponent/SquareComponent";
 import StarComponent from "../../../components/worksheet/ShapeComponent/StarComponent";
 import TriangleComponent from "../../../components/worksheet/ShapeComponent/TriangleComponent";
+import CircleComponent from "../../../components/worksheet/ShapeComponent/CircleComponent";
 
 const TestPage = () => {
   const workspaceRef = useRef<HTMLElement | null>(null);
@@ -29,12 +29,11 @@ const TestPage = () => {
       height="100%"
       overflow="hidden"
     >
-        <SquareComponent
+      <HeartComponent
         id={2}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}
-        initialColor="#7e57c2"
       />
       <TextComponent
         id={4}

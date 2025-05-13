@@ -4,19 +4,19 @@ import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
 
-type DiamondComponentProps = {
+type CircleComponentProps = {
   id: number;
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
 };
 
-const DiamondComponent = ({
+const CircleComponent = ({
   id,
   selectedId,
   setSelectedId,
   boundsRef,
-}: DiamondComponentProps) => {
+}: CircleComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
@@ -24,8 +24,9 @@ const DiamondComponent = ({
     width: 150,
     height: 150,
     transform: "translate(100px, 100px) rotate(0deg)",
-    fillColor: "#4fc3f7",
+    fillColor: "#ba68c8",
     zIndex: 1,
+    innerRadiusRatio: 0,
   });
 
   const handleClick = () => {
@@ -63,6 +64,17 @@ const DiamondComponent = ({
     }
   }, [properties.width, properties.height]);
 
+  // SVG iç çember yarıçap hesaplama (center = 50,50)
+  const outerR = 50;
+  const innerR = outerR * properties.innerRadiusRatio;
+
+  const circlePath = `
+    M50,0
+    A${outerR},${outerR} 0 1,1 49.999,0
+    M50,${50 - innerR}
+    A${innerR},${innerR} 0 1,0 50.001,${50 - innerR}
+  `;
+
   return (
     <>
       <Box
@@ -74,7 +86,6 @@ const DiamondComponent = ({
           height: `${properties.height}px`,
           transform: properties.transform,
           zIndex: properties.zIndex,
-          cursor: "move",
         }}
       >
         {selectedId === id && (
@@ -124,6 +135,25 @@ const DiamondComponent = ({
               }
               sx={{ width: 100 }}
             />
+            <TextField
+              label="Hole Size"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={properties.innerRadiusRatio}
+              slotProps={{ htmlInput: { min: 0, max: 0.98, step: 0.02 } }}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                  const clamped = Math.max(0, Math.min(value, 0.98));
+                  handleChange("innerRadiusRatio", clamped);
+                }
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
+              sx={{ width: 100 }}
+            />
             <ColorPicker
               value={properties.fillColor}
               onChange={(color: string) => handleChange("fillColor", color)}
@@ -137,7 +167,7 @@ const DiamondComponent = ({
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          <path d="M50,0 L100,50 L50,100 L0,50 Z" fill={properties.fillColor} />
+          <path d={circlePath} fill={properties.fillColor} fillRule="evenodd" />
         </svg>
       </Box>
 
@@ -218,4 +248,4 @@ const DiamondComponent = ({
   );
 };
 
-export default DiamondComponent;
+export default CircleComponent;

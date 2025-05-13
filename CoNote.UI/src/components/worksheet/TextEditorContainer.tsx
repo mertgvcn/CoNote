@@ -13,6 +13,7 @@ const TextEditorContainerStyled = styled(Stack)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   boxShadow: theme.shadows[3],
   pointerEvents: "auto",
+  cursor: "default"
 }));
 
 type TextEditorContainerPropsType = {
@@ -21,7 +22,7 @@ type TextEditorContainerPropsType = {
 
 const TextEditorContainer = ({ children }: TextEditorContainerPropsType) => {
   return (
-    <TextEditorContainerStyled direction="row" gap={1}>
+    <TextEditorContainerStyled className="text-editor-container" direction="row" gap={1}>
       {children}
     </TextEditorContainerStyled>
   );
