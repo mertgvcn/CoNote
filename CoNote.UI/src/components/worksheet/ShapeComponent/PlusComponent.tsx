@@ -93,50 +93,37 @@ const PlusComponent = ({
       >
         {selectedId === id && (
           <TextEditorContainer>
-            <Box display="flex" alignItems="center" gap={1}>
-              <TextField
-                label="Width"
-                type="number"
-                size="small"
-                variant="outlined"
-                value={frame.width}
-                onChange={handleChangeWidth}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                sx={{ width: 100 }}
-                inputProps={{
-                  onPointerDown: (e) => e.stopPropagation(),
-                }}
-              />
-              <TextField
-                label="Height"
-                type="number"
-                size="small"
-                variant="outlined"
-                value={frame.height}
-                onChange={handleChangeHeight}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                sx={{ width: 100 }}
-                inputProps={{
-                  onPointerDown: (e) => e.stopPropagation(),
-                }}
-              />
-              <Box
-                sx={{ display: "flex", alignItems: "center", height: "100%" }}
-              >
-                <ColorPicker
-                  value={fillColor}
-                  onChange={handleChangeFillColor}
-                />
-              </Box>
-            </Box>
+            <TextField
+              label="Width"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={frame.width}
+              onChange={handleChangeWidth}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              sx={{ width: 100 }}
+            />
+
+            <TextField
+              label="Height"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={frame.height}
+              onChange={handleChangeHeight}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              sx={{ width: 100 }}
+            />
+
+            <ColorPicker value={fillColor} onChange={handleChangeFillColor} />
           </TextEditorContainer>
         )}
 

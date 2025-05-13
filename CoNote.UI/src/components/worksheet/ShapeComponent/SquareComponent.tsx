@@ -92,50 +92,38 @@ const SquareComponent = ({
       >
         {selectedId === id && (
           <TextEditorContainer>
-            <Box display="flex" alignItems="center" gap={1}>
-              <TextField
-                label="Size"
-                type="number"
-                size="small"
-                variant="outlined"
-                value={frame.width}
-                onChange={handleChangeWidth}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                sx={{ width: 100 }}
-                inputProps={{
-                  onPointerDown: (e) => e.stopPropagation(),
-                }}
-              />
-              <TextField
-                label="Z-Index"
-                type="number"
-                size="small"
-                variant="outlined"
-                value={currentZIndex}
-                onChange={handleChangeZIndex}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                sx={{ width: 100 }}
-                inputProps={{
-                  onPointerDown: (e) => e.stopPropagation(),
-                }}
-              />
-              <Box
-                sx={{ display: "flex", alignItems: "center", height: "100%" }}
-              >
-                <ColorPicker
-                  value={fillColor}
-                  onChange={handleChangeFillColor}
-                />
-              </Box>
-            </Box>
+            <TextField
+              label="Size"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={frame.width}
+              onChange={handleChangeWidth}
+              fullWidth
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              sx={{ width: 100 }}
+            />
+
+            <TextField
+              label="Z-Index"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={currentZIndex}
+              onChange={handleChangeZIndex}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              sx={{ width: 100 }}
+            />
+
+            <ColorPicker value={fillColor} onChange={handleChangeFillColor} />
           </TextEditorContainer>
         )}
 
@@ -170,7 +158,7 @@ const SquareComponent = ({
           throttleResize={1}
           throttleRotate={0}
           rotationPosition="bottom"
-          renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
+          renderDirections={["nw", "ne", "sw", "se"]}
           onDrag={({ beforeTranslate }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
