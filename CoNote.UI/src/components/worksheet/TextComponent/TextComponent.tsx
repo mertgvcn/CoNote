@@ -285,6 +285,7 @@ export default function TextComponent({
             />
           </TextEditorContainer>
         )}
+        
         <EditorContent editor={editor} data-sync-size />
       </Box>
 

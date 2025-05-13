@@ -1,37 +1,48 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 //moveable
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//icons
+import LinkIcon from "@mui/icons-material/Link";
 //components
-import { TextField, Box } from "@mui/material";
-import ColorPicker from "../../ui/ColorPicker";
+import { Box, TextField } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
-type ArrowComponentPropsType = {
+export const getImageByName = (filename: string) => {
+  try {
+    return require(`../../../assets/images/${filename}`);
+  } catch (error) {
+    console.error("Image not found:", filename);
+    return require(`../../../assets/images/150x150-image-placeholder.jpg`);
+  }
+};
+
+type ImageComponentPropsType = {
   id: number;
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
 };
 
-const ArrowComponent = ({
+const ImageComponent = ({
   id,
   selectedId,
   setSelectedId,
   boundsRef,
-}: ArrowComponentPropsType) => {
+}: ImageComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 350,
-    height: 40,
+    width: 150,
+    height: 150,
     x: 100,
     y: 100,
     rotation: 0,
-    fillColor: "#64b5f6",
     zIndex: 1,
+    src: "150x150-image-placeholder.jpg",
   });
 
   const handleClick = () => {
@@ -45,6 +56,22 @@ const ArrowComponent = ({
     setProperties((prev) => ({
       ...prev,
       [key]: value,
+    }));
+  };
+
+  const handleAddImage = () => {
+    const source = prompt("Enter image URL or filename (from assets/images)");
+
+    if (!source) return;
+
+    const isExternal =
+      source.startsWith("http") || source.startsWith("data");
+
+    const finalSrc = isExternal ? source : getImageByName(source);
+
+    setProperties((prev) => ({
+      ...prev,
+      src: finalSrc,
     }));
   };
 
@@ -106,6 +133,7 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Height"
               type="number"
@@ -120,6 +148,7 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Z-Index"
               type="number"
@@ -134,24 +163,20 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
-            <ColorPicker
-              value={properties.fillColor}
-              onChange={(color: string) => handleChange("fillColor", color)}
-            />
+
+            <IconButton variant="outlined" onClick={handleAddImage}>
+              <LinkIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="10 20 180 60"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M10,40 L130,40 L130,20 L190,50 L130,80 L130,60 L10,60 Z"
-            fill={properties.fillColor}
+        <Box sx={{ width: "100%", height: "100%", objectFit: "fill" }}>
+          <img
+            src={properties.src}
+            alt="Image not found"
+            style={{ width: properties.width, height: properties.height }}
           />
-        </svg>
+        </Box>
       </Box>
 
       {selectedId === id && (
@@ -164,7 +189,7 @@ const ArrowComponent = ({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
+          throttleRotate={1}
           rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           onDragStart={({ inputEvent }) => {
@@ -239,4 +264,4 @@ const ArrowComponent = ({
   );
 };
 
-export default ArrowComponent;
+export default ImageComponent;

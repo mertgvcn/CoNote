@@ -14,6 +14,8 @@ import SquareComponent from "../../../components/worksheet/ShapeComponent/Square
 import StarComponent from "../../../components/worksheet/ShapeComponent/StarComponent";
 import TriangleComponent from "../../../components/worksheet/ShapeComponent/TriangleComponent";
 import CircleComponent from "../../../components/worksheet/ShapeComponent/CircleComponent";
+import VideoComponent from "../../../components/worksheet/MediaComponent/VideoComponent";
+import ImageComponent from "../../../components/worksheet/MediaComponent/ImageComponent";
 
 const TestPage = () => {
   const workspaceRef = useRef<HTMLElement | null>(null);
@@ -29,32 +31,8 @@ const TestPage = () => {
       height="100%"
       overflow="hidden"
     >
-      <TextComponent
+      <ImageComponent
         id={1}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
-      <ArrowComponent
-        id={2}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
-      <RectangleComponent
-        id={4}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
-      <CircleComponent
-        id={5}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
-      <CrossComponent
-        id={3}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}

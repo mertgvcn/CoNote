@@ -1,37 +1,68 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 //moveable
 import Moveable from "react-moveable";
+//tiptap
+import { EditorContent, useEditor } from "@tiptap/react";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import Youtube from "@tiptap/extension-youtube";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//icons
+import LinkIcon from "@mui/icons-material/Link";
 //components
-import { TextField, Box } from "@mui/material";
-import ColorPicker from "../../ui/ColorPicker";
+import { Box, TextField } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
-type ArrowComponentPropsType = {
+type VideoComponentPropsType = {
   id: number;
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
 };
 
-const ArrowComponent = ({
+const VideoComponent = ({
   id,
   selectedId,
   setSelectedId,
   boundsRef,
-}: ArrowComponentPropsType) => {
+}: VideoComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 350,
-    height: 40,
+    width: 400,
+    height: 240,
     x: 100,
     y: 100,
-    rotation: 0,
-    fillColor: "#64b5f6",
     zIndex: 1,
+  });
+
+  const editor = useEditor({
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Youtube.configure({
+        nocookie: true,
+      }),
+    ],
+    content: "Click insert icon and add url to be able to see the video",
+    editable: false,
+    editorProps: {
+      attributes: {
+        spellcheck: "false",
+        style: `
+          width: 100%;
+          height: 100%;
+          white-space: pre-wrap;
+          overflow-wrap: break-word;
+          outline: none;
+        `,
+      },
+    },
   });
 
   const handleClick = () => {
@@ -46,6 +77,19 @@ const ArrowComponent = ({
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleAddYoutube = () => {
+    const url = prompt("Enter YouTube URL");
+    if (url && editor) {
+      editor.commands.clearContent();
+      editor.commands.insertContentAt(0, "<p> </p>");
+      editor.commands.setYoutubeVideo({
+        src: url,
+        width: properties.width,
+        height: properties.height - 24,
+      });
+    }
   };
 
   useEffect(() => {
@@ -66,6 +110,17 @@ const ArrowComponent = ({
       document.removeEventListener("pointerdown", handleClickOutside);
   }, [selectedId, id, setSelectedId]);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    const iframe = targetRef.current?.querySelector("iframe");
+
+    if (iframe) {
+      iframe.setAttribute("width", `${properties.width}`);
+      iframe.setAttribute("height", `${properties.height - 24}`);
+    }
+  }, [properties.width, properties.height, editor]);
+
   useLayoutEffect(() => {
     if (selectedId === id) {
       moveableRef.current?.updateRect();
@@ -81,11 +136,7 @@ const ArrowComponent = ({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: getTransform(
-            properties.x,
-            properties.y,
-            properties.rotation
-          ),
+          transform: getTransform(properties.x, properties.y),
           zIndex: properties.zIndex,
           cursor: "move",
         }}
@@ -106,6 +157,7 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Height"
               type="number"
@@ -120,6 +172,7 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Z-Index"
               type="number"
@@ -134,24 +187,14 @@ const ArrowComponent = ({
               }
               sx={{ width: 100 }}
             />
-            <ColorPicker
-              value={properties.fillColor}
-              onChange={(color: string) => handleChange("fillColor", color)}
-            />
+
+            <IconButton variant="outlined" onClick={handleAddYoutube}>
+              <LinkIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="10 20 180 60"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M10,40 L130,40 L130,20 L190,50 L130,80 L130,60 L10,60 Z"
-            fill={properties.fillColor}
-          />
-        </svg>
+        <EditorContent editor={editor} data-sync-size />
       </Box>
 
       {selectedId === id && (
@@ -161,11 +204,8 @@ const ArrowComponent = ({
           origin={false}
           draggable
           resizable
-          rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
-          rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           onDragStart={({ inputEvent }) => {
             const target = inputEvent?.target as HTMLElement;
@@ -186,11 +226,7 @@ const ArrowComponent = ({
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            el.style.transform = getTransform(
-              clampedX,
-              clampedY,
-              properties.rotation
-            );
+            el.style.transform = getTransform(clampedX, clampedY);
 
             setProperties((prev) => ({
               ...prev,
@@ -207,7 +243,7 @@ const ArrowComponent = ({
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = getTransform(x, y, properties.rotation);
+            el.style.transform = getTransform(x, y);
 
             setProperties((prev) => ({
               ...prev,
@@ -217,26 +253,10 @@ const ArrowComponent = ({
               y,
             }));
           }}
-          onRotate={({ beforeRotate, drag }) => {
-            const el = targetRef.current;
-            if (!el) return;
-
-            const rotation = beforeRotate;
-            const [x, y] = drag.beforeTranslate;
-
-            el.style.transform = getTransform(x, y, rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
-          }}
         />
       )}
     </>
   );
 };
 
-export default ArrowComponent;
+export default VideoComponent;
