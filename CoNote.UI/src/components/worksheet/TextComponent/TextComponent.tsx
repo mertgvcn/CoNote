@@ -33,6 +33,7 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
 import IconButton from "../../ui/IconButton";
 import ColorPicker from "../../ui/ColorPicker";
+import zIndex from "@mui/material/styles/zIndex";
 
 type TextComponentPropsType = {
   id: number;
@@ -90,7 +91,6 @@ export default function TextComponent({
     },
   });
 
-  // dışarı tıklanınca seçimi kaldır
   useEffect(() => {
     if (selectedId !== id) return;
 
@@ -151,6 +151,7 @@ export default function TextComponent({
           width: `${frame.width}px`,
           height: `${frame.height}px`,
           transform: frame.transform,
+          zIndex: 1,
         }}
       >
         {selectedId === id && (
@@ -217,7 +218,7 @@ export default function TextComponent({
               size="medium"
             >
               <FormatListNumberedIcon />
-            </IconButton> 
+            </IconButton>
 
             <IconButton
               onClick={() =>

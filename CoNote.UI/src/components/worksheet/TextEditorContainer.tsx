@@ -6,10 +6,13 @@ const TextEditorContainerStyled = styled(Stack)(({ theme }) => ({
   top: -70,
   alignItems: "center",
   backgroundColor: theme.palette.background.paper,
-  padding: `${theme.spacing(1.5)} ${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)}`,
+  padding: `${theme.spacing(1.5)} ${theme.spacing(1)} ${theme.spacing(
+    1
+  )} ${theme.spacing(1)}`,
   boxSizing: "border-box",
   borderRadius: theme.shape.borderRadius,
   boxShadow: theme.shadows[3],
+  pointerEvents: "auto",
 }));
 
 type TextEditorContainerPropsType = {

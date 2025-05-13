@@ -29,13 +29,19 @@ const TestPage = () => {
       height="100%"
       overflow="hidden"
     >
-      <TriangleComponent />
-      {/* <TextComponent
-        id={1}
+        <SquareComponent
+        id={2}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}
-      /> */}
+        initialColor="#7e57c2"
+      />
+      <TextComponent
+        id={4}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        boundsRef={workspaceRef}
+      />
     </Box>
   );
 };
