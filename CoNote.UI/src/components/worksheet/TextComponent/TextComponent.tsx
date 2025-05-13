@@ -1,19 +1,14 @@
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-// icons
-import FormatBoldIcon from "@mui/icons-material/FormatBold";
-import FormatItalicIcon from "@mui/icons-material/FormatItalic";
-import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
-import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-// moveable
+import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
-// tiptap
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
@@ -28,12 +23,21 @@ import {
   FontFamily,
   FontFamilies,
 } from "../../../extensions/tiptap/FontFamily";
-// components
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import TextEditorContainer from "../TextEditorContainer";
+
 import IconButton from "../../ui/IconButton";
 import ColorPicker from "../../ui/ColorPicker";
-import zIndex from "@mui/material/styles/zIndex";
+import TextEditorContainer from "../TextEditorContainer";
+
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
+import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
+import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 
 type TextComponentPropsType = {
   id: number;
@@ -51,16 +55,15 @@ export default function TextComponent({
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
-  const [frame, setFrame] = useState({
-    transform: "translate(100px, 100px) rotate(0deg)",
+  const [properties, setProperties] = useState({
     width: 200,
     height: 24,
+    transform: "translate(100px, 100px) rotate(0deg)",
+    fontSize: FontSizes[0],
+    fontFamily: FontFamilies[0],
+    textColor: "#000000",
+    zIndex: 1,
   });
-  const [fontSize, setFontSize] = useState(
-    FontSizes.find((size) => size === "16px") || FontSizes[0]
-  );
-  const [fontFamily, setFontFamily] = useState(FontFamilies[0]);
-  const [textColor, setTextColor] = useState("#000000");
 
   const editor = useEditor({
     extensions: [
@@ -70,9 +73,7 @@ export default function TextComponent({
       FontSize,
       FontFamily,
       Underline,
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       BulletList,
       OrderedList,
     ],
@@ -91,33 +92,6 @@ export default function TextComponent({
     },
   });
 
-  useEffect(() => {
-    if (selectedId !== id) return;
-
-    const handleClickOutside = (event: PointerEvent) => {
-      const target = event.target as HTMLElement;
-
-      const isInsideText = targetRef.current?.contains(target);
-      const isInsideMoveable = !!target.closest(".moveable-control-box");
-      const isInsideMuiSelect =
-        !!target.closest(".MuiPopover-root") ||
-        !!target.closest(".MuiSelect-root");
-
-      if (!isInsideText && !isInsideMoveable && !isInsideMuiSelect) {
-        setSelectedId(null);
-      }
-    };
-
-    document.addEventListener("pointerdown", handleClickOutside);
-    return () => {
-      document.removeEventListener("pointerdown", handleClickOutside);
-    };
-  }, [selectedId, id, setSelectedId]);
-
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
   const applyTextCommand = (callback: () => void) => {
     editor?.commands.focus();
     editor?.commands.selectAll();
@@ -125,185 +99,193 @@ export default function TextComponent({
     editor?.commands.setTextSelection(editor.state.selection.to);
   };
 
-  const handleChangeFontFamily = (family: string) => {
-    setFontFamily(family);
-    applyTextCommand(() => editor?.commands.setFontFamily(family));
+  const handleClick = () => setSelectedId(id);
+
+  const handleChange = (key: keyof typeof properties, value: any) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    if (key === "fontSize") {
+      applyTextCommand(() => editor?.commands.setFontSize(value));
+    } else if (key === "fontFamily") {
+      applyTextCommand(() => editor?.commands.setFontFamily(value));
+    } else if (key === "textColor") {
+      applyTextCommand(() => editor?.commands.setColor(value));
+    }
   };
 
-  const handleChangeFontSize = (size: string) => {
-    setFontSize(size);
-    applyTextCommand(() => editor?.commands.setFontSize(size));
-  };
+  useEffect(() => {
+    if (selectedId !== id) return;
 
-  const handleChangeTextColor = (color: string) => {
-    setTextColor(color);
-    applyTextCommand(() => editor?.commands.setColor(color));
-  };
+    const handleClickOutside = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+      const isInside = targetRef.current?.contains(target);
+      const isMoveable = !!target.closest(".moveable-control-box");
+      const isMuiSelect = !!target.closest(".MuiPopover-root");
+
+      if (!isInside && !isMoveable && !isMuiSelect) {
+        setSelectedId(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () =>
+      document.removeEventListener("pointerdown", handleClickOutside);
+  }, [selectedId, id]);
+
+  useLayoutEffect(() => {
+    if (selectedId === id) {
+      moveableRef.current?.updateRect();
+    }
+  }, [properties.width, properties.height]);
 
   return (
     <>
       <Box
-        className="target"
         ref={targetRef}
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${frame.width}px`,
-          height: `${frame.height}px`,
-          transform: frame.transform,
-          zIndex: 1,
+          width: `${properties.width}px`,
+          height: `${properties.height}px`,
+          transform: properties.transform,
+          zIndex: properties.zIndex,
         }}
       >
         {selectedId === id && (
           <TextEditorContainer>
-            <Box sx={{ minWidth: 200 }}>
-              <FormControl fullWidth>
-                <InputLabel id="font-family-select-label">
-                  Font Family
-                </InputLabel>
-                <Select
-                  labelId="font-family-select-label"
-                  id="font-family-select"
-                  value={fontFamily}
-                  label="Font Family"
-                  size="small"
-                  onChange={(e) => handleChangeFontFamily(e.target.value)}
-                  MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
-                >
-                  {FontFamilies.map((font) => (
-                    <MenuItem
-                      key={font}
-                      value={font}
-                      style={{ fontFamily: font }}
-                    >
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Font Family</InputLabel>
+              <Select
+                value={properties.fontFamily}
+                label="Font Family"
+                onChange={(e) => handleChange("fontFamily", e.target.value)}
+              >
+                {FontFamilies.map((font) => (
+                  <MenuItem
+                    key={font}
+                    value={font}
+                    style={{ fontFamily: font }}
+                  >
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-            <Box sx={{ minWidth: 30 }}>
-              <FormControl fullWidth>
-                <InputLabel id="font-size-select-label">Font Size</InputLabel>
-                <Select
-                  labelId="font-size-select-label"
-                  id="font-size-select"
-                  value={fontSize}
-                  label="Font Size"
-                  size="small"
-                  MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
-                  onChange={(e) => handleChangeFontSize(e.target.value)}
-                >
-                  {FontSizes.map((size) => (
-                    <MenuItem key={size} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl size="small" sx={{ minWidth: 80 }}>
+              <InputLabel>Font Size</InputLabel>
+              <Select
+                value={properties.fontSize}
+                label="Font Size"
+                onChange={(e) => handleChange("fontSize", e.target.value)}
+              >
+                {FontSizes.map((size) => (
+                  <MenuItem key={size} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Z-Index"
+              type="number"
+              size="small"
+              value={properties.zIndex}
+              onChange={(e) =>
+                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+              }
+              sx={{ width: 100 }}
+            />
 
             <IconButton
-              onClick={() => editor?.chain().focus().toggleBulletList().run()}
               variant="outlined"
-              size="medium"
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
             >
               <FormatListBulletedIcon />
             </IconButton>
 
             <IconButton
-              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
               variant="outlined"
-              size="medium"
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
             >
               <FormatListNumberedIcon />
             </IconButton>
 
             <IconButton
+              variant="outlined"
               onClick={() =>
                 applyTextCommand(() => editor?.commands.toggleBold())
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatBoldIcon />
             </IconButton>
 
             <IconButton
+              variant="outlined"
               onClick={() =>
                 applyTextCommand(() => editor?.commands.toggleItalic())
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatItalicIcon />
             </IconButton>
 
             <IconButton
+              variant="outlined"
               onClick={() =>
                 applyTextCommand(() => editor?.commands.toggleUnderline())
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatUnderlinedIcon />
             </IconButton>
 
             <IconButton
+              variant="outlined"
               onClick={() =>
                 applyTextCommand(() => editor?.commands.toggleStrike())
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatStrikethroughIcon />
             </IconButton>
-
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("left"))
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatAlignLeftIcon />
             </IconButton>
-
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("center"))
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatAlignCenterIcon />
             </IconButton>
-
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("right"))
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatAlignRightIcon />
             </IconButton>
-
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("justify"))
               }
-              variant="outlined"
-              size="medium"
             >
               <FormatAlignJustifyIcon />
             </IconButton>
 
-            <ColorPicker value={textColor} onChange={handleChangeTextColor} />
+            <ColorPicker
+              value={properties.textColor}
+              onChange={(color: string) => handleChange("textColor", color)}
+            />
           </TextEditorContainer>
         )}
-        <EditorContent data-sync-size editor={editor} />
+        <EditorContent editor={editor} data-sync-size />
       </Box>
 
       {selectedId === id && (
@@ -312,60 +294,47 @@ export default function TextComponent({
           target={targetRef}
           origin={false}
           draggable
-          throttleDrag={1}
-          edgeDraggable={false}
           resizable
-          keepRatio={false}
-          throttleResize={1}
-          renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           rotatable
+          throttleDrag={1}
+          throttleResize={1}
           throttleRotate={0}
-          rotationPosition={"bottom"}
-          onDrag={(e) => {
-            const [x, y] = e.beforeTranslate;
+          rotationPosition="bottom"
+          renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
+          onDragStart={({ inputEvent }) => {
+            const target = inputEvent?.target as HTMLElement;
+            if (target.closest(".text-editor-container")) {
+              inputEvent.stopPropagation();
+              return false;
+            }
+          }}
+          onDrag={({ beforeTranslate }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             const comp = el?.getBoundingClientRect();
-
             if (!el || !bounds || !comp) return;
 
+            const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
-
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
+            const transform = `translate(${clampedX}px, ${clampedY}px)`;
 
-            el.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
-
-            setFrame((prev) => ({
-              ...prev,
-              transform: el.style.transform,
-            }));
+            el.style.transform = transform;
+            handleChange("transform", transform);
           }}
-          onResize={(e) => {
+          onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
-            let [x, y] = e.drag.beforeTranslate;
-            let width = e.width;
-            let height = e.height;
-
-            const compRect = el.getBoundingClientRect();
-            const dir = e.direction;
-
-            if (dir[0] === -1 && compRect.left + e.delta[0] < bounds.left)
-              width = compRect.right - bounds.left;
-            if (dir[1] === -1 && compRect.top + e.delta[1] < bounds.top)
-              height = compRect.bottom - bounds.top;
-            if (dir[0] === 1 && compRect.right + e.delta[0] > bounds.right)
-              width = bounds.right - compRect.left;
-            if (dir[1] === 1 && compRect.bottom + e.delta[1] > bounds.bottom)
-              height = bounds.bottom - compRect.top;
+            let [x, y] = drag.beforeTranslate;
+            const transform = `translate(${x}px, ${y}px)`;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = `translate(${x}px, ${y}px)`;
+            el.style.transform = transform;
 
             const inner = el.querySelector("[data-sync-size]") as HTMLElement;
             if (inner) {
@@ -373,17 +342,21 @@ export default function TextComponent({
               inner.style.height = "100%";
             }
 
-            setFrame({ width, height, transform: el.style.transform });
+            setProperties((prev) => ({
+              ...prev,
+              width,
+              height,
+              transform,
+            }));
           }}
-          onRotate={(e) => {
+          onRotate={({ drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            el.style.transform = e.drag.transform;
-            setFrame((prev) => ({
-              ...prev,
-              transform: el.style.transform,
-            }));
+            const transform = drag.transform;
+            el.style.transform = transform;
+
+            handleChange("transform", transform);
           }}
         />
       )}

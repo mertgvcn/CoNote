@@ -74,6 +74,7 @@ const TriangleComponent = ({
           height: `${properties.height}px`,
           transform: properties.transform,
           zIndex: properties.zIndex,
+          cursor: "move",
         }}
       >
         {selectedId === id && (

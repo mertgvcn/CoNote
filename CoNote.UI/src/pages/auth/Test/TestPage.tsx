@@ -29,14 +29,32 @@ const TestPage = () => {
       height="100%"
       overflow="hidden"
     >
+      <TextComponent
+        id={1}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        boundsRef={workspaceRef}
+      />
       <ArrowComponent
         id={2}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}
       />
-      <TextComponent
+      <RectangleComponent
         id={4}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        boundsRef={workspaceRef}
+      />
+      <CircleComponent
+        id={5}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        boundsRef={workspaceRef}
+      />
+      <CrossComponent
+        id={3}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         boundsRef={workspaceRef}

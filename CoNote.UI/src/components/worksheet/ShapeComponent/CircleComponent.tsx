@@ -64,7 +64,6 @@ const CircleComponent = ({
     }
   }, [properties.width, properties.height]);
 
-  // SVG iç çember yarıçap hesaplama (center = 50,50)
   const outerR = 50;
   const innerR = outerR * properties.innerRadiusRatio;
 
@@ -86,6 +85,7 @@ const CircleComponent = ({
           height: `${properties.height}px`,
           transform: properties.transform,
           zIndex: properties.zIndex,
+          cursor: "move",
         }}
       >
         {selectedId === id && (
