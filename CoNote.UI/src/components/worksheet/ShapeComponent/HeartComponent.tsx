@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
@@ -9,8 +9,6 @@ type HeartComponentProps = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
-  initialColor?: string;
-  zIndex?: number;
 };
 
 const HeartComponent = ({
@@ -18,42 +16,27 @@ const HeartComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialColor = "#e91e63",
-  zIndex = 1,
 }: HeartComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
-  const [frame, setFrame] = useState({
-    transform: "translate(100px, 100px) rotate(0deg)",
+  const [properties, setProperties] = useState({
     width: 150,
     height: 150,
+    transform: "translate(100px, 100px) rotate(0deg)",
+    fillColor: "#e91e63",
+    zIndex: 1,
   });
 
-  const [fillColor, setFillColor] = useState(initialColor);
-
-  const handleChangeFillColor = (color: string) => {
-    setFillColor(color);
+  const handleClick = () => {
+    setSelectedId(id);
   };
 
-  const handleChangeWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = parseInt(e.target.value);
-    if (!isNaN(newWidth)) {
-      setFrame((prev) => ({
-        ...prev,
-        width: newWidth,
-      }));
-    }
-  };
-
-  const handleChangeHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHeight = parseInt(e.target.value);
-    if (!isNaN(newHeight)) {
-      setFrame((prev) => ({
-        ...prev,
-        height: newHeight,
-      }));
-    }
+  const handleChange = (key: keyof typeof properties, value: any) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   useEffect(() => {
@@ -74,9 +57,11 @@ const HeartComponent = ({
       document.removeEventListener("pointerdown", handleClickOutside);
   }, [selectedId, id, setSelectedId]);
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
+  useLayoutEffect(() => {
+    if (selectedId === id) {
+      moveableRef.current?.updateRect();
+    }
+  }, [properties.width, properties.height]);
 
   return (
     <>
@@ -85,10 +70,10 @@ const HeartComponent = ({
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${frame.width}px`,
-          height: `${frame.height}px`,
-          transform: frame.transform,
-          zIndex,
+          width: `${properties.width}px`,
+          height: `${properties.height}px`,
+          transform: properties.transform,
+          zIndex: properties.zIndex,
         }}
       >
         {selectedId === id && (
@@ -98,32 +83,50 @@ const HeartComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={frame.width}
-              onChange={handleChangeWidth}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
+              value={properties.width}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("width", value);
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
               size="small"
               variant="outlined"
-              value={frame.height}
-              onChange={handleChangeHeight}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
+              value={properties.height}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("height", value);
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
-
-            <ColorPicker value={fillColor} onChange={handleChangeFillColor} />
+            <TextField
+              label="Z-Index"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={properties.zIndex}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("zIndex", Math.max(1, value));
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
+              sx={{ width: 100 }}
+            />
+            <ColorPicker
+              value={properties.fillColor}
+              onChange={(color: string) => handleChange("fillColor", color)}
+            />
           </TextEditorContainer>
         )}
 
@@ -135,9 +138,9 @@ const HeartComponent = ({
         >
           <path
             d="M23.6,0c-3.4,0-6.4,2.1-7.6,5.1C14.8,2.1,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4
-            c0,4.5,3.5,8.2,10.3,13.8c1.6,1.3,3.4,2.7,5.3,4.2c1.9-1.5,3.7-2.9,5.3-4.2
-            C28.5,16.6,32,12.9,32,8.4C32,3.8,28.2,0,23.6,0z"
-            fill={fillColor}
+              c0,4.5,3.5,8.2,10.3,13.8c1.6,1.3,3.4,2.7,5.3,4.2c1.9-1.5,3.7-2.9,5.3-4.2
+              C28.5,16.6,32,12.9,32,8.4C32,3.8,28.2,0,23.6,0z"
+            fill={properties.fillColor}
           />
         </svg>
       </Box>
@@ -152,9 +155,16 @@ const HeartComponent = ({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
+          throttleRotate={1}
           rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
+          onDragStart={({ inputEvent }) => {
+            const target = inputEvent?.target as HTMLElement;
+            if (target.closest(".text-editor-container")) {
+              inputEvent.stopPropagation();
+              return false;
+            }
+          }}
           onDrag={({ beforeTranslate }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
@@ -164,56 +174,45 @@ const HeartComponent = ({
             const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
-
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            el.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+            const transform = `translate(${clampedX}px, ${clampedY}px)`;
+            el.style.transform = transform;
 
-            setFrame((prev) => ({
+            setProperties((prev) => ({
               ...prev,
-              transform: el.style.transform,
+              transform,
             }));
           }}
-          onResize={({ width, height, drag, direction, delta }) => {
+          onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
             let [x, y] = drag.beforeTranslate;
-            const compRect = el.getBoundingClientRect();
-
-            if (direction[0] === -1 && compRect.left + delta[0] < bounds.left)
-              width = compRect.right - bounds.left;
-            if (direction[1] === -1 && compRect.top + delta[1] < bounds.top)
-              height = compRect.bottom - bounds.top;
-            if (direction[0] === 1 && compRect.right + delta[0] > bounds.right)
-              width = bounds.right - compRect.left;
-            if (
-              direction[1] === 1 &&
-              compRect.bottom + delta[1] > bounds.bottom
-            )
-              height = bounds.bottom - compRect.top;
-
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = `translate(${x}px, ${y}px)`;
+            const transform = `translate(${x}px, ${y}px)`;
+            el.style.transform = transform;
 
-            setFrame({
+            setProperties((prev) => ({
+              ...prev,
               width,
               height,
-              transform: el.style.transform,
-            });
+              transform,
+            }));
           }}
           onRotate={({ drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            el.style.transform = drag.transform;
+            const transform = drag.transform;
+            el.style.transform = transform;
 
-            setFrame((prev) => ({
+            setProperties((prev) => ({
               ...prev,
-              transform: el.style.transform,
+              transform,
             }));
           }}
         />

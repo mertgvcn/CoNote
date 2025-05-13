@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
@@ -9,8 +9,6 @@ type PlusComponentProps = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
-  initialColor?: string;
-  zIndex?: number;
 };
 
 const PlusComponent = ({
@@ -18,65 +16,50 @@ const PlusComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialColor = "#ef5350",
-  zIndex = 1,
 }: PlusComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
-  const [frame, setFrame] = useState({
-    transform: "translate(100px, 100px) rotate(0deg)",
+  const [properties, setProperties] = useState({
     width: 100,
     height: 100,
+    transform: "translate(100px, 100px) rotate(0deg)",
+    fillColor: "#EF5350",
+    zIndex: 1,
   });
-
-  const [fillColor, setFillColor] = useState(initialColor);
-
-  const handleChangeFillColor = (color: string) => {
-    setFillColor(color);
-  };
-
-  const handleChangeWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = parseInt(e.target.value);
-    if (!isNaN(newWidth)) {
-      setFrame((prev) => ({
-        ...prev,
-        width: newWidth,
-      }));
-    }
-  };
-
-  const handleChangeHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHeight = parseInt(e.target.value);
-    if (!isNaN(newHeight)) {
-      setFrame((prev) => ({
-        ...prev,
-        height: newHeight,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    if (selectedId !== id) return;
-
-    const handleClickOutside = (event: PointerEvent) => {
-      const target = event.target as HTMLElement;
-      const isInside = targetRef.current?.contains(target);
-      const isMoveable = !!target.closest(".moveable-control-box");
-
-      if (!isInside && !isMoveable) {
-        setSelectedId(null);
-      }
-    };
-
-    document.addEventListener("pointerdown", handleClickOutside);
-    return () =>
-      document.removeEventListener("pointerdown", handleClickOutside);
-  }, [selectedId, id, setSelectedId]);
 
   const handleClick = () => {
     setSelectedId(id);
   };
+
+  const handleChange = (key: keyof typeof properties, value: any) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  useEffect(() => {
+    if (selectedId !== id) return;
+    const handleClickOutside = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+      const isInside = targetRef.current?.contains(target);
+      const isMoveable = !!target.closest(".moveable-control-box");
+      if (!isInside && !isMoveable) {
+        setSelectedId(null);
+      }
+    };
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    };
+  }, [selectedId, id, setSelectedId]);
+
+  useLayoutEffect(() => {
+    if (selectedId === id) {
+      moveableRef.current?.updateRect();
+    }
+  }, [properties.width, properties.height]);
 
   return (
     <>
@@ -85,10 +68,10 @@ const PlusComponent = ({
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${frame.width}px`,
-          height: `${frame.height}px`,
-          transform: frame.transform,
-          zIndex,
+          width: `${properties.width}px`,
+          height: `${properties.height}px`,
+          transform: properties.transform,
+          zIndex: properties.zIndex,
         }}
       >
         {selectedId === id && (
@@ -98,32 +81,50 @@ const PlusComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={frame.width}
-              onChange={handleChangeWidth}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
+              value={properties.width}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("width", value);
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
               size="small"
               variant="outlined"
-              value={frame.height}
-              onChange={handleChangeHeight}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
+              value={properties.height}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("height", value);
               }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
               sx={{ width: 100 }}
             />
-
-            <ColorPicker value={fillColor} onChange={handleChangeFillColor} />
+            <TextField
+              label="Z-Index"
+              type="number"
+              size="small"
+              variant="outlined"
+              value={properties.zIndex}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) handleChange("zIndex", Math.max(1, value));
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
+              }
+              sx={{ width: 100 }}
+            />
+            <ColorPicker
+              value={properties.fillColor}
+              onChange={(color: string) => handleChange("fillColor", color)}
+            />
           </TextEditorContainer>
         )}
 
@@ -135,7 +136,7 @@ const PlusComponent = ({
         >
           <path
             d="M40,0 H60 V40 H100 V60 H60 V100 H40 V60 H0 V40 H40 Z"
-            fill={fillColor}
+            fill={properties.fillColor}
           />
         </svg>
       </Box>
@@ -150,69 +151,52 @@ const PlusComponent = ({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
+          throttleRotate={1}
           rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
+          onDragStart={({ inputEvent }) => {
+            const target = inputEvent?.target as HTMLElement;
+            if (target.closest(".text-editor-container")) {
+              inputEvent.stopPropagation();
+              return false;
+            }
+          }}
           onDrag={({ beforeTranslate }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             const comp = el?.getBoundingClientRect();
             if (!el || !bounds || !comp) return;
-
             const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
-
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
-
-            el.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
-
-            setFrame((prev) => ({
-              ...prev,
-              transform: el.style.transform,
-            }));
+            const transform = `translate(${clampedX}px, ${clampedY}px)`;
+            el.style.transform = transform;
+            handleChange("transform", transform);
           }}
-          onResize={({ width, height, drag, direction, delta }) => {
+          onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
-
-            let [x, y] = drag.beforeTranslate;
-            const compRect = el.getBoundingClientRect();
-
-            if (direction[0] === -1 && compRect.left + delta[0] < bounds.left)
-              width = compRect.right - bounds.left;
-            if (direction[1] === -1 && compRect.top + delta[1] < bounds.top)
-              height = compRect.bottom - bounds.top;
-            if (direction[0] === 1 && compRect.right + delta[0] > bounds.right)
-              width = bounds.right - compRect.left;
-            if (
-              direction[1] === 1 &&
-              compRect.bottom + delta[1] > bounds.bottom
-            )
-              height = bounds.bottom - compRect.top;
-
+            const [x, y] = drag.beforeTranslate;
+            const transform = `translate(${x}px, ${y}px)`;
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = `translate(${x}px, ${y}px)`;
-
-            setFrame({
+            el.style.transform = transform;
+            setProperties((prev) => ({
+              ...prev,
               width,
               height,
-              transform: el.style.transform,
-            });
+              transform,
+            }));
           }}
           onRotate={({ drag }) => {
             const el = targetRef.current;
             if (!el) return;
-
-            el.style.transform = drag.transform;
-
-            setFrame((prev) => ({
-              ...prev,
-              transform: el.style.transform,
-            }));
+            const transform = drag.transform;
+            el.style.transform = transform;
+            handleChange("transform", transform);
           }}
         />
       )}

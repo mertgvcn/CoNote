@@ -29,7 +29,7 @@ const TestPage = () => {
       height="100%"
       overflow="hidden"
     >
-      <HeartComponent
+      <ArrowComponent
         id={2}
         selectedId={selectedId}
         setSelectedId={setSelectedId}
