@@ -3,6 +3,14 @@ import { useEffect, useRef, useState } from "react";
 // icons
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
+import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
+import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 // moveable
 import Moveable from "react-moveable";
 // tiptap
@@ -10,6 +18,11 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
+import Underline from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+import BulletList from "@tiptap/extension-bullet-list";
+import ListItem from "@tiptap/extension-list-item";
+import OrderedList from "@tiptap/extension-ordered-list";
 import { FontSize, FontSizes } from "../../../extensions/tiptap/FontSize";
 import {
   FontFamily,
@@ -49,7 +62,19 @@ export default function TextComponent({
   const [textColor, setTextColor] = useState("#000000");
 
   const editor = useEditor({
-    extensions: [StarterKit, TextStyle, Color, FontSize, FontFamily],
+    extensions: [
+      StarterKit,
+      TextStyle,
+      Color,
+      FontSize,
+      FontFamily,
+      Underline,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      BulletList,
+      OrderedList,
+    ],
     content: "<p>Edit this text</p>",
     editable: true,
     editorProps: {
@@ -179,6 +204,22 @@ export default function TextComponent({
             </Box>
 
             <IconButton
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
+              variant="outlined"
+              size="medium"
+            >
+              <FormatListBulletedIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+              variant="outlined"
+              size="medium"
+            >
+              <FormatListNumberedIcon />
+            </IconButton> 
+
+            <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.toggleBold())
               }
@@ -196,6 +237,66 @@ export default function TextComponent({
               size="medium"
             >
               <FormatItalicIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.toggleUnderline())
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatUnderlinedIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.toggleStrike())
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatStrikethroughIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.setTextAlign("left"))
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatAlignLeftIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.setTextAlign("center"))
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatAlignCenterIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.setTextAlign("right"))
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatAlignRightIcon />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                applyTextCommand(() => editor?.commands.setTextAlign("justify"))
+              }
+              variant="outlined"
+              size="medium"
+            >
+              <FormatAlignJustifyIcon />
             </IconButton>
 
             <ColorPicker value={textColor} onChange={handleChangeTextColor} />
