@@ -16,7 +16,6 @@ import TriangleComponent from "../../../components/worksheet/ShapeComponent/Tria
 import CircleComponent from "../../../components/worksheet/ShapeComponent/CircleComponent";
 import VideoComponent from "../../../components/worksheet/MediaComponent/VideoComponent";
 import ImageComponent from "../../../components/worksheet/MediaComponent/ImageComponent";
-import { Circle, Diamond, Star } from "@mui/icons-material";
 
 const TestPage = () => {
   const workspaceRef = useRef<HTMLElement | null>(null);
