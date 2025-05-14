@@ -26,21 +26,21 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import ArrowComponentDroppable from "../../../components/worksheet/ShapeComponent/ArrowComponentDraggable";
-import CircleComponentDraggable from "../../../components/worksheet/ShapeComponent/CircleComponentDraggable";
-import CrossComponentDraggable from "../../../components/worksheet/ShapeComponent/CrossComponentDraggable";
-import DiamondComponentDraggable from "../../../components/worksheet/ShapeComponent/DiamondComponentDraggable";
-import HeartComponentDraggable from "../../../components/worksheet/ShapeComponent/HeartComponentDraggable";
-import MessageComponentDraggable from "../../../components/worksheet/ShapeComponent/MessageComponentDraggable";
-import PlusComponentDraggable from "../../../components/worksheet/ShapeComponent/PlusComponentDraggable";
-import PolygonComponentDraggable from "../../../components/worksheet/ShapeComponent/PolygonComponentDraggable";
-import RectangleComponentDraggable from "../../../components/worksheet/ShapeComponent/RectangleComponentDraggable";
-import SquareComponentDraggable from "../../../components/worksheet/ShapeComponent/SquareComponentDraggable";
-import StarComponentDraggable from "../../../components/worksheet/ShapeComponent/StarComponentDraggable";
-import TriangleComponentDraggable from "../../../components/worksheet/ShapeComponent/TriangleComponentDraggable";
-import TextComponentDraggable from "../../../components/worksheet/TextComponent/TextComponentDraggable";
-import ImageComponentDraggable from "../../../components/worksheet/MediaComponent/ImageComponentDraggable";
-import VideoComponentDraggable from "../../../components/worksheet/MediaComponent/VideoComponentDraggable";
+import ArrowComponentDroppable from "../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
+import CircleComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/CircleComponentDraggable";
+import CrossComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/CrossComponentDraggable";
+import DiamondComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/DiamondComponentDraggable";
+import HeartComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/HeartComponentDraggable";
+import MessageComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/MessageComponentDraggable";
+import PlusComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/PlusComponentDraggable";
+import PolygonComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/PolygonComponentDraggable";
+import RectangleComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/RectangleComponentDraggable";
+import SquareComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/SquareComponentDraggable";
+import StarComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/StarComponentDraggable";
+import TriangleComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/TriangleComponentDraggable";
+import TextComponentDraggable from "../../../components/worksheet/TextComponent/draggables/TextComponentDraggable";
+import ImageComponentDraggable from "../../../components/worksheet/MediaComponent/draggables/ImageComponentDraggable";
+import VideoComponentDraggable from "../../../components/worksheet/MediaComponent/draggables/VideoComponentDraggable";
 
 const Draggable = () => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
