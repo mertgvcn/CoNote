@@ -3,6 +3,7 @@ import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import { getTransform } from "../../../utils/getTransform";
 
 type CircleComponentProps = {
   id: number;
@@ -23,7 +24,9 @@ const CircleComponent = ({
   const [properties, setProperties] = useState({
     width: 150,
     height: 150,
-    transform: "translate(100px, 100px) rotate(0deg)",
+    x: 100,
+    y: 100,
+    rotation: 0,
     fillColor: "#ba68c8",
     zIndex: 1,
     innerRadiusRatio: 0,
@@ -33,7 +36,10 @@ const CircleComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = (key: keyof typeof properties, value: any) => {
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
     setProperties((prev) => ({
       ...prev,
       [key]: value,
@@ -83,7 +89,11 @@ const CircleComponent = ({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: properties.transform,
+          transform: getTransform(
+            properties.x,
+            properties.y,
+            properties.rotation
+          ),
           zIndex: properties.zIndex,
           cursor: "move",
         }}
@@ -96,10 +106,9 @@ const CircleComponent = ({
               size="small"
               variant="outlined"
               value={properties.width}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("width", value);
-              }}
+              onChange={(e) =>
+                handleChange("width", parseInt(e.target.value) || 0)
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
@@ -111,10 +120,9 @@ const CircleComponent = ({
               size="small"
               variant="outlined"
               value={properties.height}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("height", value);
-              }}
+              onChange={(e) =>
+                handleChange("height", parseInt(e.target.value) || 0)
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
@@ -126,10 +134,9 @@ const CircleComponent = ({
               size="small"
               variant="outlined"
               value={properties.zIndex}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("zIndex", Math.max(1, value));
-              }}
+              onChange={(e) =>
+                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
@@ -141,13 +148,11 @@ const CircleComponent = ({
               size="small"
               variant="outlined"
               value={properties.innerRadiusRatio}
-              slotProps={{ htmlInput: { min: 0, max: 0.98, step: 0.02 } }}
+              inputProps={{ min: 0, max: 0.98, step: 0.02 }}
               onChange={(e) => {
                 const value = parseFloat(e.target.value);
-                if (!isNaN(value)) {
-                  const clamped = Math.max(0, Math.min(value, 0.98));
-                  handleChange("innerRadiusRatio", clamped);
-                }
+                const clamped = Math.max(0, Math.min(value, 0.98));
+                handleChange("innerRadiusRatio", clamped);
               }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -204,12 +209,16 @@ const CircleComponent = ({
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            const transform = `translate(${clampedX}px, ${clampedY}px)`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(
+              clampedX,
+              clampedY,
+              properties.rotation
+            );
 
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x: clampedX,
+              y: clampedY,
             }));
           }}
           onResize={({ width, height, drag }) => {
@@ -218,28 +227,33 @@ const CircleComponent = ({
             if (!el || !bounds) return;
 
             let [x, y] = drag.beforeTranslate;
-            const transform = `translate(${x}px, ${y}px)`;
+
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(x, y, properties.rotation);
 
             setProperties((prev) => ({
               ...prev,
               width,
               height,
-              transform,
+              x,
+              y,
             }));
           }}
-          onRotate={({ drag }) => {
+          onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const transform = drag.transform;
-            el.style.transform = transform;
+            const rotation = beforeRotate;
+            const [x, y] = drag.beforeTranslate;
+
+            el.style.transform = getTransform(x, y, rotation);
 
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x,
+              y,
+              rotation,
             }));
           }}
         />

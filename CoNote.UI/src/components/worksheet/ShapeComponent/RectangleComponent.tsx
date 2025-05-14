@@ -3,6 +3,7 @@ import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import { getTransform } from "../../../utils/getTransform";
 
 type RectangleComponentProps = {
   id: number;
@@ -23,7 +24,9 @@ const RectangleComponent = ({
   const [properties, setProperties] = useState({
     width: 150,
     height: 100,
-    transform: "translate(100px, 100px) rotate(0deg)",
+    x: 100,
+    y: 100,
+    rotation: 0,
     fillColor: "#90caf9",
     zIndex: 1,
   });
@@ -32,7 +35,10 @@ const RectangleComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = (key: keyof typeof properties, value: any) => {
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
     setProperties((prev) => ({
       ...prev,
       [key]: value,
@@ -72,7 +78,11 @@ const RectangleComponent = ({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: properties.transform,
+          transform: getTransform(
+            properties.x,
+            properties.y,
+            properties.rotation
+          ),
           zIndex: properties.zIndex,
           cursor: "move",
         }}
@@ -85,48 +95,42 @@ const RectangleComponent = ({
               size="small"
               variant="outlined"
               value={properties.width}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("width", value);
-              }}
+              onChange={(e) =>
+                handleChange("width", parseInt(e.target.value) || 0)
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
               size="small"
               variant="outlined"
               value={properties.height}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("height", value);
-              }}
+              onChange={(e) =>
+                handleChange("height", parseInt(e.target.value) || 0)
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
               size="small"
               variant="outlined"
               value={properties.zIndex}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("zIndex", Math.max(1, value));
-              }}
+              onChange={(e) =>
+                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+              }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
               value={properties.fillColor}
               onChange={(color: string) => handleChange("fillColor", color)}
@@ -181,12 +185,17 @@ const RectangleComponent = ({
             const maxY = bounds.height - comp.height;
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
-            const transform = `translate(${clampedX}px, ${clampedY}px)`;
 
-            el.style.transform = transform;
+            el.style.transform = getTransform(
+              clampedX,
+              clampedY,
+              properties.rotation
+            );
+
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x: clampedX,
+              y: clampedY,
             }));
           }}
           onResize={({ width, height, drag }) => {
@@ -195,29 +204,33 @@ const RectangleComponent = ({
             if (!el || !bounds) return;
 
             let [x, y] = drag.beforeTranslate;
-            const transform = `translate(${x}px, ${y}px)`;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(x, y, properties.rotation);
 
             setProperties((prev) => ({
               ...prev,
               width,
               height,
-              transform,
+              x,
+              y,
             }));
           }}
-          onRotate={({ drag }) => {
+          onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const transform = drag.transform;
-            el.style.transform = transform;
+            const rotation = beforeRotate;
+            const [x, y] = drag.beforeTranslate;
+
+            el.style.transform = getTransform(x, y, rotation);
 
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x,
+              y,
+              rotation,
             }));
           }}
         />

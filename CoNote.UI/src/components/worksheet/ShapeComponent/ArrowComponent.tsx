@@ -240,3 +240,4 @@ const ArrowComponent = ({
 };
 
 export default ArrowComponent;
+

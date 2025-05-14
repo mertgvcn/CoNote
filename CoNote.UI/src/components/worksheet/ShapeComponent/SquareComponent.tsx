@@ -3,6 +3,7 @@ import Moveable from "react-moveable";
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import { getTransform } from "../../../utils/getTransform";
 
 type SquareComponentProps = {
   id: number;
@@ -23,7 +24,9 @@ const SquareComponent = ({
   const [properties, setProperties] = useState({
     width: 100,
     height: 100,
-    transform: "translate(100px, 100px) rotate(0deg)",
+    x: 100,
+    y: 100,
+    rotation: 0,
     fillColor: "#DFB6FD",
     zIndex: 1,
   });
@@ -32,7 +35,10 @@ const SquareComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = (key: keyof typeof properties, value: any) => {
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
     setProperties((prev) => ({
       ...prev,
       [key]: value,
@@ -72,7 +78,11 @@ const SquareComponent = ({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: properties.transform,
+          transform: getTransform(
+            properties.x,
+            properties.y,
+            properties.rotation
+          ),
           zIndex: properties.zIndex,
           cursor: "move",
         }}
@@ -97,7 +107,6 @@ const SquareComponent = ({
               }
               sx={{ width: 100 }}
             />
-            
             <TextField
               label="Z-Index"
               type="number"
@@ -115,7 +124,6 @@ const SquareComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
               value={properties.fillColor}
               onChange={(color: string) => handleChange("fillColor", color)}
@@ -171,12 +179,16 @@ const SquareComponent = ({
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            const transform = `translate(${clampedX}px, ${clampedY}px)`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(
+              clampedX,
+              clampedY,
+              properties.rotation
+            );
 
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x: clampedX,
+              y: clampedY,
             }));
           }}
           onResize={({ width, height, drag }) => {
@@ -186,28 +198,33 @@ const SquareComponent = ({
 
             let [x, y] = drag.beforeTranslate;
             const size = Math.min(width, height);
+
             el.style.width = `${size}px`;
             el.style.height = `${size}px`;
-            const transform = `translate(${x}px, ${y}px)`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(x, y, properties.rotation);
 
             setProperties((prev) => ({
               ...prev,
               width: size,
               height: size,
-              transform,
+              x,
+              y,
             }));
           }}
-          onRotate={({ drag }) => {
+          onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const transform = drag.transform;
-            el.style.transform = transform;
+            const rotation = beforeRotate;
+            const [x, y] = drag.beforeTranslate;
+
+            el.style.transform = getTransform(x, y, rotation);
 
             setProperties((prev) => ({
               ...prev,
-              transform,
+              x,
+              y,
+              rotation,
             }));
           }}
         />
