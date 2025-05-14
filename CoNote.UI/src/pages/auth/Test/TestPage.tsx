@@ -26,6 +26,21 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import ArrowComponentDroppable from "../../../components/worksheet/ShapeComponent/ArrowComponentDraggable";
+import CircleComponentDraggable from "../../../components/worksheet/ShapeComponent/CircleComponentDraggable";
+import CrossComponentDraggable from "../../../components/worksheet/ShapeComponent/CrossComponentDraggable";
+import DiamondComponentDraggable from "../../../components/worksheet/ShapeComponent/DiamondComponentDraggable";
+import HeartComponentDraggable from "../../../components/worksheet/ShapeComponent/HeartComponentDraggable";
+import MessageComponentDraggable from "../../../components/worksheet/ShapeComponent/MessageComponentDraggable";
+import PlusComponentDraggable from "../../../components/worksheet/ShapeComponent/PlusComponentDraggable";
+import PolygonComponentDraggable from "../../../components/worksheet/ShapeComponent/PolygonComponentDraggable";
+import RectangleComponentDraggable from "../../../components/worksheet/ShapeComponent/RectangleComponentDraggable";
+import SquareComponentDraggable from "../../../components/worksheet/ShapeComponent/SquareComponentDraggable";
+import StarComponentDraggable from "../../../components/worksheet/ShapeComponent/StarComponentDraggable";
+import TriangleComponentDraggable from "../../../components/worksheet/ShapeComponent/TriangleComponentDraggable";
+import TextComponentDraggable from "../../../components/worksheet/TextComponent/TextComponentDraggable";
+import ImageComponentDraggable from "../../../components/worksheet/MediaComponent/ImageComponentDraggable";
+import VideoComponentDraggable from "../../../components/worksheet/MediaComponent/VideoComponentDraggable";
 
 const Draggable = () => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -34,8 +49,6 @@ const Draggable = () => {
   });
 
   const style = {
-    width: 100,
-    border: "1px solid black",
     cursor: "grab",
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
@@ -47,14 +60,7 @@ const Draggable = () => {
 
   return (
     <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <svg
-        width="100%"
-        height="100%"
-        viewBox={`0 0 100 100`}
-        preserveAspectRatio="none"
-      >
-        <rect x="0" y="0" width="100px" height="100px" fill="solid" />
-      </svg>
+      <VideoComponentDraggable />
     </Box>
   );
 };
