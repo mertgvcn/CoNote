@@ -15,7 +15,7 @@ export const getImageByName = (filename: string) => {
     return require(`../../../assets/images/${filename}`);
   } catch (error) {
     console.error("Image not found:", filename);
-    return require(`../../../assets/images/150x150-image-placeholder.jpg`);
+    return require(`../../../assets/images/placeholders/image-component-placeholder.png`);
   }
 };
 
@@ -36,13 +36,13 @@ const ImageComponent = ({
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 150,
-    height: 150,
+    width: 212,
+    height: 200,
     x: 100,
     y: 100,
     rotation: 0,
     zIndex: 1,
-    src: "150x150-image-placeholder.jpg",
+    src: require(`../../../assets/images/placeholders/image-component-placeholder.png`),
   });
 
   const handleClick = () => {

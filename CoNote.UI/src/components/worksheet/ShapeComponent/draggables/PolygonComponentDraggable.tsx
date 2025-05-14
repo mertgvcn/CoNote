@@ -1,31 +1,41 @@
-import React from "react";
+import { useDraggable } from "@dnd-kit/core";
+//models
+import { ComponentType } from "../../../../models/enums/ComponentType";
+//components
+import { Box } from "@mui/material";
 
 const PolygonComponentDraggable = () => {
-  const getHexagonPoints = (
-    sides: number = 6,
-    boxSize: number = 100
-  ): string => {
-    const center = boxSize / 2;
-    const radius = center;
-    const angleStep = (2 * Math.PI) / sides;
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: ComponentType.Polygon,
+    data: { type: ComponentType.Polygon },
+  });
 
-    return Array.from({ length: sides }, (_, i) => {
-      const angle = i * angleStep - Math.PI / 2;
-      const x = center + radius * Math.cos(angle);
-      const y = center + radius * Math.sin(angle);
-      return `${x},${y}`;
-    }).join(" ");
+  const style = {
+    cursor: "grab",
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : undefined,
+    "&:active": {
+      cursor: "grabbing",
+    },
   };
 
   return (
-    <svg
-      width="150px"
-      height="150px"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-    >
-      <polygon points={getHexagonPoints()} fill="#81c784" />
-    </svg>
+    <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
+      <Box sx={{ width: 75, height: 75 }}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
+          <polygon
+            points="50,0 93.3,25 93.3,75 50,100 6.7,75 6.7,25"
+            fill="#81c784"
+          />
+        </svg>
+      </Box>
+    </Box>
   );
 };
 

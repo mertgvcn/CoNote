@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 //components
 import TextComponent from "../../../components/worksheet/TextComponent/TextComponent";
 import ArrowComponent from "../../../components/worksheet/ShapeComponent/ArrowComponent";
@@ -26,7 +26,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import ArrowComponentDroppable from "../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
 import CircleComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/CircleComponentDraggable";
 import CrossComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/CrossComponentDraggable";
 import DiamondComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/DiamondComponentDraggable";
@@ -41,29 +40,8 @@ import TriangleComponentDraggable from "../../../components/worksheet/ShapeCompo
 import TextComponentDraggable from "../../../components/worksheet/TextComponent/draggables/TextComponentDraggable";
 import ImageComponentDraggable from "../../../components/worksheet/MediaComponent/draggables/ImageComponentDraggable";
 import VideoComponentDraggable from "../../../components/worksheet/MediaComponent/draggables/VideoComponentDraggable";
-
-const Draggable = () => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "1",
-    data: { type: "square" },
-  });
-
-  const style = {
-    cursor: "grab",
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
-    "&:active": {
-      cursor: "grabbing",
-    },
-  };
-
-  return (
-    <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <VideoComponentDraggable />
-    </Box>
-  );
-};
+import { ComponentType } from "../../../models/enums/ComponentType";
+import ArrowComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
 
 const Droppable = ({ components }: { components: any }) => {
   const { isOver, setNodeRef } = useDroppable({ id: "dropzone" });
@@ -77,9 +55,40 @@ const Droppable = ({ components }: { components: any }) => {
   };
 
   const renderComponents = (comp: any, index: number) => {
-    if (comp.type === "square") {
+    if (comp.type === ComponentType.Image) {
       return (
-        <SquareComponent
+        <ImageComponent
+          key={index}
+          id={index}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          boundsRef={boundsRef}
+        />
+      );
+    } else if (comp.type === ComponentType.Video) {
+      return (
+        <VideoComponent
+          key={index}
+          id={index}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          boundsRef={boundsRef}
+        />
+      );
+    } else if (comp.type === ComponentType.Arrow) {
+      return (
+        <ArrowComponent
+          key={index}
+          id={index}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          boundsRef={boundsRef}
+        />
+      );
+    }
+    else if (comp.type === ComponentType.Message) {
+      return (
+        <MessageComponent
           key={index}
           id={index}
           selectedId={selectedId}
@@ -115,6 +124,7 @@ const TestPage = () => {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = (event: DragEndEvent) => {
+    console.log(event);
     const { over, active } = event;
     if (!over || over.id !== "dropzone") return;
 
@@ -144,7 +154,23 @@ const TestPage = () => {
       collisionDetection={pointerWithin}
       sensors={sensors}
     >
-      <Draggable />
+      <Stack direction="row" gap={1}>
+        <TextComponentDraggable />
+        <ImageComponentDraggable />
+        <VideoComponentDraggable />
+        <ArrowComponentDraggable />
+        <CircleComponentDraggable />
+        <CrossComponentDraggable />
+        <DiamondComponentDraggable />
+        <HeartComponentDraggable />
+        <MessageComponentDraggable />
+        <PlusComponentDraggable />
+        <PolygonComponentDraggable />
+        <RectangleComponentDraggable />
+        <SquareComponentDraggable />
+        <StarComponentDraggable />
+        <TriangleComponentDraggable />
+      </Stack>
       <Droppable components={components} />
     </DndContext>
   );

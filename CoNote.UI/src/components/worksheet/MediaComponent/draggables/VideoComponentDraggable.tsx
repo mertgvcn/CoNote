@@ -1,18 +1,37 @@
-import React from "react";
+import { useDraggable } from "@dnd-kit/core";
+//models
+import { ComponentType } from "../../../../models/enums/ComponentType";
+//components
+import { Box } from "@mui/material";
 
 const VideoComponentDraggable = () => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: ComponentType.Video,
+    data: { type: ComponentType.Video },
+  });
+
+  const style = {
+    cursor: "grab",
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : undefined,
+    "&:active": {
+      cursor: "grabbing",
+    },
+  };
+
   return (
-    <img
-      src={require(`../../../assets/images/150x150-image-placeholder.jpg`)}
-      alt="Image preview"
-      width="150"
-      height="150"
-      style={{
-        objectFit: "cover",
-        border: "1px solid #ccc",
-        borderRadius: 4,
-      }}
-    />
+    <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
+      <Box sx={{ width: 179, height: 100 }}>
+        <img
+          src={require(`../../../../assets/images/placeholders/video-component-placeholder.png`)}
+          alt="Video preview"
+          width="100%"
+          height="100%"
+          style={{ objectFit: "fill" }}
+        />
+      </Box>
+    </Box>
   );
 };
 

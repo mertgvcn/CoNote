@@ -25,8 +25,8 @@ const RectangleComponent = ({
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 150,
-    height: 100,
+    width: 225,
+    height: 150,
     x: 100,
     y: 100,
     rotation: 0,

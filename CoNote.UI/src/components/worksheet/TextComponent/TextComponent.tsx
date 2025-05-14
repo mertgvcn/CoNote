@@ -58,8 +58,8 @@ export default function TextComponent({
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 200,
-    height: 24,
+    width: 150,
+    height: 35,
     x: 100,
     y: 100,
     rotation: 0,

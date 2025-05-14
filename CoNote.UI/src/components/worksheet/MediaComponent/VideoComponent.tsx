@@ -33,8 +33,8 @@ const VideoComponent = ({
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 400,
-    height: 240,
+    width: 358,
+    height: 200,
     x: 100,
     y: 100,
     zIndex: 1,
@@ -49,7 +49,7 @@ const VideoComponent = ({
         nocookie: true,
       }),
     ],
-    content: "Click insert icon and add url to be able to see the video",
+    content: "Insert url to see video",
     editable: false,
     editorProps: {
       attributes: {

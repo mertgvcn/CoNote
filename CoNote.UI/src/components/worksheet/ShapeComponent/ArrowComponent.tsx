@@ -25,8 +25,8 @@ const ArrowComponent = ({
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 350,
-    height: 40,
+    width: 225,
+    height: 70,
     x: 100,
     y: 100,
     rotation: 0,
