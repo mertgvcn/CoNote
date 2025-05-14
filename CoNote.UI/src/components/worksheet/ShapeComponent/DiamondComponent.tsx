@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+//moveable
 import Moveable from "react-moveable";
+//utils
+import { getTransform } from "../../../utils/getTransform";
+//components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
-import { getTransform } from "../../../utils/getTransform";
 
 type DiamondComponentProps = {
   id: number;
