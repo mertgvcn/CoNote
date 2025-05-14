@@ -18,13 +18,12 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-
 const WorksheetPage = () => {
   const { id } = useParams();
   useWorksheetData(Number(id));
 
   const loading = useSelector(selectWorksheetLoading);
-  const [droppedItems, setDroppedItems] = useState<any[]>([]);;
+  const [droppedItems, setDroppedItems] = useState<any[]>([]);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -37,6 +36,7 @@ const WorksheetPage = () => {
     const finalY = active.rect.current.translated?.top;
 
     const containerRect = over.rect;
+
     const relativeX = Math.max(0, finalX - containerRect.left);
     const relativeY = Math.max(0, finalY - containerRect.top);
 

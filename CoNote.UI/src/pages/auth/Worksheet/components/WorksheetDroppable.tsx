@@ -1,6 +1,7 @@
-import { Box, Typography, styled } from "@mui/material";
+//dnd
 import { useDroppable } from "@dnd-kit/core";
-
+//components
+import { Box, Typography, styled, useTheme } from "@mui/material";
 
 const WorksheetDroppableContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -8,14 +9,11 @@ const WorksheetDroppableContainer = styled(Box)(({ theme }) => ({
   position: "relative",
   backgroundColor: theme.palette.background.paper,
   borderRadius: theme.shape.borderRadius,
-  padding: 0,
-  boxSizing: "border-box",
   boxShadow: theme.shadows[3],
   overflow: "hidden",
-  border: "2px dashed #90caf9",
 }));
 
-const DroppedItemBox = styled(Box)({
+const DroppedItemBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   border: "1px solid #ccc",
   borderRadius: 4,
@@ -23,13 +21,22 @@ const DroppedItemBox = styled(Box)({
   backgroundColor: "#e0f7fa",
   minWidth: 100,
   minHeight: 40,
-});
+}));
 
-const WorksheetDroppable = ({ droppedItems = [] }: { droppedItems?: any[] }) => {
-  const { setNodeRef } = useDroppable({ id: "worksheet-dropzone" });
+const WorksheetDroppable = ({
+  droppedItems = [],
+}: {
+  droppedItems?: any[];
+}) => {
+  const { isOver, setNodeRef } = useDroppable({ id: "worksheet-dropzone" });
+
+  const theme = useTheme();
+  const style = {
+    border: isOver ? `2px dashed ${theme.palette.primary.main}` : undefined,
+  };
 
   return (
-    <WorksheetDroppableContainer id="worksheet-dropzone" ref={setNodeRef}>
+    <WorksheetDroppableContainer id="worksheet-dropzone" ref={setNodeRef} sx={style}>
       {droppedItems.length === 0 && (
         <Typography
           color="text.secondary"

@@ -16,28 +16,131 @@ import TriangleComponent from "../../../components/worksheet/ShapeComponent/Tria
 import CircleComponent from "../../../components/worksheet/ShapeComponent/CircleComponent";
 import VideoComponent from "../../../components/worksheet/MediaComponent/VideoComponent";
 import ImageComponent from "../../../components/worksheet/MediaComponent/ImageComponent";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  pointerWithin,
+  useDraggable,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
-const TestPage = () => {
-  const workspaceRef = useRef<HTMLElement | null>(null);
+const Draggable = () => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: "1",
+    data: { type: "square" },
+  });
+
+  const style = {
+    width: 100,
+    border: "1px solid black",
+    cursor: "grab",
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : undefined,
+    "&:active": {
+      cursor: "grabbing",
+    },
+  };
+
+  return (
+    <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 100 100`}
+        preserveAspectRatio="none"
+      >
+        <rect x="0" y="0" width="100px" height="100px" fill="solid" />
+      </svg>
+    </Box>
+  );
+};
+
+const Droppable = ({ components }: { components: any }) => {
+  const { isOver, setNodeRef } = useDroppable({ id: "dropzone" });
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const boundsRef = useRef<HTMLDivElement | null>(null);
+
+  const style = {
+    width: 500,
+    height: 500,
+    border: `3px dashed ${isOver ? "purple" : "black"}`,
+  };
+
+  const renderComponents = (comp: any, index: number) => {
+    if (comp.type === "square") {
+      return (
+        <SquareComponent
+          key={index}
+          id={index}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          boundsRef={boundsRef}
+        />
+      );
+    }
+  };
 
   return (
     <Box
-      ref={workspaceRef}
-      position="relative"
-      alignItems="center"
-      justifyContent="center"
-      width="100%"
-      height="100%"
-      overflow="hidden"
+      ref={(node: any) => {
+        setNodeRef(node);
+        boundsRef.current = node;
+      }}
+      sx={style}
     >
-      <TextComponent
-        id={1}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        boundsRef={workspaceRef}
-      />
+      {components.length === 0 ? (
+        <>Drop here</>
+      ) : (
+        components.map((comp: any, index: number) =>
+          renderComponents(comp, index)
+        )
+      )}
     </Box>
+  );
+};
+
+const TestPage = () => {
+  const [components, setComponents] = useState<any>([]);
+
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { over, active } = event;
+    if (!over || over.id !== "dropzone") return;
+
+    const droppedComponentProperties = active.data?.current;
+    const finalX = active.rect.current.translated?.left;
+    const finalY = active.rect.current.translated?.top;
+
+    const containerRect = over.rect;
+    const relativeX = Math.max(0, finalX! - containerRect.left);
+    const relativeY = Math.max(0, finalY! - containerRect.top);
+
+    if (droppedComponentProperties) {
+      setComponents((prev: any) => [
+        ...prev,
+        {
+          x: relativeX,
+          y: relativeY,
+          type: droppedComponentProperties.type,
+        },
+      ]);
+    }
+  };
+
+  return (
+    <DndContext
+      onDragEnd={handleDragEnd}
+      collisionDetection={pointerWithin}
+      sensors={sensors}
+    >
+      <Draggable />
+      <Droppable components={components} />
+    </DndContext>
   );
 };
 
