@@ -1,14 +1,7 @@
 import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
+//moveable
 import Moveable from "react-moveable";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
-
+//tiptap
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
@@ -22,11 +15,9 @@ import {
   FontFamily,
   FontFamilies,
 } from "../../../extensions/tiptap/FontFamily";
-
-import IconButton from "../../ui/IconButton";
-import ColorPicker from "../../ui/ColorPicker";
-import TextEditorContainer from "../TextEditorContainer";
-
+//utils
+import { getTransform } from "../../../utils/getTransform";
+//icons
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
@@ -37,6 +28,18 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+//components
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import IconButton from "../../ui/IconButton";
+import ColorPicker from "../../ui/ColorPicker";
+import TextEditorContainer from "../TextEditorContainer";
 
 type TextComponentPropsType = {
   id: number;
@@ -57,7 +60,9 @@ export default function TextComponent({
   const [properties, setProperties] = useState({
     width: 200,
     height: 24,
-    transform: "translate(100px, 100px) rotate(0deg)",
+    x: 100,
+    y: 100,
+    rotation: 0,
     fontSize: FontSizes[0],
     fontFamily: FontFamilies[0],
     textColor: "#000000",
@@ -149,7 +154,11 @@ export default function TextComponent({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: properties.transform,
+          transform: getTransform(
+            properties.x,
+            properties.y,
+            properties.rotation
+          ),
           zIndex: properties.zIndex,
         }}
       >
@@ -284,7 +293,7 @@ export default function TextComponent({
             />
           </TextEditorContainer>
         )}
-        
+
         <EditorContent editor={editor} data-sync-size />
       </Box>
 
@@ -298,14 +307,23 @@ export default function TextComponent({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={0}
+          throttleRotate={1}
           rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           onDragStart={({ inputEvent }) => {
             const target = inputEvent?.target as HTMLElement;
+
+            if (
+              target.closest(".text-editor-container") &&
+              (["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName) ||
+                target.classList.contains("MuiSelect-select") ||
+                target.classList.contains("MuiSelect-icon"))
+            ) {
+              return false;
+            }
+
             if (target.closest(".text-editor-container")) {
               inputEvent.stopPropagation();
-              return false;
             }
           }}
           onDrag={({ beforeTranslate }) => {
@@ -319,10 +337,18 @@ export default function TextComponent({
             const maxY = bounds.height - comp.height;
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
-            const transform = `translate(${clampedX}px, ${clampedY}px)`;
 
-            el.style.transform = transform;
-            handleChange("transform", transform);
+            el.style.transform = getTransform(
+              clampedX,
+              clampedY,
+              properties.rotation
+            );
+
+            setProperties((prev) => ({
+              ...prev,
+              x: clampedX,
+              y: clampedY,
+            }));
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
@@ -330,11 +356,10 @@ export default function TextComponent({
             if (!el || !bounds) return;
 
             let [x, y] = drag.beforeTranslate;
-            const transform = `translate(${x}px, ${y}px)`;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = transform;
+            el.style.transform = getTransform(x, y, properties.rotation);
 
             const inner = el.querySelector("[data-sync-size]") as HTMLElement;
             if (inner) {
@@ -346,17 +371,25 @@ export default function TextComponent({
               ...prev,
               width,
               height,
-              transform,
+              x,
+              y,
             }));
           }}
-          onRotate={({ drag }) => {
+          onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const transform = drag.transform;
-            el.style.transform = transform;
+            const rotation = beforeRotate;
+            const [x, y] = drag.beforeTranslate;
 
-            handleChange("transform", transform);
+            el.style.transform = getTransform(x, y, rotation);
+
+            setProperties((prev) => ({
+              ...prev,
+              x,
+              y,
+              rotation,
+            }));
           }}
         />
       )}
