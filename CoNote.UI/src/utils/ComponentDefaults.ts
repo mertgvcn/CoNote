@@ -1,5 +1,7 @@
 import { ComponentType } from "../models/enums/ComponentType";
 import { CreateComponentRequest } from "../api/Component/models/CreateComponentRequest";
+import { FontSizes } from "../extensions/tiptap/FontSize";
+import { FontFamilies } from "../extensions/tiptap/FontFamily";
 
 export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
   {
@@ -12,7 +14,12 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Text,
-      style: "textColor:#000000",
+      content: "<p>Edit this text</p>",
+      style: {
+        textColor: "#000000",
+        fontSize: FontSizes[0],
+        fontFamily: FontFamilies[0],
+      },
     },
     [ComponentType.Image]: {
       worksheetId: 0,
@@ -45,7 +52,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Arrow,
-      style: "fillColor:#64b5f6",
+      style: { fillColor: "#64b5f6" },
     },
     [ComponentType.Circle]: {
       worksheetId: 0,
@@ -56,7 +63,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Circle,
-      style: "fillContent:#ba68c8",
+      style: { fillColor: "#ba68c8", innerRadiusRatio: 0 },
     },
     [ComponentType.Cross]: {
       worksheetId: 0,
@@ -67,7 +74,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Cross,
-      style: "fillColor:#7e57c2",
+      style: { fillColor: "#7e57c2" },
     },
     [ComponentType.Diamond]: {
       worksheetId: 0,
@@ -78,7 +85,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Diamond,
-      style: "fillColor:#4fc3f7",
+      style: { fillColor: "#4fc3f7" },
     },
     [ComponentType.Heart]: {
       worksheetId: 0,
@@ -89,7 +96,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Heart,
-      style: "fillColor:#e91e63",
+      style: { fillColor: "#e91e63" },
     },
     [ComponentType.Message]: {
       worksheetId: 0,
@@ -100,7 +107,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Message,
-      style: "fillColor:#AED581",
+      style: { fillColor: "#AED581" },
     },
     [ComponentType.Plus]: {
       worksheetId: 0,
@@ -111,7 +118,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Plus,
-      style: "fillColor:#EF5350",
+      style: { fillColor: "#EF5350" },
     },
     [ComponentType.Polygon]: {
       worksheetId: 0,
@@ -122,7 +129,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Polygon,
-      style: "fillColor:#81c784,sides:6",
+      style: { fillColor: "#81c784", sides: 6 },
     },
     [ComponentType.Rectangle]: {
       worksheetId: 0,
@@ -133,7 +140,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Rectangle,
-      style: "fillColor:#90caf9",
+      style: { fillColor: "#90caf9" },
     },
     [ComponentType.Square]: {
       worksheetId: 0,
@@ -144,7 +151,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Square,
-      style: "fillColor:#DFB6FD",
+      style: { fillColor: "#DFB6FD" },
     },
     [ComponentType.Star]: {
       worksheetId: 0,
@@ -155,7 +162,7 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Star,
-      style: "fillColor:#ffd54f",
+      style: { fillColor: "#ffd54f" },
     },
     [ComponentType.Triangle]: {
       worksheetId: 0,
@@ -166,6 +173,6 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Triangle,
-      style: "fillColor:#a1887f",
+      style: { fillColor: "#a1887f" },
     },
   };

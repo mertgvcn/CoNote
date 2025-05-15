@@ -17,6 +17,8 @@ import {
 } from "../../../extensions/tiptap/FontFamily";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//models
+import { ComponentView } from "../../../models/views/ComponentView";
 //icons
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
@@ -46,6 +48,7 @@ type TextComponentPropsType = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
 };
 
 export default function TextComponent({
@@ -53,20 +56,22 @@ export default function TextComponent({
   selectedId,
   setSelectedId,
   boundsRef,
+  initialProperties,
 }: TextComponentPropsType) {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 150,
-    height: 35,
-    x: 100,
-    y: 100,
-    rotation: 0,
-    fontSize: FontSizes[0],
-    fontFamily: FontFamilies[0],
-    textColor: "#000000",
-    zIndex: 1,
+    width: initialProperties.width,
+    height: initialProperties.height,
+    x: initialProperties.x,
+    y: initialProperties.y,
+    rotation: initialProperties.rotation,
+    zIndex: initialProperties.zIndex,
+    content: initialProperties.content,
+    textColor: initialProperties.style?.textColor,
+    fontSize: initialProperties.style?.fontSize,
+    fontFamily: initialProperties.style?.fontFamily,
   });
 
   const editor = useEditor({
@@ -81,7 +86,7 @@ export default function TextComponent({
       BulletList,
       OrderedList,
     ],
-    content: "<p>Edit this text</p>",
+    content: initialProperties.content,
     editable: true,
     editorProps: {
       attributes: {
@@ -288,7 +293,7 @@ export default function TextComponent({
             </IconButton>
 
             <ColorPicker
-              value={properties.textColor}
+              value={properties.textColor!}
               onChange={(color: string) => handleChange("textColor", color)}
             />
           </TextEditorContainer>

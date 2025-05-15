@@ -94,6 +94,7 @@ const Droppable = ({ components }: { components: ComponentView[] }) => {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           boundsRef={boundsRef}
+          initialProperties={component}
         />
       );
     } else if (component.type === ComponentType.Message) {
@@ -104,6 +105,18 @@ const Droppable = ({ components }: { components: ComponentView[] }) => {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           boundsRef={boundsRef}
+          initialProperties={component}
+        />
+      );
+    } else if (component.type === ComponentType.Text) {
+      return (
+        <TextComponent
+          key={index}
+          id={index}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          boundsRef={boundsRef}
+          initialProperties={component}
         />
       );
     }
@@ -146,7 +159,7 @@ const TestPage = () => {
     const relativeX = Math.max(0, finalX! - containerRect.left);
     const relativeY = Math.max(0, finalY! - containerRect.top);
 
-    if (droppedComponentProperties?.type) {
+    if (droppedComponentProperties) {
       const newComponent: CreateComponentRequest = {
         ...componentDefaults[droppedComponentProperties.type],
         worksheetId: 6,

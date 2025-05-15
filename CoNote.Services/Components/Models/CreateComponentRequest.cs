@@ -1,4 +1,5 @@
 ﻿using CoNote.Core.Enums;
+using CoNote.Core.Models;
 
 namespace CoNote.Services.Components.Models;
 public class CreateComponentRequest
@@ -12,5 +13,5 @@ public class CreateComponentRequest
     public int Rotation { get; set; } = 0;
     public ComponentType Type { get; set; }
     public string? Content { get; set; }
-    public string? Style { get; set; }
+    public StyleProperties? Style { get; set; }
 }

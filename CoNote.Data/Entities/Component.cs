@@ -1,5 +1,6 @@
 ﻿using CoNote.Core.Entities.Common;
 using CoNote.Core.Enums;
+using CoNote.Core.Models;
 
 namespace CoNote.Core.Entities;
 public sealed class Component : BaseEntity, IEditable
@@ -16,5 +17,5 @@ public sealed class Component : BaseEntity, IEditable
     public int Rotation { get; set; } = 0;
     public ComponentType Type { get; set; }
     public string? Content { get; set; }
-    public string? Style { get; set; }
+    public StyleProperties? Style { get; set; }
 }

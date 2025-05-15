@@ -3,6 +3,8 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//models
+import { ComponentView } from "../../../models/views/ComponentView";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
@@ -13,6 +15,7 @@ type SquareComponentProps = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
 };
 
 const SquareComponent = ({
@@ -20,18 +23,19 @@ const SquareComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
+  initialProperties
 }: SquareComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 150,
-    height: 150,
-    x: 100,
-    y: 100,
-    rotation: 0,
-    fillColor: "#DFB6FD",
-    zIndex: 1,
+    width: initialProperties.width,
+    height: initialProperties.height,
+    x: initialProperties.x,
+    y: initialProperties.y,
+    rotation: initialProperties.rotation,
+    zIndex: initialProperties.zIndex,
+    fillColor: initialProperties.style?.fillColor,
   });
 
   const handleClick = () => {
@@ -128,7 +132,7 @@ const SquareComponent = ({
               sx={{ width: 100 }}
             />
             <ColorPicker
-              value={properties.fillColor}
+              value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
           </TextEditorContainer>

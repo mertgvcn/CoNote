@@ -23,7 +23,7 @@ const ArrowComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialProperties,
+  initialProperties
 }: ArrowComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
@@ -35,7 +35,7 @@ const ArrowComponent = ({
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: "#64b5f6",
+    fillColor: initialProperties.style?.fillColor,
   });
 
   const handleClick = () => {
@@ -139,7 +139,7 @@ const ArrowComponent = ({
               sx={{ width: 100 }}
             />
             <ColorPicker
-              value={properties.fillColor}
+              value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
           </TextEditorContainer>

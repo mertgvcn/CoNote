@@ -1,4 +1,5 @@
 import { ComponentType } from "../../../models/enums/ComponentType";
+import { StyleProperties } from "../../../models/views/ComponentView";
 
 export interface CreateComponentRequest {
   worksheetId: number;
@@ -10,5 +11,5 @@ export interface CreateComponentRequest {
   rotation: number;
   type: ComponentType;
   content?: string;
-  style?: string;
+  style?: StyleProperties;
 }

@@ -1,5 +1,14 @@
 import { ComponentType } from "../enums/ComponentType";
 
+export interface StyleProperties {
+  fillColor?: string;
+  textColor?: string;
+  fontSize?: string;
+  fontFamily?: string;
+  sides?: number;
+  innerRadiusRatio?: number;
+}
+
 export interface ComponentView {
   id: number;
   width: number;
@@ -10,5 +19,5 @@ export interface ComponentView {
   rotation: number;
   type: ComponentType;
   content?: string;
-  style?: string;
+  style?: StyleProperties;
 }
