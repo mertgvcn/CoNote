@@ -42,6 +42,7 @@ import ImageComponentDraggable from "../../../components/worksheet/MediaComponen
 import VideoComponentDraggable from "../../../components/worksheet/MediaComponent/draggables/VideoComponentDraggable";
 import { ComponentType } from "../../../models/enums/ComponentType";
 import ArrowComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
+import { ComponentView } from "../../../models/views/ComponentView";
 
 const Droppable = ({ components }: { components: any }) => {
   const { isOver, setNodeRef } = useDroppable({ id: "dropzone" });
@@ -119,7 +120,7 @@ const Droppable = ({ components }: { components: any }) => {
 };
 
 const TestPage = () => {
-  const [components, setComponents] = useState<any>([]);
+  const [components, setComponents] = useState<ComponentView[]>([]);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -140,9 +141,16 @@ const TestPage = () => {
       setComponents((prev: any) => [
         ...prev,
         {
+          id: 0,
+          width: null,
+          height: null,
+          zIndex: 1,
           x: relativeX,
           y: relativeY,
+          rotation: 0,
           type: droppedComponentProperties.type,
+          content: null,
+          style: null
         },
       ]);
     }
