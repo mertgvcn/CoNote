@@ -1,7 +1,7 @@
-import { ComponentType } from "../enums/ComponentType";
+import { ComponentType } from "../../../models/enums/ComponentType";
 
-export interface ComponentView {
-  id: number;
+export interface CreateComponentRequest {
+  worksheetId: number;
   width: number;
   height: number;
   zIndex: number;

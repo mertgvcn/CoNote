@@ -43,8 +43,16 @@ import VideoComponentDraggable from "../../../components/worksheet/MediaComponen
 import { ComponentType } from "../../../models/enums/ComponentType";
 import ArrowComponentDraggable from "../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
 import { ComponentView } from "../../../models/views/ComponentView";
+import { componentDefaults } from "../../../utils/ComponentDefaults";
+import { CreateComponentRequest } from "../../../api/Component/models/CreateComponentRequest";
+import { componentService } from "../../../features/component/componentService";
 
-const Droppable = ({ components }: { components: any }) => {
+interface DroppedComponentData {
+  type: ComponentType;
+  [key: string]: any;
+}
+
+const Droppable = ({ components }: { components: ComponentView[] }) => {
   const { isOver, setNodeRef } = useDroppable({ id: "dropzone" });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const boundsRef = useRef<HTMLDivElement | null>(null);
@@ -55,8 +63,8 @@ const Droppable = ({ components }: { components: any }) => {
     border: `3px dashed ${isOver ? "purple" : "black"}`,
   };
 
-  const renderComponents = (comp: any, index: number) => {
-    if (comp.type === ComponentType.Image) {
+  const renderComponents = (component: any, index: number) => {
+    if (component.type === ComponentType.Image) {
       return (
         <ImageComponent
           key={index}
@@ -64,9 +72,10 @@ const Droppable = ({ components }: { components: any }) => {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           boundsRef={boundsRef}
+          initialProperties={component}
         />
       );
-    } else if (comp.type === ComponentType.Video) {
+    } else if (component.type === ComponentType.Video) {
       return (
         <VideoComponent
           key={index}
@@ -74,9 +83,10 @@ const Droppable = ({ components }: { components: any }) => {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           boundsRef={boundsRef}
+          initialProperties={component}
         />
       );
-    } else if (comp.type === ComponentType.Arrow) {
+    } else if (component.type === ComponentType.Arrow) {
       return (
         <ArrowComponent
           key={index}
@@ -86,8 +96,7 @@ const Droppable = ({ components }: { components: any }) => {
           boundsRef={boundsRef}
         />
       );
-    }
-    else if (comp.type === ComponentType.Message) {
+    } else if (component.type === ComponentType.Message) {
       return (
         <MessageComponent
           key={index}
@@ -111,8 +120,8 @@ const Droppable = ({ components }: { components: any }) => {
       {components.length === 0 ? (
         <>Drop here</>
       ) : (
-        components.map((comp: any, index: number) =>
-          renderComponents(comp, index)
+        components.map((component: any, index: number) =>
+          renderComponents(component, index)
         )
       )}
     </Box>
@@ -124,12 +133,12 @@ const TestPage = () => {
 
   const sensors = useSensors(useSensor(PointerSensor));
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    console.log(event);
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
     if (!over || over.id !== "dropzone") return;
 
-    const droppedComponentProperties = active.data?.current;
+    const droppedComponentProperties = active.data
+      ?.current as DroppedComponentData;
     const finalX = active.rect.current.translated?.left;
     const finalY = active.rect.current.translated?.top;
 
@@ -137,22 +146,18 @@ const TestPage = () => {
     const relativeX = Math.max(0, finalX! - containerRect.left);
     const relativeY = Math.max(0, finalY! - containerRect.top);
 
-    if (droppedComponentProperties) {
-      setComponents((prev: any) => [
-        ...prev,
-        {
-          id: 0,
-          width: null,
-          height: null,
-          zIndex: 1,
-          x: relativeX,
-          y: relativeY,
-          rotation: 0,
-          type: droppedComponentProperties.type,
-          content: null,
-          style: null
-        },
-      ]);
+    if (droppedComponentProperties?.type) {
+      const newComponent: CreateComponentRequest = {
+        ...componentDefaults[droppedComponentProperties.type],
+        worksheetId: 6,
+        x: relativeX,
+        y: relativeY,
+      };
+
+      var returnedComponent: ComponentView =
+        await componentService.CreateComponent(newComponent);
+
+      setComponents((prev) => [...prev, returnedComponent]);
     }
   };
 

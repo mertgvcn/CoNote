@@ -9,6 +9,8 @@ import Text from "@tiptap/extension-text";
 import Youtube from "@tiptap/extension-youtube";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//models
+import { ComponentView } from "../../../models/views/ComponentView";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
 //components
@@ -21,6 +23,7 @@ type VideoComponentPropsType = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
 };
 
 const VideoComponent = ({
@@ -28,16 +31,17 @@ const VideoComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
+  initialProperties
 }: VideoComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 358,
-    height: 200,
-    x: 100,
-    y: 100,
-    zIndex: 1,
+    width: initialProperties.width,
+    height: initialProperties.height,
+    x: initialProperties.x,
+    y: initialProperties.y,
+    zIndex: initialProperties.zIndex,
   });
 
   const editor = useEditor({
@@ -49,7 +53,7 @@ const VideoComponent = ({
         nocookie: true,
       }),
     ],
-    content: "Insert url to see video",
+    content: initialProperties.content,
     editable: false,
     editorProps: {
       attributes: {

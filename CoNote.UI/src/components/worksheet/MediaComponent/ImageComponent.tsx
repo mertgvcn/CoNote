@@ -3,6 +3,8 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//models
+import { ComponentView } from "../../../models/views/ComponentView";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
 //components
@@ -12,10 +14,10 @@ import IconButton from "../../ui/IconButton";
 
 export const getImageByName = (filename: string) => {
   try {
-    return require(`../../../assets/images/${filename}`);
+    return `/assets/images/${filename}`;
   } catch (error) {
     console.error("Image not found:", filename);
-    return require(`../../../assets/images/placeholders/image-component-placeholder.png`);
+    return `/assets/images/placeholders/image-component-placeholder.png`;
   }
 };
 
@@ -24,6 +26,7 @@ type ImageComponentPropsType = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
 };
 
 const ImageComponent = ({
@@ -31,18 +34,19 @@ const ImageComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
+  initialProperties,
 }: ImageComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 212,
-    height: 200,
-    x: 100,
-    y: 100,
-    rotation: 0,
-    zIndex: 1,
-    src: require(`../../../assets/images/placeholders/image-component-placeholder.png`),
+    width: initialProperties.width,
+    height: initialProperties.height,
+    x: initialProperties.x,
+    y: initialProperties.y,
+    rotation: initialProperties.rotation,
+    zIndex: initialProperties.zIndex,
+    src: "/assets/images/placeholders/image-component-placeholder.png",
   });
 
   const handleClick = () => {
@@ -64,8 +68,7 @@ const ImageComponent = ({
 
     if (!source) return;
 
-    const isExternal =
-      source.startsWith("http") || source.startsWith("data");
+    const isExternal = source.startsWith("http") || source.startsWith("data");
 
     const finalSrc = isExternal ? source : getImageByName(source);
 

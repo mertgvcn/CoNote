@@ -3,6 +3,8 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+//models
+import { ComponentView } from "../../../models/views/ComponentView";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
@@ -13,6 +15,7 @@ type ArrowComponentPropsType = {
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
   boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
 };
 
 const ArrowComponent = ({
@@ -20,18 +23,19 @@ const ArrowComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
+  initialProperties,
 }: ArrowComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
 
   const [properties, setProperties] = useState({
-    width: 225,
-    height: 70,
-    x: 100,
-    y: 100,
-    rotation: 0,
+    width: initialProperties.width,
+    height: initialProperties.height,
+    x: initialProperties.x,
+    y: initialProperties.y,
+    rotation: initialProperties.rotation,
+    zIndex: initialProperties.zIndex,
     fillColor: "#64b5f6",
-    zIndex: 1,
   });
 
   const handleClick = () => {
@@ -240,4 +244,3 @@ const ArrowComponent = ({
 };
 
 export default ArrowComponent;
-

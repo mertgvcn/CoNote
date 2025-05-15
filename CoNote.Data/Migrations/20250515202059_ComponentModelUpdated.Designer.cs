@@ -3,6 +3,7 @@ using System;
 using CoNote.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoNote.Data.Migrations
 {
     [DbContext(typeof(CoNoteContext))]
-    partial class CoNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20250515202059_ComponentModelUpdated")]
+    partial class ComponentModelUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,11 +138,11 @@ namespace CoNote.Data.Migrations
                     b.Property<long>("WorksheetId")
                         .HasColumnType("bigint");
 
-                    b.Property<double>("X")
-                        .HasColumnType("double precision");
+                    b.Property<int>("X")
+                        .HasColumnType("integer");
 
-                    b.Property<double>("Y")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Y")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ZIndex")
                         .HasColumnType("integer");
