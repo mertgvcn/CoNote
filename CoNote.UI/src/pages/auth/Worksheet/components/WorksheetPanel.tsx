@@ -1,11 +1,25 @@
-// redux
+//redux
 import { useSelector } from "react-redux";
 import { selectWorksheetSettings } from "../../../../features/worksheet/slices/worksheetSlice";
-// icons
+//icons
 import SettingsIcon from "@mui/icons-material/Settings";
-// dnd-kit
-import { useDraggable } from "@dnd-kit/core";
-// mui
+//draggable components
+import TextComponentDraggable from "../../../../components/worksheet/TextComponent/draggables/TextComponentDraggable";
+import ImageComponentDraggable from "../../../../components/worksheet/MediaComponent/draggables/ImageComponentDraggable";
+import VideoComponentDraggable from "../../../../components/worksheet/MediaComponent/draggables/VideoComponentDraggable";
+import ArrowComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/ArrowComponentDraggable";
+import CircleComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/CircleComponentDraggable";
+import CrossComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/CrossComponentDraggable";
+import DiamondComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/DiamondComponentDraggable";
+import HeartComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/HeartComponentDraggable";
+import MessageComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/MessageComponentDraggable";
+import PlusComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/PlusComponentDraggable";
+import PolygonComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/PolygonComponentDraggable";
+import RectangleComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/RectangleComponentDraggable";
+import SquareComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/SquareComponentDraggable";
+import StarComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/StarComponentDraggable";
+import TriangleComponentDraggable from "../../../../components/worksheet/ShapeComponent/draggables/TriangleComponentDraggable";
+//components
 import {
   Box,
   Divider,
@@ -14,12 +28,14 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import Carousel from "../../../../components/ui/Carousel/Carousel";
 
 const WorksheetPanelContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",
   minWidth: 240,
+  width: 240,
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
@@ -29,42 +45,8 @@ const WorksheetPanelContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-const DraggableItem = ({ id, name }: { id: string; name: string }) => {
-  const { attributes, listeners, setNodeRef } = useDraggable({
-    id,
-    data: { id, name },
-  });
-
-  return (
-    <Box
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      sx={{
-        border: "1px solid #ccc",
-        padding: 1,
-        borderRadius: 1,
-        mb: 1,
-        backgroundColor: "#f9f9f9",
-        cursor: "grab",
-        userSelect: "none",
-        position: "relative",
-        zIndex: 999,
-        touchAction: "none", 
-      }}
-    >
-      {name}
-    </Box>
-  );
-};
-
 const WorksheetPanel = () => {
   const worksheet = useSelector(selectWorksheetSettings);
-
-  const components = [
-    { id: "textField", name: "Text Field" },
-    { id: "checkbox", name: "Checkbox" },
-  ];
 
   return (
     <WorksheetPanelContainer>
@@ -84,16 +66,38 @@ const WorksheetPanel = () => {
 
       <Divider />
 
-      {components.map((comp, index) => (
-        <DraggableItem
-          key={`${comp.id}-${index}`}
-          id={`${comp.id}-${index}`}
-          name={comp.name}
-        />
-      ))}
+      <Stack direction="column" gap={1}>
+        <Typography variant="subtitle2">Text</Typography>
+        <TextComponentDraggable />
+      </Stack>
+
+      <Stack direction="column" gap={1}>
+        <Typography variant="subtitle2">Media</Typography>
+        <Carousel>
+          <ImageComponentDraggable />
+          <VideoComponentDraggable />
+        </Carousel>
+      </Stack>
+
+      <Stack direction="column" gap={1}>
+        <Typography variant="subtitle2">Shape</Typography>
+        <Carousel>
+          <ArrowComponentDraggable />
+          <CircleComponentDraggable />
+          <CrossComponentDraggable />
+          <DiamondComponentDraggable />
+          <HeartComponentDraggable />
+          <MessageComponentDraggable />
+          <PlusComponentDraggable />
+          <PolygonComponentDraggable />
+          <RectangleComponentDraggable />
+          <SquareComponentDraggable />
+          <StarComponentDraggable />
+          <TriangleComponentDraggable />
+        </Carousel>
+      </Stack>
     </WorksheetPanelContainer>
   );
 };
 
 export default WorksheetPanel;
-  

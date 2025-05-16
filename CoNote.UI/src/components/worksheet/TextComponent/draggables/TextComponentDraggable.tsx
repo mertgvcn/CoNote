@@ -11,7 +11,7 @@ const TextComponentDraggableContainer = styled(Box)(({ theme }) => ({
   height: "100%",
   padding: `0px ${theme.spacing(2)}`,
   boxSizing: "border-box",
-  border: `1px solid ${theme.palette.divider}`
+  border: `1px dashed ${theme.palette.divider}`
 }));
 
 const TextComponentDraggable = () => {
