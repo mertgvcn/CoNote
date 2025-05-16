@@ -22,6 +22,13 @@ public class ComponentController : ControllerBase
         _cancellationToken = cancellationTokenService.CancellationToken;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<Component>>> GetComponentsByWorksheetId(long worksheetId)
+    {
+        var response = await _componentService.GetComponentsByWorksheetIdAsync(worksheetId, _cancellationToken);
+        return response;
+    }
+
     [HttpPost]
     public async Task<ActionResult<Component>> CreateComponent([FromBody] CreateComponentRequest request)
     {

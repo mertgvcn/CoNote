@@ -26,6 +26,12 @@ public class ComponentService : IComponentService
         _mapper = mapper;
     }
 
+    public async Task<List<Component>> GetComponentsByWorksheetIdAsync(long worksheetId, CancellationToken cancellationToken)
+    {
+        var components = await _componentRepository.GetListByWorksheetId(worksheetId, cancellationToken);
+        return components;
+    }
+
     public async Task<Component> CreateComponentAsync(CreateComponentRequest request, CancellationToken cancellationToken)
     {
         var currentUserId = _httpContextService.GetCurrentUserId();

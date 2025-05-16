@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //redux
 import { useSelector } from "react-redux";
@@ -40,6 +40,17 @@ const WorksheetPage = () => {
   const loading = useSelector(selectWorksheetLoading);
 
   const [components, setComponents] = useState<ComponentView[]>([]);
+
+  useEffect(() => {
+    fetchComponents();
+  }, [id]);
+
+  const fetchComponents = async () => {
+    const response = await componentService.GetComponentsByWorksheetId(
+      Number(id)
+    );
+    setComponents(response);
+  };
 
   const sensors = useSensors(useSensor(PointerSensor));
 

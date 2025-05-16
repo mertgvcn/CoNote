@@ -10,6 +10,15 @@ class ComponentAPI extends BaseAPI {
     super();
   }
 
+  public async GetComponentsByWorksheetId(
+    worksheetId: number
+  ): Promise<AxiosResponse> {
+    return await this.get(
+      this.controllerExtension + "/GetComponentsByWorksheetId",
+      { worksheetId }
+    );
+  }
+
   public async CreateComponent(
     params: CreateComponentRequest
   ): Promise<AxiosResponse> {

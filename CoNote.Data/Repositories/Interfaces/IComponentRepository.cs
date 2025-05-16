@@ -3,4 +3,5 @@
 namespace CoNote.Data.Repositories.Interfaces;
 public interface IComponentRepository : IBaseRepository<Component>
 {
+    Task<List<Component>> GetListByWorksheetId(long worksheetId, CancellationToken cancellationToken = default);
 }
