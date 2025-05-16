@@ -3,12 +3,16 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+//icons
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
 type PolygonComponentProps = {
   id: number;
@@ -39,20 +43,6 @@ const PolygonComponent = ({
     sides: initialProperties.style?.sides,
   });
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
   useEffect(() => {
     if (selectedId !== id) return;
     const handleClickOutside = (event: PointerEvent) => {
@@ -74,6 +64,24 @@ const PolygonComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
 
   function getPolygonPoints(sides: number, boxSize = 100): string {
     const center = boxSize / 2;
@@ -121,6 +129,7 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Height"
               type="number"
@@ -134,6 +143,7 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Sides"
               type="number"
@@ -151,6 +161,7 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Z-Index"
               type="number"
@@ -164,10 +175,19 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <ColorPicker
               value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
+
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 

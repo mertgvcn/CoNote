@@ -3,12 +3,16 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+//icons
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
 type SquareComponentProps = {
   id: number;
@@ -23,7 +27,7 @@ const SquareComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialProperties
+  initialProperties,
 }: SquareComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
@@ -37,20 +41,6 @@ const SquareComponent = ({
     zIndex: initialProperties.zIndex,
     fillColor: initialProperties.style?.fillColor,
   });
-
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
 
   useEffect(() => {
     if (selectedId !== id) return;
@@ -75,6 +65,24 @@ const SquareComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
 
   return (
     <>
@@ -114,6 +122,7 @@ const SquareComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Z-Index"
               type="number"
@@ -131,10 +140,19 @@ const SquareComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <ColorPicker
               value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
+            
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 

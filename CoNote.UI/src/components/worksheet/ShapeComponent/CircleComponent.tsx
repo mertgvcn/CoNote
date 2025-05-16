@@ -3,12 +3,16 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+//icons
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
 type CircleComponentProps = {
   id: number;
@@ -23,7 +27,7 @@ const CircleComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialProperties
+  initialProperties,
 }: CircleComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
@@ -38,20 +42,6 @@ const CircleComponent = ({
     fillColor: initialProperties.style?.fillColor,
     innerRadiusRatio: initialProperties.style?.innerRadiusRatio,
   });
-
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
 
   useEffect(() => {
     if (selectedId !== id) return;
@@ -76,6 +66,24 @@ const CircleComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
 
   const outerR = 50;
   const innerR = outerR * properties.innerRadiusRatio!;
@@ -170,6 +178,13 @@ const CircleComponent = ({
               value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 

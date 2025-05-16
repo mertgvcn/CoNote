@@ -13,6 +13,11 @@ public sealed class ComponentRepository : BaseRepository<Component>, IComponentR
         _context = context;
     }
 
+    public async Task<bool> ExistsByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
+    }
+
     public async Task<List<Component>> GetListByWorksheetId(long worksheetId, CancellationToken cancellationToken = default)
     {
         return await GetAll()

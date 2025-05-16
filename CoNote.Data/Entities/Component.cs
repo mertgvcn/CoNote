@@ -1,9 +1,10 @@
 ﻿using CoNote.Core.Entities.Common;
 using CoNote.Core.Enums;
 using CoNote.Core.Models;
+using CoNote.Data.Entities.Common;
 
 namespace CoNote.Core.Entities;
-public sealed class Component : BaseEntity, IEditable
+public sealed class Component : BaseEntity, IEditable, IDeletable
 {
     public string EditedBy { get; set; } = default!;
     public DateTime EditedAt { get; set; } = DateTime.Now;

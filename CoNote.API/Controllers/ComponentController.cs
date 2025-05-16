@@ -23,7 +23,7 @@ public class ComponentController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Component>>> GetComponentsByWorksheetId(long worksheetId)
+    public async Task<ActionResult<List<Component>>> GetComponentsByWorksheetId([FromQuery] long worksheetId)
     {
         var response = await _componentService.GetComponentsByWorksheetIdAsync(worksheetId, _cancellationToken);
         return response;
@@ -33,6 +33,13 @@ public class ComponentController : ControllerBase
     public async Task<ActionResult<Component>> CreateComponent([FromBody] CreateComponentRequest request)
     {
         var response = await _componentService.CreateComponentAsync(request, _cancellationToken);
+        return response;
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<long>> DeleteComponent([FromQuery] long componentId)
+    {
+        var response = await _componentService.DeleteComponentAsync(componentId, _cancellationToken);
         return response;
     }
 }

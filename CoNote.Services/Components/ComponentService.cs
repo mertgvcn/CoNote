@@ -49,4 +49,16 @@ public class ComponentService : IComponentService
         var component = await _componentRepository.AddAsync(newComponent, cancellationToken);
         return component;
     }
+
+    public async Task<long> DeleteComponentAsync(long componentId, CancellationToken cancellationToken)
+    {
+        var exists = await _componentRepository.ExistsByIdAsync(componentId, cancellationToken);
+        if (!exists)
+        {
+            throw new ComponentNotFoundException();
+        }
+
+        await _componentRepository.DeleteAsync(componentId, cancellationToken);
+        return componentId;
+    }
 }

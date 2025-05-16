@@ -17,6 +17,7 @@ import {
 } from "../../../extensions/tiptap/FontFamily";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 //icons
@@ -30,6 +31,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import {
   Box,
@@ -101,30 +103,6 @@ export default function TextComponent({
     },
   });
 
-  const applyTextCommand = (callback: () => void) => {
-    editor?.commands.focus();
-    editor?.commands.selectAll();
-    callback();
-    editor?.commands.setTextSelection(editor.state.selection.to);
-  };
-
-  const handleClick = () => setSelectedId(id);
-
-  const handleChange = (key: keyof typeof properties, value: any) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-
-    if (key === "fontSize") {
-      applyTextCommand(() => editor?.commands.setFontSize(value));
-    } else if (key === "fontFamily") {
-      applyTextCommand(() => editor?.commands.setFontFamily(value));
-    } else if (key === "textColor") {
-      applyTextCommand(() => editor?.commands.setColor(value));
-    }
-  };
-
   useEffect(() => {
     if (selectedId !== id) return;
 
@@ -149,6 +127,34 @@ export default function TextComponent({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const applyTextCommand = (callback: () => void) => {
+    editor?.commands.focus();
+    editor?.commands.selectAll();
+    callback();
+    editor?.commands.setTextSelection(editor.state.selection.to);
+  };
+
+  const handleClick = () => setSelectedId(id);
+
+  const handleChange = (key: keyof typeof properties, value: any) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    if (key === "fontSize") {
+      applyTextCommand(() => editor?.commands.setFontSize(value));
+    } else if (key === "fontFamily") {
+      applyTextCommand(() => editor?.commands.setFontFamily(value));
+    } else if (key === "textColor") {
+      applyTextCommand(() => editor?.commands.setColor(value));
+    }
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
 
   return (
     <>
@@ -296,6 +302,14 @@ export default function TextComponent({
               value={properties.textColor!}
               onChange={(color: string) => handleChange("textColor", color)}
             />
+
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 

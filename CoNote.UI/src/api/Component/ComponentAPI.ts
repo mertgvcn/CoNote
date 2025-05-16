@@ -27,6 +27,12 @@ class ComponentAPI extends BaseAPI {
       params
     );
   }
+
+  public async DeleteComponent(componentId: number): Promise<AxiosResponse> {
+    return await this.delete(this.controllerExtension + "/DeleteComponent", {
+      componentId,
+    });
+  }
 }
 
 export default new ComponentAPI();

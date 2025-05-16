@@ -3,12 +3,16 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+//icons
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import IconButton from "../../ui/IconButton";
 
 type TriangleComponentProps = {
   id: number;
@@ -38,20 +42,6 @@ const TriangleComponent = ({
     fillColor: initialProperties.style?.fillColor,
   });
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
   useEffect(() => {
     if (selectedId !== id) return;
 
@@ -75,6 +65,24 @@ const TriangleComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
 
   return (
     <>
@@ -111,6 +119,7 @@ const TriangleComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Height"
               type="number"
@@ -126,6 +135,7 @@ const TriangleComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <TextField
               label="Z-Index"
               type="number"
@@ -141,10 +151,19 @@ const TriangleComponent = ({
               }
               sx={{ width: 100 }}
             />
+
             <ColorPicker
               value={properties.fillColor!}
               onChange={(color: string) => handleChange("fillColor", color)}
             />
+
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
+            </IconButton>
           </TextEditorContainer>
         )}
 

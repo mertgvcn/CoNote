@@ -3,10 +3,12 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { Box, TextField } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
@@ -49,35 +51,6 @@ const ImageComponent = ({
     src: "/assets/images/placeholders/image-component-placeholder.png",
   });
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const handleAddImage = () => {
-    const source = prompt("Enter image URL or filename (from assets/images)");
-
-    if (!source) return;
-
-    const isExternal = source.startsWith("http") || source.startsWith("data");
-
-    const finalSrc = isExternal ? source : getImageByName(source);
-
-    setProperties((prev) => ({
-      ...prev,
-      src: finalSrc,
-    }));
-  };
-
   useEffect(() => {
     if (selectedId !== id) return;
 
@@ -101,6 +74,39 @@ const ImageComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
+
+  const handleAddImage = () => {
+    const source = prompt("Enter image URL or filename (from assets/images)");
+
+    if (!source) return;
+
+    const isExternal = source.startsWith("http") || source.startsWith("data");
+
+    const finalSrc = isExternal ? source : getImageByName(source);
+
+    setProperties((prev) => ({
+      ...prev,
+      src: finalSrc,
+    }));
+  };
 
   return (
     <>
@@ -169,6 +175,14 @@ const ImageComponent = ({
 
             <IconButton variant="outlined" onClick={handleAddImage}>
               <LinkIcon />
+            </IconButton>
+
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
             </IconButton>
           </TextEditorContainer>
         )}

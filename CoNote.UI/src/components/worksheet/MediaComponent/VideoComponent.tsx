@@ -9,10 +9,12 @@ import Text from "@tiptap/extension-text";
 import Youtube from "@tiptap/extension-youtube";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { Box, TextField } from "@mui/material";
 import TextEditorContainer from "../TextEditorContainer";
@@ -31,7 +33,7 @@ const VideoComponent = ({
   selectedId,
   setSelectedId,
   boundsRef,
-  initialProperties
+  initialProperties,
 }: VideoComponentPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
@@ -69,33 +71,6 @@ const VideoComponent = ({
     },
   });
 
-  const handleClick = () => {
-    setSelectedId(id);
-  };
-
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const handleAddYoutube = () => {
-    const url = prompt("Enter YouTube URL");
-    if (url && editor) {
-      editor.commands.clearContent();
-      editor.commands.insertContentAt(0, "<p> </p>");
-      editor.commands.setYoutubeVideo({
-        src: url,
-        width: properties.width,
-        height: properties.height - 24,
-      });
-    }
-  };
-
   useEffect(() => {
     if (selectedId !== id) return;
 
@@ -130,6 +105,37 @@ const VideoComponent = ({
       moveableRef.current?.updateRect();
     }
   }, [properties.width, properties.height]);
+
+  const handleClick = () => {
+    setSelectedId(id);
+  };
+
+  const handleChange = <K extends keyof typeof properties>(
+    key: K,
+    value: (typeof properties)[K]
+  ) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleDelete = async () => {
+    await componentService.DeleteComponent(initialProperties.id);
+  };
+
+  const handleAddYoutube = () => {
+    const url = prompt("Enter YouTube URL");
+    if (url && editor) {
+      editor.commands.clearContent();
+      editor.commands.insertContentAt(0, "<p> </p>");
+      editor.commands.setYoutubeVideo({
+        src: url,
+        width: properties.width,
+        height: properties.height - 24,
+      });
+    }
+  };
 
   return (
     <>
@@ -194,6 +200,14 @@ const VideoComponent = ({
 
             <IconButton variant="outlined" onClick={handleAddYoutube}>
               <LinkIcon />
+            </IconButton>
+
+            <IconButton
+              color="error"
+              tooltipTitle="Delete"
+              onClick={handleDelete}
+            >
+              <DeleteIcon />
             </IconButton>
           </TextEditorContainer>
         )}

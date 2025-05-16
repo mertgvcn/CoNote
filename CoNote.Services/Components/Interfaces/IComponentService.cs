@@ -6,4 +6,5 @@ public interface IComponentService
 {
     Task<List<Component>> GetComponentsByWorksheetIdAsync(long worksheetId, CancellationToken cancellationToken);
     Task<Component> CreateComponentAsync(CreateComponentRequest request, CancellationToken cancellationToken);
+    Task<long> DeleteComponentAsync(long componentId, CancellationToken cancellationToken);
 }

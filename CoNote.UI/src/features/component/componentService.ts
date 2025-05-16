@@ -32,7 +32,23 @@ export const CreateComponent = async (request: CreateComponentRequest) => {
   }
 };
 
+export const DeleteComponent = async (componentId: number) => {
+  debugger;
+  try {
+    var response = await ComponentAPI.DeleteComponent(componentId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast("An error occurred.");
+    }
+    throw error;
+  }
+};
+
 export const componentService = {
   GetComponentsByWorksheetId,
   CreateComponent,
+  DeleteComponent,
 };
