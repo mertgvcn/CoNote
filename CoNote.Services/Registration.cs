@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using CoNote.Services.Authentication;
 using CoNote.Services.Authentication.Interfaces;
+using CoNote.Services.Components;
+using CoNote.Services.Components.Interfaces;
 using CoNote.Services.Roles;
 using CoNote.Services.Roles.Interfaces;
 using CoNote.Services.Sections;
@@ -28,5 +30,6 @@ public static class Registration
         services.AddScoped<ISectionService, SectionService>();
         services.AddScoped<IWorksheetService, WorksheetService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IComponentService, ComponentService>();
     }
 }

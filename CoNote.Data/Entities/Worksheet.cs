@@ -12,7 +12,5 @@ public sealed class Worksheet : BaseEntity, IEditable
     public long? SectionId { get; set; }
     public Section? Section { get; set; } = default!;
     public List<Component> Components { get; set; } = default!;
-    public List<ComponentGroup> ComponentGroups { get; set; } = default!;
-    public List<WorksheetStyle> WorksheetStyles { get; set; } = default!;
     public List<Comment> Comments { get; set; } = default!;
 }

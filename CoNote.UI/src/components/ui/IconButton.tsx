@@ -16,43 +16,52 @@ const sizeStyles = {
   large: {
     width: 48,
     height: 48,
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
 };
 
-const variantStyles = {
+type PaletteColorKey =
+  | "primary"
+  | "secondary"
+  | "success"
+  | "error"
+  | "info"
+  | "warning";
+
+const getVariantStyles = (color: PaletteColorKey) => ({
   contained: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette[color].main,
     color: theme.palette.common.white,
     "&:hover": {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette[color].dark,
     },
   },
   outlined: {
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.primary.main,
-    border: `1px solid ${theme.palette.primary.main}`,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette[color].main,
+    border: `1px solid ${theme.palette[color].main}`,
     "&:hover": {
-      color: theme.palette.primary.dark,
-      borderColor: theme.palette.primary.dark,
+      color: theme.palette[color].dark,
+      borderColor: theme.palette[color].dark,
     },
   },
   text: {
     backgroundColor: "inherit",
-    color: theme.palette.primary.main,
+    color: theme.palette[color].main,
     "&:hover": {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.primary.dark,
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette[color].dark,
     },
   },
-};
+});
 
 const IconButtonWrapper = styled(Box)<{
   size: "small" | "medium" | "large";
   variant: "contained" | "outlined" | "text";
-}>(({ theme, size, variant }) => {
+  color: PaletteColorKey;
+}>(({ theme, size, variant, color }) => {
   const sizeStyle = sizeStyles[size];
-  const variantStyle = variantStyles[variant];
+  const variantStyle = getVariantStyles(color)[variant];
   return {
     ...sizeStyle,
     ...variantStyle,
@@ -69,6 +78,7 @@ type IconButtonPropsType = {
   children: ReactNode;
   size?: "small" | "medium" | "large";
   variant?: "contained" | "outlined" | "text";
+  color?: PaletteColorKey;
   tooltipTitle?: string;
   onClick?: any;
 };
@@ -77,6 +87,7 @@ const IconButton = ({
   children,
   size = "medium",
   variant = "contained",
+  color = "primary",
   tooltipTitle,
   onClick,
 }: IconButtonPropsType) => {
@@ -84,12 +95,22 @@ const IconButton = ({
     <>
       {tooltipTitle ? (
         <Tooltip title={tooltipTitle}>
-          <IconButtonWrapper size={size} variant={variant} onClick={onClick}>
+          <IconButtonWrapper
+            size={size}
+            variant={variant}
+            color={color}
+            onClick={onClick}
+          >
             {children}
           </IconButtonWrapper>
         </Tooltip>
       ) : (
-        <IconButtonWrapper size={size} variant={variant} onClick={onClick}>
+        <IconButtonWrapper
+          size={size}
+          variant={variant}
+          color={color}
+          onClick={onClick}
+        >
           {children}
         </IconButtonWrapper>
       )}

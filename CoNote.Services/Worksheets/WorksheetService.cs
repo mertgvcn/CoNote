@@ -71,7 +71,6 @@ public class WorksheetService : IWorksheetService
         await transaction.CommitAsync(cancellationToken);
     }
 
-
     public async Task<WorksheetSettingsView> GetSettingsByWorksheetIdAsync(long worksheetId, CancellationToken cancellationToken)
     {
         var settingsView = await _worksheetRepository.GetById(worksheetId)

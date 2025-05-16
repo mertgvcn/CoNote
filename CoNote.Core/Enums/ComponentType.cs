@@ -3,5 +3,17 @@ public enum ComponentType
 {
     Text = 0,
     Image = 1,
-    Icon = 2,
+    Video = 2,
+    Arrow = 3,
+    Circle = 4,
+    Cross = 5,
+    Diamond = 6,
+    Heart = 7,
+    Message = 8,
+    Plus = 9,
+    Polygon = 10,
+    Rectangle = 11,
+    Square = 12,
+    Star = 13,
+    Triangle = 14,
 }
