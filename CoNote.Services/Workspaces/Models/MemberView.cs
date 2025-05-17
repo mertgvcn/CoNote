@@ -1,5 +1,5 @@
 ﻿namespace CoNote.Services.Workspaces.Models;
-public class MemberView
+public record MemberView
 {
     public long Id { get; init; }
     public long UserId { get; set; }

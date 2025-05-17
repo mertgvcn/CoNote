@@ -16,7 +16,6 @@
   <ItemGroup>
     <Folder Include="Roles\Mapper\" />
     <Folder Include="Roles\Models\" />
-    <Folder Include="Users\" />
   </ItemGroup>
 
   <ItemGroup>

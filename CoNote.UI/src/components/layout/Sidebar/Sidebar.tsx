@@ -10,7 +10,7 @@ import SidebarItem from "./components/SidebarItem";
 import CreateModal from "../../modals/CreateModal/CreateModal";
 
 const Sidebar = () => {
-  const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
     <>
@@ -37,7 +37,7 @@ const Sidebar = () => {
             color="primary"
             size="small"
             fullWidth
-            onClick={() => setOpenCreateModal(true)}
+            onClick={() => setShowCreateModal(true)}
           >
             Create
           </Button>
@@ -53,8 +53,8 @@ const Sidebar = () => {
       </SidebarContainer>
 
       <CreateModal
-        open={openCreateModal}
-        onClose={() => setOpenCreateModal(false)}
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
       />
     </>
   );

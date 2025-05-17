@@ -7,6 +7,8 @@ using CoNote.Services.Roles;
 using CoNote.Services.Roles.Interfaces;
 using CoNote.Services.Sections;
 using CoNote.Services.Sections.Interfaces;
+using CoNote.Services.Users;
+using CoNote.Services.Users.Interfaces;
 using CoNote.Services.Worksheets;
 using CoNote.Services.Worksheets.Interfaces;
 using CoNote.Services.Workspaces;
@@ -31,5 +33,6 @@ public static class Registration
         services.AddScoped<IWorksheetService, WorksheetService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IComponentService, ComponentService>();
+        services.AddScoped<IUserService, UserService>();
     }
 }

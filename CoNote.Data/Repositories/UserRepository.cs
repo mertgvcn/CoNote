@@ -36,4 +36,10 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
             .Where(x => x.Username == username)
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    public IQueryable<User> SearchByUsername(string searchValue = "")
+    {
+        return GetAll()
+            .Where(u => u.Username.ToLower().Contains(searchValue.ToLower()));
+    }
 }

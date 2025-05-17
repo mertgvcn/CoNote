@@ -7,4 +7,5 @@ public interface IUserRepository : IBaseRepository<User>
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken);
     Task<bool> ExistsByUsernameAsync(string username, CancellationToken cancellationToken);
     Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken);
+    IQueryable<User> SearchByUsername(string searchValue = "");
 }
