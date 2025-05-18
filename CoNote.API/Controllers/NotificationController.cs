@@ -28,9 +28,16 @@ public class NotificationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> MarkNotificationsAsRead([FromBody] MarkNotificationsAsReadRequest request)
+    public async Task<ActionResult<List<long>>> MarkNotificationsAsRead([FromBody] MarkNotificationsAsReadRequest request)
     {
-        await _notificationService.MarkNotificationsAsReadAsync(request, _cancellationToken);
-        return Ok();
+        var response = await _notificationService.MarkNotificationsAsReadAsync(request, _cancellationToken);
+        return response;
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<long>> DeleteNotification([FromQuery] long notificationId)
+    {
+        var response = await _notificationService.DeleteNotificationById(notificationId, _cancellationToken);
+        return response;
     }
 }

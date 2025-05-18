@@ -24,6 +24,14 @@ class NotificationAPI extends BaseAPI {
       request
     );
   }
+
+  public async DeleteNotification(
+    notificationId: number
+  ): Promise<AxiosResponse> {
+    return await this.delete(this.controllerExtension + "/DeleteNotification", {
+      notificationId,
+    });
+  }
 }
 
 export default new NotificationAPI();

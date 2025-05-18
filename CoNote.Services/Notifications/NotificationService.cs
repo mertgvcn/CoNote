@@ -30,6 +30,7 @@ public class NotificationService : INotificationService
     public async Task CreateNotificationAsync(CreateNotificationRequest request, CancellationToken cancellationToken)
     {
         var notification = _mapper.Map<Notification>(request);
+        notification.EditedBy = request.CreatedBy!;
 
         await _notificationRepository.AddAsync(notification);
     }
@@ -51,7 +52,7 @@ public class NotificationService : INotificationService
         return notificationViews;
     }
 
-    public async Task MarkNotificationsAsReadAsync(MarkNotificationsAsReadRequest request, CancellationToken cancellationToken)
+    public async Task<List<long>> MarkNotificationsAsReadAsync(MarkNotificationsAsReadRequest request, CancellationToken cancellationToken)
     {
         var currentUserId = _httpContextService.GetCurrentUserId();
         var user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
@@ -70,5 +71,12 @@ public class NotificationService : INotificationService
         }
 
         await _notificationRepository.UpdateRangeAsync(notifications, cancellationToken);
+        return request.NotificationIds;
+    }
+
+    public async Task<long> DeleteNotificationById(long notificationId, CancellationToken cancellationToken)
+    {
+        await _notificationRepository.DeleteAsync(notificationId, cancellationToken);
+        return notificationId;
     }
 }

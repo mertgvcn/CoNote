@@ -5,5 +5,6 @@ public interface INotificationService
 {
     Task CreateNotificationAsync(CreateNotificationRequest request, CancellationToken cancellationToken);
     Task<List<NotificationView>> GetCurrentUserNotificationsAsync(CancellationToken cancellationToken);
-    Task MarkNotificationsAsReadAsync(MarkNotificationsAsReadRequest request, CancellationToken cancellationToken);
+    Task<List<long>> MarkNotificationsAsReadAsync(MarkNotificationsAsReadRequest request, CancellationToken cancellationToken);
+    Task<long> DeleteNotificationById(long notificationId, CancellationToken cancellationToken);
 }

@@ -31,8 +31,6 @@ const MembersSidebar = ({
     (invitation) => invitation.type === InvitationType.JoinRequest
   ).length;
 
-  console.log(invitations)
-
   return (
     <SidebarContainer withoutPaddingY>
       <SidebarItemStack>

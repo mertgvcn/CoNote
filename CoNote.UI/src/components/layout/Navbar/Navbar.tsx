@@ -3,9 +3,10 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 //utils
 import { authService } from "../../../features/auth/authService";
 //redux
-import { useSelector } from "react-redux";
-import { RootState } from "../../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../app/store";
 import {
+  markNotificationsAsRead,
   notificationSelectors,
 } from "../../../features/notification/slices/notificationSlice";
 //icons
@@ -15,6 +16,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import LogoutIcon from "@mui/icons-material/Logout";
+//models
+import { MarkNotificationAsReadRequest } from "../../../api/Notification/models/MarkNotificationAsReadRequest";
 //components
 import {
   AppBar,
@@ -37,6 +40,7 @@ import NotificationsModal from "../../modals/NotificationsModal/NotificationsMod
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
@@ -45,9 +49,15 @@ const Navbar = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const notifications = useSelector(notificationSelectors.selectAll);
+  const notificationIds = useSelector(notificationSelectors.selectIds);
   const unreadNotificationCount = notifications.filter((n) => !n.isRead).length;
 
-  const handleNotificationsClick = () => {
+  const handleNotificationsClick = async () => {
+    var request: MarkNotificationAsReadRequest = {
+      notificationIds: notificationIds,
+    };
+
+    await dispatch(markNotificationsAsRead(request));
     setShowNotificationsModal(true);
   };
 

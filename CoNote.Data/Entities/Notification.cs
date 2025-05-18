@@ -1,8 +1,9 @@
 ﻿using CoNote.Core.Entities.Common;
 using CoNote.Core.Enums;
+using CoNote.Data.Entities.Common;
 
 namespace CoNote.Core.Entities;
-public sealed class Notification : BaseEntity, IEditable
+public sealed class Notification : BaseEntity, IEditable, IDeletable
 {
     public string EditedBy { get; set; } = default!;
     public DateTime EditedAt { get; set; } = DateTime.Now;
