@@ -80,7 +80,7 @@ public class InvitationService : IInvitationService
             UserId = request.ReceiverId,
             CreatedBy = user.Username,
             IsRead = false,
-            Message = $"{user.Username} invites you to workspace named '{workspaceName}' with role '{roleName}'.",
+            Message = $"'{user.Username}' invites you to workspace named '{workspaceName}' with role '{roleName}'.",
         };
 
         await _notificationService.CreateNotificationAsync(notificationRequest, cancellationToken);

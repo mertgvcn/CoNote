@@ -1,13 +1,16 @@
 import { useParams } from "react-router-dom";
 import { useCallback, useState } from "react";
 //redux
-import { useSelector } from "react-redux";
-import { rolesSelectors } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getInvitationsByWorkspaceId, rolesSelectors } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
+import { AppDispatch } from "../../../../../../../app/store";
 //utils
 import { debounce } from "../../../../../../../utils/debounce";
 import { userService } from "../../../../../../../features/user/userService";
+import { invitationService } from "../../../../../../../features/invitation/invitationService";
 //models
 import { SearchedUserView } from "../../../../../../../models/views/SearchedUserView";
+import { SendInvitationRequest } from "../../../../../../../api/Invitation/models/SendInvitationRequest";
 //icons
 import CloseIcon from "@mui/icons-material/Close";
 //components
@@ -35,6 +38,7 @@ interface AddPeopleModalProps {
 
 const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
   const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
   const roles = useSelector(rolesSelectors.selectAll);
 
   const [searchValue, setSearchValue] = useState<string>("");
@@ -62,8 +66,26 @@ const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
     debouncedSearch(e.target.value.trim());
   };
 
-  const handleSendInvite = () => {
-    
+  const resetStates = () => {
+    setSearchValue("");
+    setSearchedUsers([]);
+    setSelectedUser(null);
+    setSelectedRoleId(null);
+  };
+
+  const handleSendInvite = async () => {
+    var request: SendInvitationRequest = {
+      workspaceId: Number(id),
+      receiverId: selectedUser!.id,
+      roleId: selectedRoleId!,
+    };
+
+    try {
+      await invitationService.SendInvitation(request);
+      await dispatch(getInvitationsByWorkspaceId(Number(id)))
+      resetStates();
+      onClose();
+    } catch (error: any) {}
   };
 
   return (
@@ -156,6 +178,7 @@ const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
               onClick={handleSendInvite}
               color="primary"
               variant="contained"
+              disabled={selectedUser === null || selectedRoleId === null}
             >
               Send Invite
             </Button>
