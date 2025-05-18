@@ -16,13 +16,17 @@ import worksheetReducer, {
 import notificationReducer, {
   notificationInitialState,
 } from "../features/notification/slices/notificationSlice";
+import invitationReducer, {
+  invitationInitialState,
+} from "../features/invitation/slices/invitationSlice";
 
 export const appReducer = combineReducers({
   auth: authReducer,
   workspace: workspaceReducer,
   workspaceDetails: workspaceDetailsReducer,
   worksheet: worksheetReducer,
-  notification: notificationReducer
+  notification: notificationReducer,
+  invitation: invitationReducer,
 });
 
 const initialStates = {
@@ -30,7 +34,8 @@ const initialStates = {
   workspace: workspaceInitialState,
   workspaceDetails: workspaceDetailsInitialState,
   worksheet: worksheetInitialState,
-  notification: notificationInitialState
+  notification: notificationInitialState,
+  invitation: invitationInitialState,
 };
 
 export const rootReducer: Reducer = (state, action) => {

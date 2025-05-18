@@ -28,10 +28,10 @@ public class InvitationController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<ActionResult> DeleteInvitation([FromQuery] long invitationId)
+    public async Task<ActionResult<long>> DeleteInvitation([FromQuery] long invitationId)
     {
-        await _invitationService.DeleteInvitationAsync(invitationId, _cancellationToken);
-        return Ok();
+        var response = await _invitationService.DeleteInvitationAsync(invitationId, _cancellationToken);
+        return response;
     }
 
     [HttpGet]
@@ -39,5 +39,12 @@ public class InvitationController : ControllerBase
     {
         var response = await _invitationService.GetCurrentUserInvitationsAsync(_cancellationToken);
         return response;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> UpdateInvitationStatus([FromBody] UpdateInvitationStatusRequest request)
+    {
+        await _invitationService.UpdateInvitationStatusAsync(request, _cancellationToken);
+        return Ok();
     }
 }

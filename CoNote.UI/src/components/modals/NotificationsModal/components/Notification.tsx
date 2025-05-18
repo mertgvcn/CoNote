@@ -14,6 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { Box, Stack, styled, Typography } from "@mui/material";
 import IconButton from "../../../ui/IconButton";
+import { getCurrentUserInvitations } from "../../../../features/invitation/slices/invitationSlice";
 
 const NotificationContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -33,9 +34,10 @@ const NotificationContainer = styled(Box)(({ theme }) => ({
 
 type NotificationPropsType = {
   notification: NotificationView;
+  onClose: () => void;
 };
 
-const Notification = ({ notification }: NotificationPropsType) => {
+const Notification = ({ notification, onClose }: NotificationPropsType) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -46,6 +48,8 @@ const Notification = ({ notification }: NotificationPropsType) => {
   const handleClick = async () => {
     if (notification.type === NotificationType.Other) {
     } else if (notification.type === NotificationType.Invitation) {
+      await dispatch(getCurrentUserInvitations());
+      onClose();
       navigate("/invitations");
     } else if (notification.type === NotificationType.Follow) {
     }

@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import { BaseAPI } from "../BaseAPI";
 //models
 import { SendInvitationRequest } from "./models/SendInvitationRequest";
+import { UpdateInvitationStatusRequest } from "./models/UpdateInvitationStatusRequest";
 
 class InvitationAPI extends BaseAPI {
   private controllerExtension: string = "/api/Invitation";
@@ -26,9 +27,19 @@ class InvitationAPI extends BaseAPI {
   }
 
   public async GetCurrentUserInvitations(): Promise<AxiosResponse> {
-  return await this.get(this.controllerExtension + "/GetCurrentUserInvitations");
-}
+    return await this.get(
+      this.controllerExtension + "/GetCurrentUserInvitations"
+    );
+  }
 
+  public async UpdateInvitationStatus(
+    request: UpdateInvitationStatusRequest
+  ): Promise<AxiosResponse> {
+    return await this.post(
+      this.controllerExtension + "/UpdateInvitationStatus",
+      request
+    );
+  }
 }
 
 export default new InvitationAPI();

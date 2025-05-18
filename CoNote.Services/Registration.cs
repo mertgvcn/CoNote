@@ -15,6 +15,8 @@ using CoNote.Services.Users;
 using CoNote.Services.Users.Interfaces;
 using CoNote.Services.Worksheets;
 using CoNote.Services.Worksheets.Interfaces;
+using CoNote.Services.WorkspaceMembers;
+using CoNote.Services.WorkspaceMembers.Interfaces;
 using CoNote.Services.Workspaces;
 using CoNote.Services.Workspaces.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,5 +42,6 @@ public static class Registration
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvitationService, InvitationService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IWorkspaceMemberService, WorkspaceMemberService>();
     }
 }

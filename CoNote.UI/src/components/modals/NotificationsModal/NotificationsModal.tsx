@@ -59,7 +59,11 @@ const NotificationsModal = ({ open, onClose }: NotificationsModalProps) => {
             </NotificationsEmptyContainer>
           ) : (
             notifications.map((notification) => (
-              <Notification key={notification.id} notification={notification} />
+              <Notification
+                key={notification.id}
+                notification={notification}
+                onClose={onClose}
+              />
             ))
           )}
         </NotificationList>

@@ -76,6 +76,12 @@ public class NotificationService : INotificationService
 
     public async Task<long> DeleteNotificationById(long notificationId, CancellationToken cancellationToken)
     {
+        var notification = await _notificationRepository.GetByIdAsync(notificationId, cancellationToken);
+        if (notification == null)
+        {
+            throw new NotificationNotFoundException();
+        }
+
         await _notificationRepository.DeleteAsync(notificationId, cancellationToken);
         return notificationId;
     }

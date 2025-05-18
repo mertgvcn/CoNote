@@ -90,7 +90,7 @@ public class InvitationService : IInvitationService
         await transaction.CommitAsync(cancellationToken);
     }
 
-    public async Task DeleteInvitationAsync(long invitationId, CancellationToken cancellationToken)
+    public async Task<long> DeleteInvitationAsync(long invitationId, CancellationToken cancellationToken)
     {
         var invitation = await _invitationRepository.GetByIdAsync(invitationId, cancellationToken);
         if (invitation == null)
@@ -99,6 +99,7 @@ public class InvitationService : IInvitationService
         }
 
         await _invitationRepository.DeleteAsync(invitation);
+        return invitationId;
     }
 
     public async Task<List<InvitationView>> GetCurrentUserInvitationsAsync(CancellationToken cancellationToken)
@@ -116,5 +117,13 @@ public class InvitationService : IInvitationService
         var invitationViews = _mapper.Map<List<InvitationView>>(invitations);
 
         return invitationViews;
+    }
+
+    public async Task UpdateInvitationStatusAsync(UpdateInvitationStatusRequest request, CancellationToken cancellationToken)
+    {
+        var invitation = await _invitationRepository.GetByIdAsync(request.InvitationId);
+        invitation.Status = request.Status;
+
+        await _invitationRepository.UpdateAsync(invitation, cancellationToken);
     }
 }
