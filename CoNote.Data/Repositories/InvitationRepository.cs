@@ -17,6 +17,17 @@ public sealed class InvitationRepository : BaseRepository<Invitation>, IInvitati
     {
         return GetAll()
             .Where(i => i.WorkspaceId == workspaceId)
+            .Include(i => i.Workspace)
+            .Include(i => i.Sender)
+            .Include(i => i.Receiver)
+            .Include(i => i.Role);
+    }
+
+    public IQueryable<Invitation> GetListByReceiverId(long receiverId)
+    {
+        return GetAll()
+            .Where(n => n.ReceiverId == receiverId)
+            .Include(i => i.Workspace)
             .Include(i => i.Sender)
             .Include(i => i.Receiver)
             .Include(i => i.Role);

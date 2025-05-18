@@ -1,5 +1,5 @@
-﻿using CoNote.Core.Entities;
-using CoNote.Data.Context;
+﻿using CoNote.Data.Context;
+using CoNote.Data.Entities;
 using CoNote.Data.Repositories.Interfaces;
 
 namespace CoNote.Data.Repositories;

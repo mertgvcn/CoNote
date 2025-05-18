@@ -9,6 +9,7 @@ using CoNote.Services.Invitations.Interfaces;
 using CoNote.Services.Invitations.Models;
 using CoNote.Services.Notifications.Interfaces;
 using CoNote.Services.Notifications.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Services.Invitations;
 public class InvitationService : IInvitationService
@@ -98,5 +99,22 @@ public class InvitationService : IInvitationService
         }
 
         await _invitationRepository.DeleteAsync(invitation);
+    }
+
+    public async Task<List<InvitationView>> GetCurrentUserInvitationsAsync(CancellationToken cancellationToken)
+    {
+        var currentUserId = _httpContextService.GetCurrentUserId();
+        var user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+        if (user == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        var invitations = await _invitationRepository.GetListByReceiverId(currentUserId)
+            .ToListAsync(cancellationToken);
+
+        var invitationViews = _mapper.Map<List<InvitationView>>(invitations);
+
+        return invitationViews;
     }
 }

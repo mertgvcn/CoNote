@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CoNote.Core.Entities;
 using CoNote.Core.Exceptions;
+using CoNote.Data.Entities;
 using CoNote.Data.Repositories.Interfaces;
 using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Services.Notifications.Interfaces;

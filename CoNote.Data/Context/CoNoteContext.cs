@@ -2,6 +2,7 @@
 using System.Text.Json;
 using CoNote.Core.Entities;
 using CoNote.Core.Entities.Common;
+using CoNote.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Context;

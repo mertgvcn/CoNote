@@ -7,7 +7,7 @@ import {
 import { RootState } from "../../../app/store";
 //models
 import { StructureView } from "../../../models/views/StructureView";
-import { InvitationView } from "../../../models/views/InvitationView";
+import { WorkspaceInvitationView } from "../../../models/views/WorkspaceInvitationView";
 import { MemberView } from "../../../models/views/MemberView";
 import { WorkspaceSettingsView } from "../../../models/views/WorkspaceSettingsView";
 import { RoleView } from "../../../models/views/RoleView";
@@ -23,7 +23,7 @@ export const memberAdapter = createEntityAdapter({
 });
 
 export const invitationAdapter = createEntityAdapter({
-  selectId: (invitation: InvitationView) => invitation.id,
+  selectId: (invitation: WorkspaceInvitationView) => invitation.id,
 });
 
 export const rolesAdapter = createEntityAdapter({
@@ -33,7 +33,7 @@ export const rolesAdapter = createEntityAdapter({
 interface WorkspaceDetailsInitialStateType {
   structure: EntityState<StructureView, number>;
   members: EntityState<MemberView, number>;
-  invitations: EntityState<InvitationView, number>;
+  invitations: EntityState<WorkspaceInvitationView, number>;
   settings: WorkspaceSettingsView | null;
   roles: EntityState<RoleView, number>;
   loading: boolean;

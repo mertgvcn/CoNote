@@ -1,4 +1,4 @@
-﻿using CoNote.Core.Entities;
+﻿using CoNote.Data.Entities;
 
 namespace CoNote.Data.Repositories.Interfaces;
 public interface INotificationRepository : IBaseRepository<Notification>

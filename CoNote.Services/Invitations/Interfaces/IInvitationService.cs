@@ -5,4 +5,5 @@ public interface IInvitationService
 {
     Task SendInvitationAsync(SendInvitationRequest request, CancellationToken cancellationToken);
     Task DeleteInvitationAsync(long invitationId, CancellationToken cancellationToken);
+    Task<List<InvitationView>> GetCurrentUserInvitationsAsync(CancellationToken cancellationToken);
 }

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 //redux
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../app/store";
@@ -9,7 +10,7 @@ import { NotificationView } from "../../../../models/views/NotificationView";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 //components
 import { Box, Stack, styled, Typography } from "@mui/material";
 import IconButton from "../../../ui/IconButton";
@@ -36,22 +37,19 @@ type NotificationPropsType = {
 
 const Notification = ({ notification }: NotificationPropsType) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const dynamicStyle = {
     backgroundColor: !notification.isRead ? "#E6EEFE" : undefined,
   };
 
   const handleClick = async () => {
-    if(notification.type === NotificationType.Other) {
-
+    if (notification.type === NotificationType.Other) {
+    } else if (notification.type === NotificationType.Invitation) {
+      navigate("/invitations");
+    } else if (notification.type === NotificationType.Follow) {
     }
-    else if(notification.type === NotificationType.Invitation) {
-      //TODO: invitations sayfasına yönlendir
-    }
-    else if(notification.type === NotificationType.Follow) {
-      
-    }
-  }
+  };
 
   const handleDelete = async () => {
     await dispatch(deleteNotification(notification.id));

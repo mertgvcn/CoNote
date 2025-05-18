@@ -90,10 +90,10 @@ public class WorkspaceService : IWorkspaceService
         return memberViews;
     }
 
-    public async Task<List<InvitationView>> GetInvitationsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
+    public async Task<List<WorkspaceInvitationView>> GetInvitationsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
     {
         var invitationViews = await _invitationRepository.GetListByWorkspaceId(workspaceId)
-            .ProjectTo<InvitationView>(_mapper.ConfigurationProvider)
+            .ProjectTo<WorkspaceInvitationView>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
         return invitationViews;

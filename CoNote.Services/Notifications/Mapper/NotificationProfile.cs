@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoNote.Core.Entities;
+using CoNote.Data.Entities;
 using CoNote.Services.Notifications.Models;
 using Humanizer;
 

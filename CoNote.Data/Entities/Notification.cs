@@ -1,8 +1,9 @@
-﻿using CoNote.Core.Entities.Common;
+﻿using CoNote.Core.Entities;
+using CoNote.Core.Entities.Common;
 using CoNote.Core.Enums;
 using CoNote.Data.Entities.Common;
 
-namespace CoNote.Core.Entities;
+namespace CoNote.Data.Entities;
 public sealed class Notification : BaseEntity, IEditable, IDeletable
 {
     public string EditedBy { get; set; } = default!;

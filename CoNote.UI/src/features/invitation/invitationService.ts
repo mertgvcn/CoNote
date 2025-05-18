@@ -37,7 +37,23 @@ export const DeleteInvitation = async (invitationId: number) => {
   }
 };
 
+export const GetCurrentUserInvitations = async () => {
+  try {
+    const response = await InvitationAPI.GetCurrentUserInvitations();
+    return response.data; 
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast("An error occurred while fetching invitations.");
+    }
+    throw error;
+  }
+};
+
+
 export const invitationService = {
   SendInvitation,
   DeleteInvitation,
+  GetCurrentUserInvitations,
 };

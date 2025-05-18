@@ -6,7 +6,7 @@ import { getInvitationsByWorkspaceId } from "../../../../../../../features/works
 //utils
 import { invitationService } from "../../../../../../../features/invitation/invitationService";
 //models
-import { InvitationView } from "../../../../../../../models/views/InvitationView";
+import { WorkspaceInvitationView } from "../../../../../../../models/views/WorkspaceInvitationView";
 import { InvitationStatus } from "../../../../../../../models/enums/InvitationStatus";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
@@ -38,7 +38,7 @@ const InvitationsSentElementContainer = styled(Box)(({ theme }) => ({
 }));
 
 type InvitationsSentElementPropsType = {
-  invitationElement: InvitationView;
+  invitationElement: WorkspaceInvitationView;
   isFirst?: boolean;
   isLast?: boolean;
 };

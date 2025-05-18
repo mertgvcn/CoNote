@@ -24,6 +24,11 @@ class InvitationAPI extends BaseAPI {
       invitationId,
     });
   }
+
+  public async GetCurrentUserInvitations(): Promise<AxiosResponse> {
+  return await this.get(this.controllerExtension + "/GetCurrentUserInvitations");
+}
+
 }
 
 export default new InvitationAPI();

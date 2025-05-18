@@ -1,4 +1,5 @@
 ﻿using CoNote.Core.Entities.Common;
+using CoNote.Data.Entities;
 
 namespace CoNote.Core.Entities;
 public sealed class User : BaseEntity, IEditable, ISoftDeletable
