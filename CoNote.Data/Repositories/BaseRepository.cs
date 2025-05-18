@@ -53,6 +53,20 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity is IEditable)
+                _context.Attach(entity);
+            else
+                throw new Exception("One or more entities cannot be modified.");
+        }
+
+        _context.UpdateRange(entities);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
         await DeleteAsync(await GetByIdAsync(id, cancellationToken));

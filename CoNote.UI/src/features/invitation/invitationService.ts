@@ -22,6 +22,22 @@ export const SendInvitation = async (request: SendInvitationRequest) => {
   }
 };
 
+export const DeleteInvitation = async (invitationId: number) => {
+  try {
+    var response = await InvitationAPI.DeleteInvitation(invitationId);
+    RenderSuccessToast("Invitation deleted successfully");
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast("An error occurred while deleting invitation.");
+    }
+    throw error;
+  }
+};
+
 export const invitationService = {
   SendInvitation,
+  DeleteInvitation,
 };

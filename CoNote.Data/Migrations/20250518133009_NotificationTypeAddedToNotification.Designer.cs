@@ -3,6 +3,7 @@ using System;
 using CoNote.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoNote.Data.Migrations
 {
     [DbContext(typeof(CoNoteContext))]
-    partial class CoNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20250518133009_NotificationTypeAddedToNotification")]
+    partial class NotificationTypeAddedToNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -216,13 +219,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("EditedBy")
                         .IsRequired()
                         .HasColumnType("text");
 

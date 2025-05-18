@@ -18,6 +18,12 @@ class InvitationAPI extends BaseAPI {
       request
     );
   }
+
+  public async DeleteInvitation(invitationId: number): Promise<AxiosResponse> {
+    return await this.delete(this.controllerExtension + "/DeleteInvitation", {
+      invitationId,
+    });
+  }
 }
 
 export default new InvitationAPI();

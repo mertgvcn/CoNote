@@ -11,4 +11,10 @@ public sealed class NotificationRepository : BaseRepository<Notification>, INoti
     {
         _context = context;
     }
+
+    public IQueryable<Notification> GetListByUserId(long userId)
+    {
+        return GetAll()
+            .Where(n => n.UserId == userId);
+    }
 }

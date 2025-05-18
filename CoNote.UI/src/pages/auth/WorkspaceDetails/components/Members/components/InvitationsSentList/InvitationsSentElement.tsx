@@ -1,3 +1,10 @@
+import { useParams } from "react-router-dom";
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../../../app/store";
+import { getInvitationsByWorkspaceId } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
+//utils
+import { invitationService } from "../../../../../../../features/invitation/invitationService";
 //models
 import { InvitationView } from "../../../../../../../models/views/InvitationView";
 import { InvitationStatus } from "../../../../../../../models/enums/InvitationStatus";
@@ -41,6 +48,9 @@ const InvitationsSentElement = ({
   isFirst = false,
   isLast = false,
 }: InvitationsSentElementPropsType) => {
+  const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+
   const theme = useTheme();
 
   const dynamicStyle = {
@@ -68,6 +78,13 @@ const InvitationsSentElement = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await invitationService.DeleteInvitation(invitationElement.id);
+      await dispatch(getInvitationsByWorkspaceId(Number(id)));
+    } catch (error: any) {}
+  };
+
   return (
     <InvitationsSentElementContainer sx={dynamicStyle}>
       <Stack direction="row" gap={1} alignItems="center">
@@ -86,7 +103,7 @@ const InvitationsSentElement = ({
           label={InvitationStatus[invitationElement.status]}
           color={getChipColor(invitationElement.status)}
         />
-        <IconButton color="secondary" size="small">
+        <IconButton color="secondary" size="small" onClick={handleDelete}>
           <ClearIcon />
         </IconButton>
       </Stack>

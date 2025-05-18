@@ -81,10 +81,22 @@ public class InvitationService : IInvitationService
             CreatedBy = user.Username,
             IsRead = false,
             Message = $"'{user.Username}' invites you to workspace named '{workspaceName}' with role '{roleName}'.",
+            Type = NotificationType.Invitation,
         };
 
         await _notificationService.CreateNotificationAsync(notificationRequest, cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task DeleteInvitationAsync(long invitationId, CancellationToken cancellationToken)
+    {
+        var invitation = await _invitationRepository.GetByIdAsync(invitationId, cancellationToken);
+        if (invitation == null)
+        {
+            throw new InvitationNotFoundException();
+        }
+
+        await _invitationRepository.DeleteAsync(invitation);
     }
 }

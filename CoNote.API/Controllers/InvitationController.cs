@@ -26,4 +26,11 @@ public class InvitationController : ControllerBase
         await _invitationService.SendInvitationAsync(request, _cancellationToken);
         return Ok();
     }
+
+    [HttpDelete()]
+    public async Task<ActionResult> DeleteInvitation([FromQuery] long invitationId)
+    {
+        await _invitationService.DeleteInvitationAsync(invitationId, _cancellationToken);
+        return Ok();
+    }
 }
