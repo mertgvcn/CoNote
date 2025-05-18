@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using CoNote.Core.Entities;
 using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
@@ -44,9 +43,10 @@ public class NotificationService : INotificationService
             throw new UserNotFoundException();
         }
 
-        var notificationViews = await _notificationRepository.GetListByUserId(currentUserId)
-            .ProjectTo<NotificationView>(_mapper.ConfigurationProvider)
+        var notifications = await _notificationRepository.GetListByUserId(currentUserId)
             .ToListAsync(cancellationToken);
+
+        var notificationViews = _mapper.Map<List<NotificationView>>(notifications);
 
         return notificationViews;
     }

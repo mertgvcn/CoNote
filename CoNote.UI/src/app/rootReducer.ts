@@ -13,12 +13,16 @@ import workspaceDetailsReducer, {
 import worksheetReducer, {
   worksheetInitialState,
 } from "../features/worksheet/slices/worksheetSlice";
+import notificationReducer, {
+  notificationInitialState,
+} from "../features/notification/slices/notificationSlice";
 
 export const appReducer = combineReducers({
   auth: authReducer,
   workspace: workspaceReducer,
   workspaceDetails: workspaceDetailsReducer,
   worksheet: worksheetReducer,
+  notification: notificationReducer
 });
 
 const initialStates = {
@@ -26,6 +30,7 @@ const initialStates = {
   workspace: workspaceInitialState,
   workspaceDetails: workspaceDetailsInitialState,
   worksheet: worksheetInitialState,
+  notification: notificationInitialState
 };
 
 export const rootReducer: Reducer = (state, action) => {

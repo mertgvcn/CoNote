@@ -19,6 +19,7 @@ import { RegisterForm } from "./models/RegisterForm";
 import { UserLoginRequest } from "../../api/Authentication/models/UserLoginRequest";
 import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResponse";
 import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
+import { getCurrentUserNotifications } from "../notification/slices/notificationSlice";
 
 const login = async (params: LoginForm) => {
   const userLoginRequest: UserLoginRequest = {
@@ -89,6 +90,7 @@ const initializeAppData = () => async (dispatch: AppDispatch) => {
 
   if (isAuthenticated) {
     await dispatch(getCurrentUserWorkspaces());
+    await dispatch(getCurrentUserNotifications())
   }
   
   dispatch(setIsAppInitialized(true));
