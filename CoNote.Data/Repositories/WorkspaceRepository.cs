@@ -17,4 +17,14 @@ public sealed class WorkspaceRepository : BaseRepository<Workspace>, IWorkspaceR
     {
         return await GetAll().AnyAsync(a => a.Id == id, cancellationToken);
     }
+
+    public async Task<string> GetNameByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        var workspaceName = await GetAll()
+            .Where(w => w.Id == id)
+            .Select(w => w.Name)
+            .SingleAsync(cancellationToken);
+
+        return workspaceName;
+    }
 }

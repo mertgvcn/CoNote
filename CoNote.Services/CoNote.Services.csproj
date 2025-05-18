@@ -14,11 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Roles\Mapper\" />
-    <Folder Include="Roles\Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
@@ -26,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CoNote.Infrastructure\CoNote.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Roles\Models\" />
   </ItemGroup>
 
 </Project>

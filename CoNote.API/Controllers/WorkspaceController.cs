@@ -55,6 +55,13 @@ public class WorkspaceController : ControllerBase
         return response;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<RoleView>>> GetRolesByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var response = await _workspaceService.GetRolesByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return response;
+    }
+
     [HttpPost]
     public async Task<ActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest request)
     {

@@ -70,11 +70,7 @@ const SearchedUser = ({
       </Stack>
 
       {isSelected && (
-        <IconButton
-          color="secondary"
-          size="small"
-          onClick={() => setSelectedUser(null)}
-        >
+        <IconButton color="secondary" size="small" onClick={handleDeselect}>
           <CloseIcon />
         </IconButton>
       )}

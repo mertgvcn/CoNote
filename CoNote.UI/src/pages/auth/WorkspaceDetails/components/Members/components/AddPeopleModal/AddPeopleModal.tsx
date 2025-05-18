@@ -1,4 +1,8 @@
+import { useParams } from "react-router-dom";
 import { useCallback, useState } from "react";
+//redux
+import { useSelector } from "react-redux";
+import { rolesSelectors } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
 //utils
 import { debounce } from "../../../../../../../utils/debounce";
 import { userService } from "../../../../../../../features/user/userService";
@@ -12,7 +16,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Typography,
 } from "@mui/material";
@@ -26,11 +34,15 @@ interface AddPeopleModalProps {
 }
 
 const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
+  const { id } = useParams();
+  const roles = useSelector(rolesSelectors.selectAll);
+
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUserView[]>([]);
   const [selectedUser, setSelectedUser] = useState<SearchedUserView | null>(
     null
   );
+  const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 
   const searchUsers = async (searchValue: string) => {
     if (!searchValue.trim()) {
@@ -48,6 +60,10 @@ const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
   const handleSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value.trim());
     debouncedSearch(e.target.value.trim());
+  };
+
+  const handleSendInvite = () => {
+    
   };
 
   return (
@@ -92,13 +108,37 @@ const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
                 )}
               </>
             ) : (
-              <>
+              <Stack direction="column" gap={2}>
                 <SearchedUser
                   searchedUser={selectedUser}
                   setSelectedUser={setSelectedUser}
                   isSelected
                 />
-              </>
+
+                <Stack direction="row" gap={1} alignItems="center">
+                  <Typography variant="body1">
+                    Assign role for new callaborator
+                  </Typography>
+
+                  <FormControl size="small" sx={{ minWidth: 150 }}>
+                    <InputLabel>Select role</InputLabel>
+                    <Select
+                      labelId="role-select-label"
+                      value={selectedRoleId}
+                      label="Select role"
+                      onChange={(e) =>
+                        setSelectedRoleId(Number(e.target.value))
+                      }
+                    >
+                      {roles.map((role) => (
+                        <MenuItem key={role.id} value={role.id}>
+                          {role.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Stack>
             )}
           </Stack>
 
@@ -112,7 +152,11 @@ const AddPeopleModal = ({ open, onClose }: AddPeopleModalProps) => {
             <Button onClick={onClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={() => {}} color="primary" variant="contained">
+            <Button
+              onClick={handleSendInvite}
+              color="primary"
+              variant="contained"
+            >
               Send Invite
             </Button>
           </Stack>

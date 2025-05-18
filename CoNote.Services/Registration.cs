@@ -3,6 +3,10 @@ using CoNote.Services.Authentication;
 using CoNote.Services.Authentication.Interfaces;
 using CoNote.Services.Components;
 using CoNote.Services.Components.Interfaces;
+using CoNote.Services.Invitations;
+using CoNote.Services.Invitations.Interfaces;
+using CoNote.Services.Notifications;
+using CoNote.Services.Notifications.Interfaces;
 using CoNote.Services.Roles;
 using CoNote.Services.Roles.Interfaces;
 using CoNote.Services.Sections;
@@ -34,5 +38,7 @@ public static class Registration
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IComponentService, ComponentService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IInvitationService, InvitationService>();
+        services.AddScoped<INotificationService, NotificationService>();
     }
 }

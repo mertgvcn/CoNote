@@ -50,5 +50,7 @@ public class WorkspaceProfile : Profile
             .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
 
         CreateMap<Workspace, WorkspaceSettingsView>();
+
+        CreateMap<Role, RoleView>();
     }
 }

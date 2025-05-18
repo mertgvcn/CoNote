@@ -10,6 +10,7 @@ import { StructureView } from "../../../models/views/StructureView";
 import { InvitationView } from "../../../models/views/InvitationView";
 import { MemberView } from "../../../models/views/MemberView";
 import { WorkspaceSettingsView } from "../../../models/views/WorkspaceSettingsView";
+import { RoleView } from "../../../models/views/RoleView";
 //utils
 import { workspaceService } from "../workspaceService";
 
@@ -25,11 +26,16 @@ export const invitationAdapter = createEntityAdapter({
   selectId: (invitation: InvitationView) => invitation.id,
 });
 
+export const rolesAdapter = createEntityAdapter({
+  selectId: (role: RoleView) => role.id,
+});
+
 interface WorkspaceDetailsInitialStateType {
   structure: EntityState<StructureView, number>;
   members: EntityState<MemberView, number>;
   invitations: EntityState<InvitationView, number>;
   settings: WorkspaceSettingsView | null;
+  roles: EntityState<RoleView, number>;
   loading: boolean;
   clickedSections: number[];
 }
@@ -39,6 +45,7 @@ export const workspaceDetailsInitialState: WorkspaceDetailsInitialStateType = {
   members: memberAdapter.getInitialState(),
   invitations: invitationAdapter.getInitialState(),
   settings: null,
+  roles: rolesAdapter.getInitialState(),
   loading: false,
   clickedSections: [],
 };
@@ -77,6 +84,13 @@ export const getSettingsByWorkspaceId = createAsyncThunk(
   "workspaceDetails/getSettingsByWorkspaceId",
   async (workspaceId: number) => {
     return await workspaceService.GetSettingsByWorkspaceId(workspaceId);
+  }
+);
+
+export const getRolesByWorkspaceId = createAsyncThunk(
+  "workspaceDetails/getRolesByWorkspaceId",
+  async (workspaceId: number) => {
+    return await workspaceService.GetRolesByWorkspaceId(workspaceId);
   }
 );
 
@@ -144,6 +158,18 @@ const workspaceDetailsSlice = createSlice({
       })
       .addCase(getSettingsByWorkspaceId.rejected, (state) => {
         state.loading = false;
+      })
+
+      // Roles
+      .addCase(getRolesByWorkspaceId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getRolesByWorkspaceId.fulfilled, (state, action) => {
+        state.loading = false;
+        rolesAdapter.setAll(state.roles, action.payload);
+      })
+      .addCase(getRolesByWorkspaceId.rejected, (state) => {
+        state.loading = false;
       });
   },
 });
@@ -156,6 +182,9 @@ export const memberSelectors = memberAdapter.getSelectors(
 );
 export const invitationSelectors = invitationAdapter.getSelectors(
   (state: RootState) => state.workspaceDetails.invitations
+);
+export const rolesSelectors = rolesAdapter.getSelectors(
+  (state: RootState) => state.workspaceDetails.roles
 );
 export const selectWorkspaceDetailsSettings = (state: RootState) =>
   state.workspaceDetails.settings;
