@@ -40,7 +40,7 @@ public class WorkspaceProfile : Profile
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
 
-        CreateMap<Invitation, InvitationView>()
+        CreateMap<Invitation, WorkspaceInvitationView>()
             .ForMember(dest => dest.SenderFullName, opt => opt.MapFrom(src => $"{src.Sender.FirstName} {src.Sender.LastName}"))
             .ForMember(dest => dest.SenderEmail, opt => opt.MapFrom(src => src.Sender.Email))
             .ForMember(dest => dest.SenderUsername, opt => opt.MapFrom(src => src.Sender.Username))
@@ -50,5 +50,7 @@ public class WorkspaceProfile : Profile
             .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
 
         CreateMap<Workspace, WorkspaceSettingsView>();
+
+        CreateMap<Role, RoleView>();
     }
 }

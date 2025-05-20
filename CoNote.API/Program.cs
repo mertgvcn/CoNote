@@ -1,6 +1,7 @@
 using CoNote.API;
 using CoNote.Data.Context;
 using CoNote.Infrastructure.Middlewares;
+using CoNote.SignalR.Hubs.WorksheetHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,5 +49,7 @@ app.UseAuthorization();
 app.AutoMigrateDatabase();
 
 app.MapControllers();
+
+app.MapHub<WorksheetHub>(WorksheetHub.HubURL);
 
 app.Run();

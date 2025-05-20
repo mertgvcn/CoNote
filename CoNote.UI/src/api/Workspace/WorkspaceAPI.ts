@@ -53,6 +53,15 @@ class WorkspaceAPI extends BaseAPI {
     );
   }
 
+  public async GetRolesByWorkspaceId(
+    workspaceId: number
+  ): Promise<AxiosResponse> {
+    return await this.get(
+      this.controllerExtension + "/GetRolesByWorkspaceId",
+      { workspaceId }
+    );
+  }
+
   public async CreateWorkspace(
     params: CreateWorkspaceRequest
   ): Promise<AxiosResponse> {

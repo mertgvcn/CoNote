@@ -1,9 +1,12 @@
 ﻿using CoNote.Core.Entities.Common;
 using CoNote.Core.Enums;
+using CoNote.Data.Entities.Common;
 
 namespace CoNote.Core.Entities;
-public class Invitation : BaseEntity
+public class Invitation : BaseEntity, IEditable, IDeletable
 {
+    public string EditedBy { get; set; } = default!;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
     public long WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
     public long SenderId { get; set; }

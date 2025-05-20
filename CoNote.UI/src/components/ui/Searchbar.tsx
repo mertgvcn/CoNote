@@ -43,7 +43,7 @@ const SearchbarInput = styled("input")(({ theme }) => ({
 type SearchbarPropsType = {
   value: string;
   onChange?: any;
-  color?: "primary" | "secondary"; 
+  color?: "primary" | "secondary";
   //TODO: Size ekle small, medium, large
 };
 
@@ -76,7 +76,11 @@ const Searchbar = (props: SearchbarPropsType) => {
       <SearchbarIconContainer>
         <SearchIcon />
       </SearchbarIconContainer>
-      <SearchbarInput placeholder="Search..." />
+      <SearchbarInput
+        placeholder="Search..."
+        value={value}
+        onChange={onChange}
+      />
     </SearchContainer>
   );
 };

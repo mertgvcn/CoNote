@@ -1,7 +1,7 @@
 ﻿using CoNote.Core.Enums;
 
 namespace CoNote.Services.Workspaces.Models;
-public record InvitationView
+public record WorkspaceInvitationView
 {
     public long Id { get; set; }
     public long SenderId { get; set; }

@@ -95,6 +95,22 @@ export const GetSettingsByWorkspaceId = async (workspaceId: number) => {
   }
 };
 
+export const GetRolesByWorkspaceId = async (workspaceId: number) => {
+  try {
+    var response = await WorkspaceAPI.GetRolesByWorkspaceId(workspaceId);
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast(
+        "An error occurred while fetching roles of workspace."
+      );
+    }
+    throw error;
+  }
+};
+
 export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
   //TODO: Buraya mapping eklenebilir
   var createWorkspaceRequest: CreateWorkspaceRequest = {
@@ -122,5 +138,6 @@ export const workspaceService = {
   GetMembersByWorkspaceId,
   GetInvitationsByWorkspaceId,
   GetSettingsByWorkspaceId,
+  GetRolesByWorkspaceId,
   CreateWorkspace,
 };

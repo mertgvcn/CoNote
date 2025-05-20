@@ -166,6 +166,13 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<long?>("ReceiverId")
                         .HasColumnType("bigint");
 
@@ -212,12 +219,22 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");

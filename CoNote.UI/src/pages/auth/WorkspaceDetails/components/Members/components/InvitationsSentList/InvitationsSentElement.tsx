@@ -1,5 +1,13 @@
+import { useParams } from "react-router-dom";
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../../../app/store";
+import { getInvitationsByWorkspaceId } from "../../../../../../../features/workspace/slices/workspaceDetailsSlice";
+//utils
+import { invitationService } from "../../../../../../../features/invitation/invitationService";
+import { getChipColorByInvitationStatus } from "../../../../../../../utils/getChipColorByInvitationStatus";
 //models
-import { InvitationView } from "../../../../../../../models/views/InvitationView";
+import { WorkspaceInvitationView } from "../../../../../../../models/views/WorkspaceInvitationView";
 import { InvitationStatus } from "../../../../../../../models/enums/InvitationStatus";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
@@ -31,7 +39,7 @@ const InvitationsSentElementContainer = styled(Box)(({ theme }) => ({
 }));
 
 type InvitationsSentElementPropsType = {
-  invitationElement: InvitationView;
+  invitationElement: WorkspaceInvitationView;
   isFirst?: boolean;
   isLast?: boolean;
 };
@@ -41,6 +49,9 @@ const InvitationsSentElement = ({
   isFirst = false,
   isLast = false,
 }: InvitationsSentElementPropsType) => {
+  const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+
   const theme = useTheme();
 
   const dynamicStyle = {
@@ -53,19 +64,11 @@ const InvitationsSentElement = ({
     borderBottomRightRadius: isLast ? theme.shape.borderRadius : "0px",
   };
 
-  const getChipColor = (
-    status: InvitationStatus
-  ): "warning" | "success" | "error" => {
-    switch (status) {
-      case InvitationStatus.Pending:
-        return "warning";
-      case InvitationStatus.Accepted:
-        return "success";
-      case InvitationStatus.Rejected:
-        return "error";
-      default:
-        return "warning";
-    }
+  const handleDelete = async () => {
+    try {
+      await invitationService.DeleteInvitation(invitationElement.id);
+      await dispatch(getInvitationsByWorkspaceId(Number(id)));
+    } catch (error: any) {}
   };
 
   return (
@@ -84,9 +87,10 @@ const InvitationsSentElement = ({
       <Stack direction="row" gap={1} alignItems="center">
         <Chip
           label={InvitationStatus[invitationElement.status]}
-          color={getChipColor(invitationElement.status)}
+          color={getChipColorByInvitationStatus(invitationElement.status)}
+          size="small"
         />
-        <IconButton color="secondary" size="small">
+        <IconButton color="secondary" size="small" onClick={handleDelete}>
           <ClearIcon />
         </IconButton>
       </Stack>

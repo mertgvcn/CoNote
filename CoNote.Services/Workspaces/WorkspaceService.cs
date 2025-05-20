@@ -20,6 +20,7 @@ public class WorkspaceService : IWorkspaceService
     private readonly IInvitationRepository _invitationRepository;
     private readonly ISectionRepository _sectionRepository;
     private readonly IWorksheetRepository _worksheetRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IRoleService _roleService;
     private readonly IHttpContextService _httpContextService;
     private readonly ITransactionService _transactionService;
@@ -32,6 +33,7 @@ public class WorkspaceService : IWorkspaceService
         IInvitationRepository invitationRepository,
         ISectionRepository sectionRepository,
         IWorksheetRepository worksheetRepository,
+        IRoleRepository roleRepository,
         IRoleService roleService,
         IHttpContextService httpContextService,
         ITransactionService transactionService,
@@ -43,6 +45,7 @@ public class WorkspaceService : IWorkspaceService
         _invitationRepository = invitationRepository;
         _sectionRepository = sectionRepository;
         _worksheetRepository = worksheetRepository;
+        _roleRepository = roleRepository;
         _roleService = roleService;
         _httpContextService = httpContextService;
         _transactionService = transactionService;
@@ -87,10 +90,10 @@ public class WorkspaceService : IWorkspaceService
         return memberViews;
     }
 
-    public async Task<List<InvitationView>> GetInvitationsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
+    public async Task<List<WorkspaceInvitationView>> GetInvitationsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
     {
         var invitationViews = await _invitationRepository.GetListByWorkspaceId(workspaceId)
-            .ProjectTo<InvitationView>(_mapper.ConfigurationProvider)
+            .ProjectTo<WorkspaceInvitationView>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
         return invitationViews;
@@ -108,6 +111,15 @@ public class WorkspaceService : IWorkspaceService
         }
 
         return settingsView;
+    }
+
+    public async Task<List<RoleView>> GetRolesByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken)
+    {
+        var roleViews = await _roleRepository.GetRolesByWorkspaceId(workspaceId)
+            .ProjectTo<RoleView>(_mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
+
+        return roleViews;
     }
 
     public async Task CreateWorkspaceAsync(CreateWorkspaceRequest request, CancellationToken cancellationToken)

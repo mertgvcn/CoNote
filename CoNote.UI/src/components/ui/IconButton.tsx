@@ -49,7 +49,7 @@ const getVariantStyles = (color: PaletteColorKey) => ({
     backgroundColor: "inherit",
     color: theme.palette[color].main,
     "&:hover": {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.grey[200],
       color: theme.palette[color].dark,
     },
   },

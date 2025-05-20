@@ -1,5 +1,5 @@
 //models
-import { InvitationView } from "../../../../../../../models/views/InvitationView";
+import { WorkspaceInvitationView } from "../../../../../../../models/views/WorkspaceInvitationView";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -30,7 +30,7 @@ const RequestsToJoinElementContainer = styled(Box)(({ theme }) => ({
 }));
 
 type RequestsToJoinElementPropsType = {
-  invitationElement: InvitationView;
+  invitationElement: WorkspaceInvitationView;
   isFirst?: boolean;
   isLast?: boolean;
 };

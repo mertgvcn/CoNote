@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CoNote.Services\CoNote.Services.csproj" />
+    <ProjectReference Include="..\CoNote.SignalR\CoNote.SignalR.csproj" />
   </ItemGroup>
 
 </Project>

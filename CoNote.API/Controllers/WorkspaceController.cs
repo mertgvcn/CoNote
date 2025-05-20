@@ -42,7 +42,7 @@ public class WorkspaceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<InvitationView>>> GetInvitationsByWorkspaceId([FromQuery] long workspaceId)
+    public async Task<ActionResult<List<WorkspaceInvitationView>>> GetInvitationsByWorkspaceId([FromQuery] long workspaceId)
     {
         var response = await _workspaceService.GetInvitationsByWorkspaceIdAsync(workspaceId, _cancellationToken);
         return response;
@@ -52,6 +52,13 @@ public class WorkspaceController : ControllerBase
     public async Task<ActionResult<WorkspaceSettingsView>> GetSettingsByWorkspaceId([FromQuery] long workspaceId)
     {
         var response = await _workspaceService.GetSettingsByWorkspaceIdAsync(workspaceId, _cancellationToken);
+        return response;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<RoleView>>> GetRolesByWorkspaceId([FromQuery] long workspaceId)
+    {
+        var response = await _workspaceService.GetRolesByWorkspaceIdAsync(workspaceId, _cancellationToken);
         return response;
     }
 
