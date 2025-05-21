@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Hubs\NotificationHub\" />
-    <Folder Include="Hubs\WorksheetHub\Models\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,4 +26,12 @@ public class WorksheetHub : Hub
         await Clients.OthersInGroup(worksheetId)
             .SendAsync("ReceiveComponentAdded", component);
     }
+
+    public async Task ComponentDeleted(ComponentDeletedRequest request)
+    {
+        var worksheetId = request.WorksheetId.ToString();
+
+        await Clients.OthersInGroup(worksheetId)
+            .SendAsync("ReceiveComponentDeleted", request.ComponentId);
+    }
 }

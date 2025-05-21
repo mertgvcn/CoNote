@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 //redux
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/store";
@@ -13,8 +14,11 @@ import Text from "@tiptap/extension-text";
 import Youtube from "@tiptap/extension-youtube";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { signalRManager } from "../../../utils/SignalR/signalRManager";
+import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -38,6 +42,7 @@ const VideoComponent = ({
   boundsRef,
   initialProperties,
 }: VideoComponentPropsType) => {
+  const { id: worksheetId } = useParams();
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -126,6 +131,15 @@ const VideoComponent = ({
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
+    
+    const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+    if (hubConnection) {
+      const request: ComponentDeletedRequest = {
+        WorksheetId: Number(worksheetId),
+        ComponentId: initialProperties.id,
+      };
+      await hubConnection.invoke("ComponentDeleted", request);
+    }
   };
 
   const handleAddYoutube = () => {

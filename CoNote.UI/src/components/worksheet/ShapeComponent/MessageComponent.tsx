@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useParams } from "react-router-dom";
 //redux
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/store";
@@ -7,8 +8,11 @@ import { deleteComponent } from "../../../features/component/slices/componentSli
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
+import { signalRManager } from "../../../utils/SignalR/signalRManager";
+import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
+import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
 //components
@@ -32,6 +36,7 @@ const MessageComponent = ({
   boundsRef,
   initialProperties,
 }: MessageComponentProps) => {
+  const { id: worksheetId } = useParams();
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -87,6 +92,15 @@ const MessageComponent = ({
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
+    
+    const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+    if (hubConnection) {
+      const request: ComponentDeletedRequest = {
+        WorksheetId: Number(worksheetId),
+        ComponentId: initialProperties.id,
+      };
+      await hubConnection.invoke("ComponentDeleted", request);
+    }
   };
   
   return (

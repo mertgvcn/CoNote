@@ -1,8 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 //redux
 import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../app/store";
 import { selectWorksheetLoading } from "../../../features/worksheet/slices/worksheetSlice";
+import {
+  addComponentToStore,
+  componentSelectors,
+  removeComponentFromStore,
+} from "../../../features/component/slices/componentSlice";
 //dnd-kit
 import {
   DndContext,
@@ -12,17 +18,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-//signalr
-import {
-  HubConnection,
-  HubConnectionBuilder,
-  LogLevel,
-} from "@microsoft/signalr";
 //hooks
 import { useWorksheetData } from "../../../features/worksheet/hooks/useWorksheetData";
+import { useComponentData } from "../../../features/component/hooks/useComponentData";
 //utils
 import { componentService } from "../../../features/component/componentService";
 import { componentDefaults } from "../../../utils/ComponentDefaults";
+import { signalRManager } from "../../../utils/SignalR/signalRManager";
+import { HUB_ENDPOINTS, HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 import { CreateComponentRequest } from "../../../api/Component/models/CreateComponentRequest";
@@ -32,16 +35,6 @@ import { Stack } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
 import WorksheetPanel from "./components/WorksheetPanel";
 import WorksheetDroppable from "./components/WorksheetDroppable";
-import { getCookie } from "../../../utils/CookieManager";
-import { AppDispatch } from "../../../app/store";
-import {
-  addComponentToStore,
-  componentSelectors,
-  getComponentsByWorksheetId,
-} from "../../../features/component/slices/componentSlice";
-import { useComponentData } from "../../../features/component/hooks/useComponentData";
-
-const BACKEND_BASEURL = process.env.REACT_APP_BACKEND_BASEURL;
 
 interface DroppedComponentData {
   type: ComponentType;
@@ -60,34 +53,38 @@ const WorksheetPage = () => {
   const components = useSelector(componentSelectors.selectAll);
   const worksheetSettingsLoading = useSelector(selectWorksheetLoading);
 
-  const [hubConnection, setHubConnection] = useState<HubConnection>();
-
   useEffect(() => {
     setupHubConnection();
+
+    return () => {
+      signalRManager.disconnect(HUB_NAMES.WORKSHEET);
+    };
   }, [id]);
 
   const setupHubConnection = async () => {
-    const hubConnection = new HubConnectionBuilder()
-      .withUrl(`${BACKEND_BASEURL}/ws/worksheet`, {
-        accessTokenFactory: () => getCookie("access_token"),
-      })
-      .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
-      .build();
-
     try {
-      hubConnection.on("ReceiveComponentAdded", (component: ComponentView) => {
-        dispatch(addComponentToStore(component));
+      await signalRManager.connect(HUB_NAMES.WORKSHEET, {
+        hubEndpoints: HUB_ENDPOINTS.WORKSHEET,
+        onMessage: {
+          ReceiveComponentAdded: (component: ComponentView) => {
+            dispatch(addComponentToStore(component));
+          },
+          ReceiveComponentDeleted: (componentId: number) => {
+            debugger;
+            dispatch(removeComponentFromStore(componentId));
+            console.log("Component deleted:", componentId);
+          },
+        },
       });
 
-      await hubConnection.start();
-      setHubConnection(hubConnection);
-
-      await hubConnection.invoke("JoinWorksheet", {
-        WorksheetId: Number(id),
-      });
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+      if (hubConnection) {
+        await hubConnection.invoke("JoinWorksheet", {
+          WorksheetId: worksheetId,
+        });
+      }
     } catch (e: any) {
-      console.log(e);
+      console.error("Worksheet hub connection error:", e);
     }
   };
 
@@ -117,6 +114,7 @@ const WorksheetPage = () => {
 
       dispatch(addComponentToStore(returnedComponent));
 
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
       if (hubConnection) {
         await hubConnection.invoke("ComponentAdded", returnedComponent);
       }
