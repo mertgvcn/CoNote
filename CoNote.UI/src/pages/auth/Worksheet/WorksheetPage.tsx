@@ -7,12 +7,17 @@ import { selectWorksheetLoading } from "../../../features/worksheet/slices/works
 import {
   DndContext,
   DragEndEvent,
-  DragStartEvent,
   PointerSensor,
   pointerWithin,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+//signalr
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from "@microsoft/signalr";
 //hooks
 import { useWorksheetData } from "../../../features/worksheet/hooks/useWorksheetData";
 //utils
@@ -27,6 +32,9 @@ import { Stack } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
 import WorksheetPanel from "./components/WorksheetPanel";
 import WorksheetDroppable from "./components/WorksheetDroppable";
+import { getCookie } from "../../../utils/CookieManager";
+
+const BACKEND_BASEURL = process.env.REACT_APP_BACKEND_BASEURL;
 
 interface DroppedComponentData {
   type: ComponentType;
@@ -40,10 +48,37 @@ const WorksheetPage = () => {
   const loading = useSelector(selectWorksheetLoading);
 
   const [components, setComponents] = useState<ComponentView[]>([]);
+  const [hubConnection, setHubConnection] = useState<HubConnection>();
 
   useEffect(() => {
+    setupHubConnection();
     fetchComponents();
   }, [id]);
+
+  const setupHubConnection = async () => {
+    const hubConnection = new HubConnectionBuilder()
+      .withUrl(`${BACKEND_BASEURL}/ws/worksheet`, {
+        accessTokenFactory: () => getCookie("access_token"),
+      })
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    try {
+      hubConnection.on("ReceiveComponentAdded", (component: ComponentView) => {
+        setComponents((prev) => [...prev, component]);
+      });
+
+      await hubConnection.start();
+      setHubConnection(hubConnection);
+
+      await hubConnection.invoke("JoinWorksheet", {
+        WorksheetId: Number(id),
+      });
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
 
   const fetchComponents = async () => {
     const response = await componentService.GetComponentsByWorksheetId(
@@ -79,6 +114,10 @@ const WorksheetPage = () => {
         await componentService.CreateComponent(newComponent);
 
       setComponents((prev) => [...prev, returnedComponent]);
+
+      if (hubConnection) {
+        await hubConnection.invoke("ComponentAdded", returnedComponent);
+      }
     }
   };
 
