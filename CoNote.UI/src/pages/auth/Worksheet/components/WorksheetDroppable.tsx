@@ -1,4 +1,7 @@
 import { useRef, useState } from "react";
+//redux
+import { useSelector } from "react-redux";
+import { selectComponentLoading } from "../../../../features/component/slices/componentSlice";
 //dnd
 import { useDroppable } from "@dnd-kit/core";
 //models
@@ -24,6 +27,7 @@ import StarComponent from "../../../../components/worksheet/ShapeComponent/StarC
 import TriangleComponent from "../../../../components/worksheet/ShapeComponent/TriangleComponent";
 //components
 import { Box, Stack, styled, Typography, useTheme } from "@mui/material";
+import Loading from "../../../../components/ui/Loading";
 
 const WorksheetDroppableContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -41,6 +45,7 @@ const WorksheetDroppable = ({ components }: WorksheetDroppablePropsType) => {
   const { isOver, setNodeRef } = useDroppable({ id: "worksheet-dropzone" });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const boundsRef = useRef<HTMLDivElement | null>(null);
+  const loading = useSelector(selectComponentLoading);
 
   const theme = useTheme();
   const style = {
@@ -219,6 +224,8 @@ const WorksheetDroppable = ({ components }: WorksheetDroppablePropsType) => {
     }
   };
 
+  if (loading) return <Loading />;
+
   return (
     <WorksheetDroppableContainer
       ref={(node: any) => {
@@ -240,10 +247,16 @@ const WorksheetDroppable = ({ components }: WorksheetDroppablePropsType) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Typography variant="subtitle1" color={isOver ? "primary" : "secondary"}>
+            <Typography
+              variant="subtitle1"
+              color={isOver ? "primary" : "secondary"}
+            >
               Drop here
             </Typography>
-            <FileDownloadIcon fontSize="large" color={isOver ? "primary" : "secondary"} />
+            <FileDownloadIcon
+              fontSize="large"
+              color={isOver ? "primary" : "secondary"}
+            />
           </Stack>
         </Box>
       ) : (

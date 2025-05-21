@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../app/store";
+import { deleteComponent } from "../../../features/component/slices/componentSlice";
 //moveable
 import Moveable from "react-moveable";
 //tiptap
@@ -17,7 +21,6 @@ import {
 } from "../../../extensions/tiptap/FontFamily";
 //utils
 import { getTransform } from "../../../utils/getTransform";
-import { componentService } from "../../../features/component/componentService";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 //icons
@@ -62,6 +65,7 @@ export default function TextComponent({
 }: TextComponentPropsType) {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [properties, setProperties] = useState({
     width: initialProperties.width,
@@ -153,7 +157,7 @@ export default function TextComponent({
   };
 
   const handleDelete = async () => {
-    await componentService.DeleteComponent(initialProperties.id);
+    await dispatch(deleteComponent(initialProperties.id));
   };
 
   return (

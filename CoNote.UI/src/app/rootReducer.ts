@@ -19,6 +19,9 @@ import notificationReducer, {
 import invitationReducer, {
   invitationInitialState,
 } from "../features/invitation/slices/invitationSlice";
+import componentReducer, {
+  componentInitialState,
+} from "../features/component/slices/componentSlice";
 
 export const appReducer = combineReducers({
   auth: authReducer,
@@ -27,6 +30,7 @@ export const appReducer = combineReducers({
   worksheet: worksheetReducer,
   notification: notificationReducer,
   invitation: invitationReducer,
+  component: componentReducer,
 });
 
 const initialStates = {
@@ -36,6 +40,7 @@ const initialStates = {
   worksheet: worksheetInitialState,
   notification: notificationInitialState,
   invitation: invitationInitialState,
+  component: componentInitialState,
 };
 
 export const rootReducer: Reducer = (state, action) => {

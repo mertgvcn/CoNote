@@ -33,7 +33,6 @@ export const CreateComponent = async (request: CreateComponentRequest) => {
 };
 
 export const DeleteComponent = async (componentId: number) => {
-  debugger;
   try {
     var response = await ComponentAPI.DeleteComponent(componentId);
     return response.data;

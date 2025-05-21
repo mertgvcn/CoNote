@@ -1,4 +1,8 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+//redux
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../app/store";
+import { deleteComponent } from "../../../features/component/slices/componentSlice";
 //moveable
 import Moveable from "react-moveable";
 //utils
@@ -31,6 +35,7 @@ const StarComponent = ({
 }: StarComponentProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [properties, setProperties] = useState({
     width: initialProperties.width,
@@ -77,7 +82,7 @@ const StarComponent = ({
   };
 
   const handleDelete = async () => {
-    await componentService.DeleteComponent(initialProperties.id);
+    await dispatch(deleteComponent(initialProperties.id));
   };
 
   return (

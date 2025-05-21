@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectWorksheetLoading } from "../../../features/worksheet/slices/worksheetSlice";
 //dnd-kit
 import {
@@ -33,6 +33,13 @@ import Loading from "../../../components/ui/Loading";
 import WorksheetPanel from "./components/WorksheetPanel";
 import WorksheetDroppable from "./components/WorksheetDroppable";
 import { getCookie } from "../../../utils/CookieManager";
+import { AppDispatch } from "../../../app/store";
+import {
+  addComponentToStore,
+  componentSelectors,
+  getComponentsByWorksheetId,
+} from "../../../features/component/slices/componentSlice";
+import { useComponentData } from "../../../features/component/hooks/useComponentData";
 
 const BACKEND_BASEURL = process.env.REACT_APP_BACKEND_BASEURL;
 
@@ -43,16 +50,20 @@ interface DroppedComponentData {
 
 const WorksheetPage = () => {
   const { id } = useParams();
-  useWorksheetData(Number(id));
+  const worksheetId = Number(id);
+  const sensors = useSensors(useSensor(PointerSensor));
 
-  const loading = useSelector(selectWorksheetLoading);
+  const dispatch = useDispatch<AppDispatch>();
+  useWorksheetData(worksheetId);
+  useComponentData(worksheetId);
 
-  const [components, setComponents] = useState<ComponentView[]>([]);
+  const components = useSelector(componentSelectors.selectAll);
+  const worksheetSettingsLoading = useSelector(selectWorksheetLoading);
+
   const [hubConnection, setHubConnection] = useState<HubConnection>();
 
   useEffect(() => {
     setupHubConnection();
-    fetchComponents();
   }, [id]);
 
   const setupHubConnection = async () => {
@@ -66,7 +77,7 @@ const WorksheetPage = () => {
 
     try {
       hubConnection.on("ReceiveComponentAdded", (component: ComponentView) => {
-        setComponents((prev) => [...prev, component]);
+        dispatch(addComponentToStore(component));
       });
 
       await hubConnection.start();
@@ -79,15 +90,6 @@ const WorksheetPage = () => {
       console.log(e);
     }
   };
-
-  const fetchComponents = async () => {
-    const response = await componentService.GetComponentsByWorksheetId(
-      Number(id)
-    );
-    setComponents(response);
-  };
-
-  const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
@@ -113,7 +115,7 @@ const WorksheetPage = () => {
       var returnedComponent: ComponentView =
         await componentService.CreateComponent(newComponent);
 
-      setComponents((prev) => [...prev, returnedComponent]);
+      dispatch(addComponentToStore(returnedComponent));
 
       if (hubConnection) {
         await hubConnection.invoke("ComponentAdded", returnedComponent);
@@ -121,7 +123,7 @@ const WorksheetPage = () => {
     }
   };
 
-  if (loading) return <Loading />;
+  if (worksheetSettingsLoading) return <Loading />;
 
   return (
     <DndContext
