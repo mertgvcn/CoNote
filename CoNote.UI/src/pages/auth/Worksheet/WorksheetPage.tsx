@@ -70,7 +70,6 @@ const WorksheetPage = () => {
             dispatch(addComponentToStore(component));
           },
           ReceiveComponentDeleted: (componentId: number) => {
-            debugger;
             dispatch(removeComponentFromStore(componentId));
             console.log("Component deleted:", componentId);
           },

@@ -50,14 +50,16 @@ const ImageComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    src: "/assets/images/placeholders/image-component-placeholder.png",
+    type: initialProperties.type,
+    content: initialProperties.content,
   });
 
   useEffect(() => {
@@ -88,10 +90,7 @@ const ImageComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
+  const handleChange = (key: keyof ComponentView, value: any) => {
     setProperties((prev) => ({
       ...prev,
       [key]: value,
@@ -100,7 +99,7 @@ const ImageComponent = ({
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -120,10 +119,7 @@ const ImageComponent = ({
 
     const finalSrc = isExternal ? source : getImageByName(source);
 
-    setProperties((prev) => ({
-      ...prev,
-      src: finalSrc,
-    }));
+    handleChange("content", finalSrc);
   };
 
   return (
@@ -160,7 +156,6 @@ const ImageComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
@@ -175,7 +170,6 @@ const ImageComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
@@ -183,18 +177,19 @@ const ImageComponent = ({
               variant="outlined"
               value={properties.zIndex}
               onChange={(e) =>
-                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+                handleChange(
+                  "zIndex",
+                  Math.max(1, parseInt(e.target.value) || 0)
+                )
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <IconButton variant="outlined" onClick={handleAddImage}>
               <LinkIcon />
             </IconButton>
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -207,7 +202,10 @@ const ImageComponent = ({
 
         <Box sx={{ width: "100%", height: "100%", objectFit: "fill" }}>
           <img
-            src={properties.src}
+            src={
+              properties.content ??
+              "/assets/images/placeholders/image-component-placeholder.png"
+            }
             alt="Image not found"
             style={{ width: properties.width, height: properties.height }}
           />
@@ -252,30 +250,24 @@ const ImageComponent = ({
               properties.rotation
             );
 
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
-            let [x, y] = drag.beforeTranslate;
+            const [x, y] = drag.beforeTranslate;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
             el.style.transform = getTransform(x, y, properties.rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
@@ -286,12 +278,9 @@ const ImageComponent = ({
 
             el.style.transform = getTransform(x, y, rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

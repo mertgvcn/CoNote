@@ -11,7 +11,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -41,14 +44,18 @@ const ArrowComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+    },
   });
 
   useEffect(() => {
@@ -79,14 +86,23 @@ const ArrowComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
@@ -168,8 +184,10 @@ const ArrowComponent = ({
             />
 
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
 
             <IconButton
@@ -190,7 +208,7 @@ const ArrowComponent = ({
         >
           <path
             d="M10,40 L130,40 L130,20 L190,50 L130,80 L130,60 L10,60 Z"
-            fill={properties.fillColor}
+            fill={properties.style?.fillColor ?? "#000000"}
           />
         </svg>
       </Box>

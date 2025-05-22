@@ -11,7 +11,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -41,14 +44,18 @@ const MessageComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+    },
   });
 
   useEffect(() => {
@@ -65,9 +72,8 @@ const MessageComponent = ({
     };
 
     document.addEventListener("pointerdown", handleClickOutside);
-    return () => {
+    return () =>
       document.removeEventListener("pointerdown", handleClickOutside);
-    };
   }, [selectedId, id, setSelectedId]);
 
   useLayoutEffect(() => {
@@ -80,19 +86,28 @@ const MessageComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -102,7 +117,7 @@ const MessageComponent = ({
       await hubConnection.invoke("ComponentDeleted", request);
     }
   };
-  
+
   return (
     <>
       <Box
@@ -137,7 +152,6 @@ const MessageComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
@@ -152,7 +166,6 @@ const MessageComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
@@ -167,12 +180,12 @@ const MessageComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -191,7 +204,7 @@ const MessageComponent = ({
         >
           <path
             d="M10,10 H90 V70 H75 L70,90 L65,70 H10 Z"
-            fill={properties.fillColor}
+            fill={properties.style?.fillColor ?? "#000000"}
           />
         </svg>
       </Box>
@@ -233,12 +246,8 @@ const MessageComponent = ({
               clampedY,
               properties.rotation
             );
-
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
@@ -251,13 +260,10 @@ const MessageComponent = ({
             el.style.height = `${height}px`;
             el.style.transform = getTransform(x, y, properties.rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
@@ -267,13 +273,9 @@ const MessageComponent = ({
             const [x, y] = drag.beforeTranslate;
 
             el.style.transform = getTransform(x, y, rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

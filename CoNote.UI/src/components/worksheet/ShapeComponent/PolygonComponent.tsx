@@ -11,7 +11,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,7 +24,7 @@ import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
 import IconButton from "../../ui/IconButton";
 
-type PolygonComponentProps = {
+type PlusComponentProps = {
   id: number;
   selectedId: number | null;
   setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -29,27 +32,31 @@ type PolygonComponentProps = {
   initialProperties: ComponentView;
 };
 
-const PolygonComponent = ({
+const PlusComponent = ({
   id,
   selectedId,
   setSelectedId,
   boundsRef,
   initialProperties,
-}: PolygonComponentProps) => {
+}: PlusComponentProps) => {
   const { id: worksheetId } = useParams();
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
-    sides: initialProperties.style?.sides,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+      sides: initialProperties.style?.sides,
+    },
   });
 
   useEffect(() => {
@@ -78,19 +85,28 @@ const PolygonComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -102,6 +118,9 @@ const PolygonComponent = ({
   };
 
   function getPolygonPoints(sides: number, boxSize = 100): string {
+    if (sides === 4) {
+      return "40,0 60,0 60,40 100,40 100,60 60,60 60,100 40,100 40,60 0,60 0,40 40,40";
+    }
     const center = boxSize / 2;
     const radius = center;
     const angleStep = (2 * Math.PI) / sides;
@@ -138,6 +157,7 @@ const PolygonComponent = ({
               label="Width"
               type="number"
               size="small"
+              variant="outlined"
               value={properties.width}
               onChange={(e) =>
                 handleChange("width", parseInt(e.target.value) || 0)
@@ -147,11 +167,11 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
               size="small"
+              variant="outlined"
               value={properties.height}
               onChange={(e) =>
                 handleChange("height", parseInt(e.target.value) || 0)
@@ -161,29 +181,29 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Sides"
               type="number"
               size="small"
-              value={properties.sides}
+              variant="outlined"
+              value={properties.style?.sides ?? 4}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
                 if (!isNaN(value)) {
-                  handleChange("sides", Math.max(5, Math.min(10, value)));
+                  handleStyleChange("sides", Math.max(4, Math.min(10, value)));
                 }
               }}
-              inputProps={{ min: 5, max: 10 }}
+              inputProps={{ min: 4, max: 10 }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
               size="small"
+              variant="outlined"
               value={properties.zIndex}
               onChange={(e) =>
                 handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
@@ -193,12 +213,12 @@ const PolygonComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -216,8 +236,8 @@ const PolygonComponent = ({
           preserveAspectRatio="none"
         >
           <polygon
-            points={getPolygonPoints(properties.sides!)}
-            fill={properties.fillColor}
+            points={getPolygonPoints(properties.style?.sides ?? 4)}
+            fill={properties.style?.fillColor ?? "#000000"}
           />
         </svg>
       </Box>
@@ -247,58 +267,41 @@ const PolygonComponent = ({
             const bounds = boundsRef.current?.getBoundingClientRect();
             const comp = el?.getBoundingClientRect();
             if (!el || !bounds || !comp) return;
-
             const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
-
             el.style.transform = getTransform(
               clampedX,
               clampedY,
               properties.rotation
             );
-
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
-
-            let [x, y] = drag.beforeTranslate;
+            const [x, y] = drag.beforeTranslate;
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
             el.style.transform = getTransform(x, y, properties.rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
-
             const rotation = beforeRotate;
             const [x, y] = drag.beforeTranslate;
-
             el.style.transform = getTransform(x, y, rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}
@@ -306,4 +309,4 @@ const PolygonComponent = ({
   );
 };
 
-export default PolygonComponent;
+export default PlusComponent;

@@ -47,12 +47,16 @@ const VideoComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
+    rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
+    type: initialProperties.type,
+    content: initialProperties.content,
   });
 
   const editor = useEditor({
@@ -119,10 +123,7 @@ const VideoComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
+  const handleChange = (key: keyof ComponentView, value: any) => {
     setProperties((prev) => ({
       ...prev,
       [key]: value,
@@ -131,7 +132,7 @@ const VideoComponent = ({
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -152,6 +153,8 @@ const VideoComponent = ({
         width: properties.width,
         height: properties.height - 24,
       });
+      // Update content in properties
+      handleChange("content", editor.getHTML());
     }
   };
 
@@ -164,7 +167,11 @@ const VideoComponent = ({
           position: "absolute",
           width: `${properties.width}px`,
           height: `${properties.height}px`,
-          transform: getTransform(properties.x, properties.y),
+          transform: getTransform(
+            properties.x,
+            properties.y,
+            properties.rotation
+          ),
           zIndex: properties.zIndex,
           cursor: "move",
         }}
@@ -185,7 +192,6 @@ const VideoComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
@@ -200,7 +206,6 @@ const VideoComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
@@ -208,18 +213,19 @@ const VideoComponent = ({
               variant="outlined"
               value={properties.zIndex}
               onChange={(e) =>
-                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+                handleChange(
+                  "zIndex",
+                  Math.max(1, parseInt(e.target.value) || 0)
+                )
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <IconButton variant="outlined" onClick={handleAddYoutube}>
               <LinkIcon />
             </IconButton>
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -240,8 +246,11 @@ const VideoComponent = ({
           origin={false}
           draggable
           resizable
+          rotatable
           throttleDrag={1}
           throttleResize={1}
+          throttleRotate={1}
+          rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           onDragStart={({ inputEvent }) => {
             const target = inputEvent?.target as HTMLElement;
@@ -262,32 +271,50 @@ const VideoComponent = ({
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
 
-            el.style.transform = getTransform(clampedX, clampedY);
+            el.style.transform = getTransform(
+              clampedX,
+              clampedY,
+              properties.rotation
+            );
 
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
-            let [x, y] = drag.beforeTranslate;
+            const [x, y] = drag.beforeTranslate;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = getTransform(x, y);
+            el.style.transform = getTransform(x, y, properties.rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            // Update iframe size
+            const iframe = el.querySelector("iframe");
+            if (iframe) {
+              iframe.setAttribute("width", `${width}`);
+              iframe.setAttribute("height", `${height - 24}`);
+            }
+
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
+          }}
+          onRotate={({ beforeRotate, drag }) => {
+            const el = targetRef.current;
+            if (!el) return;
+
+            const rotation = beforeRotate;
+            const [x, y] = drag.beforeTranslate;
+
+            el.style.transform = getTransform(x, y, rotation);
+
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

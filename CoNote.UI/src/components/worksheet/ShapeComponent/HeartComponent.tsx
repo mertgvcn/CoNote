@@ -11,7 +11,7 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import { ComponentView, StyleProperties } from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -41,14 +41,18 @@ const HeartComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+    },
   });
 
   useEffect(() => {
@@ -79,14 +83,23 @@ const HeartComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
@@ -136,7 +149,6 @@ const HeartComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
@@ -151,7 +163,6 @@ const HeartComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
@@ -166,12 +177,12 @@ const HeartComponent = ({
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -192,7 +203,7 @@ const HeartComponent = ({
             d="M23.6,0c-3.4,0-6.4,2.1-7.6,5.1C14.8,2.1,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4
               c0,4.5,3.5,8.2,10.3,13.8c1.6,1.3,3.4,2.7,5.3,4.2c1.9-1.5,3.7-2.9,5.3-4.2
               C28.5,16.6,32,12.9,32,8.4C32,3.8,28.2,0,23.6,0z"
-            fill={properties.fillColor}
+            fill={properties.style?.fillColor ?? "#000000"}
           />
         </svg>
       </Box>
@@ -234,12 +245,8 @@ const HeartComponent = ({
               clampedY,
               properties.rotation
             );
-
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
@@ -252,13 +259,10 @@ const HeartComponent = ({
             el.style.height = `${height}px`;
             el.style.transform = getTransform(x, y, properties.rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
@@ -268,13 +272,9 @@ const HeartComponent = ({
             const [x, y] = drag.beforeTranslate;
 
             el.style.transform = getTransform(x, y, rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

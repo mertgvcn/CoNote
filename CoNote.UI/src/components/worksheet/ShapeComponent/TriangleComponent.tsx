@@ -11,7 +11,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -41,32 +44,34 @@ const TriangleComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+    },
   });
 
   useEffect(() => {
     if (selectedId !== id) return;
-
     const handleClickOutside = (event: PointerEvent) => {
       const target = event.target as HTMLElement;
       const isInside = targetRef.current?.contains(target);
       const isMoveable = !!target.closest(".moveable-control-box");
-
       if (!isInside && !isMoveable) {
         setSelectedId(null);
       }
     };
-
     document.addEventListener("pointerdown", handleClickOutside);
-    return () =>
+    return () => {
       document.removeEventListener("pointerdown", handleClickOutside);
+    };
   }, [selectedId, id, setSelectedId]);
 
   useLayoutEffect(() => {
@@ -79,19 +84,28 @@ const TriangleComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -129,15 +143,14 @@ const TriangleComponent = ({
               variant="outlined"
               value={properties.width}
               onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("width", value);
+                const value = parseInt(e.target.value) || 0;
+                handleChange("width", value);
               }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Height"
               type="number"
@@ -145,15 +158,14 @@ const TriangleComponent = ({
               variant="outlined"
               value={properties.height}
               onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("height", value);
+                const value = parseInt(e.target.value) || 0;
+                handleChange("height", value);
               }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <TextField
               label="Z-Index"
               type="number"
@@ -161,20 +173,20 @@ const TriangleComponent = ({
               variant="outlined"
               value={properties.zIndex}
               onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value)) handleChange("zIndex", Math.max(1, value));
+                const value = parseInt(e.target.value) || 0;
+                handleChange("zIndex", Math.max(1, value));
               }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
-
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
-
             <IconButton
               color="error"
               tooltipTitle="Delete"
@@ -191,7 +203,10 @@ const TriangleComponent = ({
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          <polygon points="50,0 100,100 0,100" fill={properties.fillColor} />
+          <polygon
+            points="50,0 100,100 0,100"
+            fill={properties.style?.fillColor ?? "#000000"}
+          />
         </svg>
       </Box>
 
@@ -220,59 +235,41 @@ const TriangleComponent = ({
             const bounds = boundsRef.current?.getBoundingClientRect();
             const comp = el?.getBoundingClientRect();
             if (!el || !bounds || !comp) return;
-
             const [x, y] = beforeTranslate;
             const maxX = bounds.width - comp.width;
             const maxY = bounds.height - comp.height;
-
             const clampedX = Math.max(0, Math.min(x, maxX));
             const clampedY = Math.max(0, Math.min(y, maxY));
-
             el.style.transform = getTransform(
               clampedX,
               clampedY,
               properties.rotation
             );
-
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
-
             const [x, y] = drag.beforeTranslate;
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
             el.style.transform = getTransform(x, y, properties.rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
-
             const rotation = beforeRotate;
             const [x, y] = drag.beforeTranslate;
-
             el.style.transform = getTransform(x, y, rotation);
-
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

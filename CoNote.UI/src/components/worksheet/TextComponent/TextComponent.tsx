@@ -25,7 +25,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
@@ -72,17 +75,21 @@ export default function TextComponent({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
+    type: initialProperties.type,
     content: initialProperties.content,
-    textColor: initialProperties.style?.textColor,
-    fontSize: initialProperties.style?.fontSize,
-    fontFamily: initialProperties.style?.fontFamily,
+    style: {
+      textColor: initialProperties.style?.textColor,
+      fontSize: initialProperties.style?.fontSize,
+      fontFamily: initialProperties.style?.fontFamily,
+    },
   });
 
   const editor = useEditor({
@@ -129,7 +136,7 @@ export default function TextComponent({
     document.addEventListener("pointerdown", handleClickOutside);
     return () =>
       document.removeEventListener("pointerdown", handleClickOutside);
-  }, [selectedId, id]);
+  }, [selectedId, id, setSelectedId]);
 
   useLayoutEffect(() => {
     if (selectedId === id) {
@@ -146,19 +153,35 @@ export default function TextComponent({
 
   const handleClick = () => setSelectedId(id);
 
-  const handleChange = (key: keyof typeof properties, value: any) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
 
-    if (key === "fontSize") {
-      applyTextCommand(() => editor?.commands.setFontSize(value));
-    } else if (key === "fontFamily") {
-      applyTextCommand(() => editor?.commands.setFontFamily(value));
-    } else if (key === "textColor") {
-      applyTextCommand(() => editor?.commands.setColor(value));
+    if (key === "style") {
+      const styleKey = Object.keys(value)[0] as keyof StyleProperties;
+      const styleValue = value[styleKey];
+      if (styleKey === "fontSize") {
+        applyTextCommand(() => editor?.commands.setFontSize(styleValue));
+      } else if (styleKey === "fontFamily") {
+        applyTextCommand(() => editor?.commands.setFontFamily(styleValue));
+      } else if (styleKey === "textColor") {
+        applyTextCommand(() => editor?.commands.setColor(styleValue));
+      }
     }
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
@@ -196,9 +219,11 @@ export default function TextComponent({
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Font Family</InputLabel>
               <Select
-                value={properties.fontFamily}
+                value={properties.style?.fontFamily ?? ""}
                 label="Font Family"
-                onChange={(e) => handleChange("fontFamily", e.target.value)}
+                onChange={(e) =>
+                  handleStyleChange("fontFamily", e.target.value)
+                }
               >
                 {FontFamilies.map((font) => (
                   <MenuItem
@@ -215,9 +240,9 @@ export default function TextComponent({
             <FormControl size="small" sx={{ minWidth: 80 }}>
               <InputLabel>Font Size</InputLabel>
               <Select
-                value={properties.fontSize}
+                value={properties.style?.fontSize ?? ""}
                 label="Font Size"
-                onChange={(e) => handleChange("fontSize", e.target.value)}
+                onChange={(e) => handleStyleChange("fontSize", e.target.value)}
               >
                 {FontSizes.map((size) => (
                   <MenuItem key={size} value={size}>
@@ -231,9 +256,16 @@ export default function TextComponent({
               label="Z-Index"
               type="number"
               size="small"
+              variant="outlined"
               value={properties.zIndex}
               onChange={(e) =>
-                handleChange("zIndex", Math.max(1, parseInt(e.target.value)))
+                handleChange(
+                  "zIndex",
+                  Math.max(1, parseInt(e.target.value) || 0)
+                )
+              }
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.target as HTMLInputElement).blur()
               }
               sx={{ width: 100 }}
             />
@@ -287,6 +319,7 @@ export default function TextComponent({
             >
               <FormatStrikethroughIcon />
             </IconButton>
+
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("left"))
@@ -294,6 +327,7 @@ export default function TextComponent({
             >
               <FormatAlignLeftIcon />
             </IconButton>
+
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("center"))
@@ -301,6 +335,7 @@ export default function TextComponent({
             >
               <FormatAlignCenterIcon />
             </IconButton>
+
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("right"))
@@ -308,6 +343,7 @@ export default function TextComponent({
             >
               <FormatAlignRightIcon />
             </IconButton>
+
             <IconButton
               onClick={() =>
                 applyTextCommand(() => editor?.commands.setTextAlign("justify"))
@@ -317,8 +353,10 @@ export default function TextComponent({
             </IconButton>
 
             <ColorPicker
-              value={properties.textColor!}
-              onChange={(color: string) => handleChange("textColor", color)}
+              value={properties.style?.textColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("textColor", color)
+              }
             />
 
             <IconButton
@@ -381,18 +419,15 @@ export default function TextComponent({
               properties.rotation
             );
 
-            setProperties((prev) => ({
-              ...prev,
-              x: clampedX,
-              y: clampedY,
-            }));
+            handleChange("x", clampedX);
+            handleChange("y", clampedY);
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
-            let [x, y] = drag.beforeTranslate;
+            const [x, y] = drag.beforeTranslate;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
@@ -404,13 +439,10 @@ export default function TextComponent({
               inner.style.height = "100%";
             }
 
-            setProperties((prev) => ({
-              ...prev,
-              width,
-              height,
-              x,
-              y,
-            }));
+            handleChange("width", width);
+            handleChange("height", height);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
@@ -421,12 +453,9 @@ export default function TextComponent({
 
             el.style.transform = getTransform(x, y, rotation);
 
-            setProperties((prev) => ({
-              ...prev,
-              x,
-              y,
-              rotation,
-            }));
+            handleChange("rotation", rotation);
+            handleChange("x", x);
+            handleChange("y", y);
           }}
         />
       )}

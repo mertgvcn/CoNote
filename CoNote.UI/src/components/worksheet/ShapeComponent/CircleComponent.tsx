@@ -11,7 +11,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import { ComponentView } from "../../../models/views/ComponentView";
+import {
+  ComponentView,
+  StyleProperties,
+} from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -41,15 +44,19 @@ const CircleComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState({
+  const [properties, setProperties] = useState<ComponentView>({
+    id: initialProperties.id,
     width: initialProperties.width,
     height: initialProperties.height,
     x: initialProperties.x,
     y: initialProperties.y,
     rotation: initialProperties.rotation,
     zIndex: initialProperties.zIndex,
-    fillColor: initialProperties.style?.fillColor,
-    innerRadiusRatio: initialProperties.style?.innerRadiusRatio,
+    type: initialProperties.type,
+    style: {
+      fillColor: initialProperties.style?.fillColor,
+      innerRadiusRatio: initialProperties.style?.innerRadiusRatio,
+    },
   });
 
   useEffect(() => {
@@ -80,19 +87,28 @@ const CircleComponent = ({
     setSelectedId(id);
   };
 
-  const handleChange = <K extends keyof typeof properties>(
-    key: K,
-    value: (typeof properties)[K]
-  ) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: keyof ComponentView, value: any) => {
+    setProperties((prev) => {
+      if (key === "style") {
+        return {
+          ...prev,
+          style: { ...prev.style, ...value },
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  };
+
+  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
+    handleChange("style", { [key]: value });
   };
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
-    
+
     const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
     if (hubConnection) {
       const request: ComponentDeletedRequest = {
@@ -104,7 +120,7 @@ const CircleComponent = ({
   };
 
   const outerR = 50;
-  const innerR = outerR * properties.innerRadiusRatio!;
+  const innerR = outerR * (properties.style?.innerRadiusRatio ?? 0);
 
   const circlePath = `
     M50,0
@@ -180,12 +196,12 @@ const CircleComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={properties.innerRadiusRatio}
+              value={properties.style?.innerRadiusRatio ?? 0}
               inputProps={{ min: 0, max: 0.98, step: 0.02 }}
               onChange={(e) => {
                 const value = parseFloat(e.target.value);
                 const clamped = Math.max(0, Math.min(value, 0.98));
-                handleChange("innerRadiusRatio", clamped);
+                handleStyleChange("innerRadiusRatio", clamped);
               }}
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -193,8 +209,10 @@ const CircleComponent = ({
               sx={{ width: 100 }}
             />
             <ColorPicker
-              value={properties.fillColor!}
-              onChange={(color: string) => handleChange("fillColor", color)}
+              value={properties.style?.fillColor ?? "#000000"}
+              onChange={(color: string) =>
+                handleStyleChange("fillColor", color)
+              }
             />
             <IconButton
               color="error"
@@ -212,7 +230,11 @@ const CircleComponent = ({
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          <path d={circlePath} fill={properties.fillColor} fillRule="evenodd" />
+          <path
+            d={circlePath}
+            fill={properties.style?.fillColor ?? "#000000"}
+            fillRule="evenodd"
+          />
         </svg>
       </Box>
 
