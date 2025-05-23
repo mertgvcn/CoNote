@@ -8,5 +8,7 @@ public class ComponentProfile : Profile
     public ComponentProfile()
     {
         CreateMap<CreateComponentRequest, Component>();
+
+        CreateMap<UpdateComponentRequest, Component>();
     }
 }

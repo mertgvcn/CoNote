@@ -7,7 +7,9 @@ import { selectWorksheetLoading } from "../../../features/worksheet/slices/works
 import {
   addComponentToStore,
   componentSelectors,
+  createComponent,
   removeComponentFromStore,
+  updateComponentInStore,
 } from "../../../features/component/slices/componentSlice";
 //dnd-kit
 import {
@@ -22,7 +24,6 @@ import {
 import { useWorksheetData } from "../../../features/worksheet/hooks/useWorksheetData";
 import { useComponentData } from "../../../features/component/hooks/useComponentData";
 //utils
-import { componentService } from "../../../features/component/componentService";
 import { componentDefaults } from "../../../utils/ComponentDefaults";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_ENDPOINTS, HUB_NAMES } from "../../../utils/SignalR/hubConstants";
@@ -69,9 +70,16 @@ const WorksheetPage = () => {
           ReceiveComponentAdded: (component: ComponentView) => {
             dispatch(addComponentToStore(component));
           },
+          ReceiveComponentUpdated: (component: ComponentView) => {
+            dispatch(
+              updateComponentInStore({
+                id: component.id,
+                changes: component,
+              })
+            );
+          },
           ReceiveComponentDeleted: (componentId: number) => {
             dispatch(removeComponentFromStore(componentId));
-            console.log("Component deleted:", componentId);
           },
         },
       });
@@ -108,10 +116,9 @@ const WorksheetPage = () => {
         y: relativeY,
       };
 
-      var returnedComponent: ComponentView =
-        await componentService.CreateComponent(newComponent);
-
-      dispatch(addComponentToStore(returnedComponent));
+      const { payload: returnedComponent } = await dispatch(
+        createComponent(newComponent)
+      );
 
       const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
       if (hubConnection) {

@@ -1,7 +1,5 @@
 import { ComponentType } from "../models/enums/ComponentType";
 import { CreateComponentRequest } from "../api/Component/models/CreateComponentRequest";
-import { FontSizes } from "../extensions/tiptap/FontSize";
-import { FontFamilies } from "../extensions/tiptap/FontFamily";
 
 export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
   {
@@ -14,12 +12,8 @@ export const componentDefaults: Record<ComponentType, CreateComponentRequest> =
       rotation: 0,
       zIndex: 1,
       type: ComponentType.Text,
-      content: "<p>Edit this text</p>",
-      style: {
-        textColor: "#000000",
-        fontSize: FontSizes[0],
-        fontFamily: FontFamilies[0],
-      },
+      content:
+        "<p><span style='color: #000000; font-size: 16px; font-family: Arial'>Edit this text</span></p>",
     },
     [ComponentType.Image]: {
       worksheetId: 0,

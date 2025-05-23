@@ -1,9 +1,14 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useLayoutEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 //redux
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/store";
-import { deleteComponent } from "../../../features/component/slices/componentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState, store } from "../../../app/store";
+import {
+  componentSelectors,
+  deleteComponent,
+  updateComponent,
+  updateComponentInStore,
+} from "../../../features/component/slices/componentSlice";
 //moveable
 import Moveable from "react-moveable";
 //tiptap
@@ -25,11 +30,10 @@ import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
-import {
-  ComponentView,
-  StyleProperties,
-} from "../../../models/views/ComponentView";
+import { ComponentView } from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
+import { UpdateComponentRequest } from "../../../api/Component/models/UpdateComponentRequest";
+import { ComponentUpdatedRequest } from "../../../models/hubs/worksheetHub/ComponentUpdatedRequest";
 //icons
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
@@ -48,12 +52,14 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  rgbToHex,
   Select,
   TextField,
 } from "@mui/material";
 import IconButton from "../../ui/IconButton";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
+import { throttle } from "lodash";
 
 type TextComponentPropsType = {
   id: number;
@@ -62,6 +68,38 @@ type TextComponentPropsType = {
   boundsRef: React.RefObject<HTMLElement | null>;
   initialProperties: ComponentView;
 };
+
+const throttledSendLiveUpdate = throttle(
+  (
+    updatedProperties: ComponentView,
+    worksheetId: string,
+    hubConnection: any
+  ) => {
+    const request: ComponentUpdatedRequest = {
+      worksheetId: Number(worksheetId),
+      component: updatedProperties,
+    };
+    hubConnection.invoke("ComponentUpdated", request);
+  },
+  350,
+  { leading: false, trailing: true }
+);
+
+const throttledHandleChange = throttle(
+  (
+    dispatch: AppDispatch,
+    componentId: number,
+    component: ComponentView,
+    updates: Partial<ComponentView>,
+    sendLiveUpdate: (updatedProperties: ComponentView) => void
+  ) => {
+    dispatch(updateComponentInStore({ id: componentId, changes: updates }));
+    const updatedComponent = { ...component, ...updates };
+    sendLiveUpdate(updatedComponent);
+  },
+  100,
+  { leading: false, trailing: true }
+);
 
 export default function TextComponent({
   id,
@@ -75,22 +113,10 @@ export default function TextComponent({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState<ComponentView>({
-    id: initialProperties.id,
-    width: initialProperties.width,
-    height: initialProperties.height,
-    x: initialProperties.x,
-    y: initialProperties.y,
-    rotation: initialProperties.rotation,
-    zIndex: initialProperties.zIndex,
-    type: initialProperties.type,
-    content: initialProperties.content,
-    style: {
-      textColor: initialProperties.style?.textColor,
-      fontSize: initialProperties.style?.fontSize,
-      fontFamily: initialProperties.style?.fontFamily,
-    },
-  });
+  const componentId = initialProperties.id;
+  const component = useSelector((state: RootState) =>
+    componentSelectors.selectById(state, componentId)
+  );
 
   const editor = useEditor({
     extensions: [
@@ -104,7 +130,7 @@ export default function TextComponent({
       BulletList,
       OrderedList,
     ],
-    content: initialProperties.content,
+    content: component.content,
     editable: true,
     editorProps: {
       attributes: {
@@ -120,15 +146,60 @@ export default function TextComponent({
   });
 
   useEffect(() => {
+    if (editor && component?.content !== editor.getHTML()) {
+      editor.commands.setContent(component.content!);
+    }
+  }, [component?.content, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleEditorUpdate = () => {
+      const newContent = editor.getHTML();
+      if (newContent !== component.content) {
+        throttledHandleChange(
+          dispatch,
+          componentId,
+          component,
+          { content: newContent },
+          sendLiveUpdate
+        );
+      }
+    };
+
+    editor.on("update", handleEditorUpdate);
+    return () => {
+      editor.off("update", handleEditorUpdate);
+    };
+  }, [editor, dispatch, componentId, component.content]);
+
+  useEffect(() => {
     if (selectedId !== id) return;
 
-    const handleClickOutside = (event: PointerEvent) => {
+    const handleClickOutside = async (event: PointerEvent) => {
       const target = event.target as HTMLElement;
       const isInside = targetRef.current?.contains(target);
       const isMoveable = !!target.closest(".moveable-control-box");
       const isMuiSelect = !!target.closest(".MuiPopover-root");
 
       if (!isInside && !isMoveable && !isMuiSelect) {
+        const latestComponent = componentSelectors.selectById(
+          store.getState() as RootState,
+          componentId
+        );
+        if (latestComponent) {
+          const updateRequest: UpdateComponentRequest = {
+            id: latestComponent.id,
+            width: latestComponent.width,
+            height: latestComponent.height,
+            x: latestComponent.x,
+            y: latestComponent.y,
+            rotation: latestComponent.rotation,
+            zIndex: latestComponent.zIndex,
+            content: latestComponent.content,
+          };
+          await dispatch(updateComponent(updateRequest));
+        }
         setSelectedId(null);
       }
     };
@@ -142,47 +213,32 @@ export default function TextComponent({
     if (selectedId === id) {
       moveableRef.current?.updateRect();
     }
-  }, [properties.width, properties.height]);
+  }, [component.width, component.height]);
 
-  const applyTextCommand = (callback: () => void) => {
-    editor?.commands.focus();
-    editor?.commands.selectAll();
-    callback();
-    editor?.commands.setTextSelection(editor.state.selection.to);
-  };
+  const applyTextCommand = useCallback(
+    (callback: () => void) => {
+      editor?.commands.focus();
+      editor?.commands.selectAll();
+      callback();
+      editor?.commands.setTextSelection(editor.state.selection.to);
+    },
+    [editor]
+  );
 
   const handleClick = () => setSelectedId(id);
 
-  const handleChange = (key: keyof ComponentView, value: any) => {
-    setProperties((prev) => {
-      if (key === "style") {
-        return {
-          ...prev,
-          style: { ...prev.style, ...value },
-        };
-      }
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
-
-    if (key === "style") {
-      const styleKey = Object.keys(value)[0] as keyof StyleProperties;
-      const styleValue = value[styleKey];
-      if (styleKey === "fontSize") {
-        applyTextCommand(() => editor?.commands.setFontSize(styleValue));
-      } else if (styleKey === "fontFamily") {
-        applyTextCommand(() => editor?.commands.setFontFamily(styleValue));
-      } else if (styleKey === "textColor") {
-        applyTextCommand(() => editor?.commands.setColor(styleValue));
-      }
-    }
-  };
-
-  const handleStyleChange = (key: keyof StyleProperties, value: any) => {
-    handleChange("style", { [key]: value });
-  };
+  const handleChange = useCallback(
+    (updates: Partial<ComponentView>) => {
+      throttledHandleChange(
+        dispatch,
+        componentId,
+        component,
+        updates,
+        sendLiveUpdate
+      );
+    },
+    [dispatch, componentId, component]
+  );
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
@@ -197,6 +253,16 @@ export default function TextComponent({
     }
   };
 
+  const sendLiveUpdate = useCallback(
+    (updatedProperties: ComponentView) => {
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+      if (hubConnection && worksheetId) {
+        throttledSendLiveUpdate(updatedProperties, worksheetId, hubConnection);
+      }
+    },
+    [worksheetId]
+  );
+
   return (
     <>
       <Box
@@ -204,14 +270,10 @@ export default function TextComponent({
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${properties.width}px`,
-          height: `${properties.height}px`,
-          transform: getTransform(
-            properties.x,
-            properties.y,
-            properties.rotation
-          ),
-          zIndex: properties.zIndex,
+          width: `${component.width}px`,
+          height: `${component.height}px`,
+          transform: getTransform(component.x, component.y, component.rotation),
+          zIndex: component.zIndex,
         }}
       >
         {selectedId === id && (
@@ -219,10 +281,15 @@ export default function TextComponent({
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Font Family</InputLabel>
               <Select
-                value={properties.style?.fontFamily ?? ""}
+                value={
+                  editor?.getAttributes("textStyle")?.fontFamily ??
+                  FontFamilies[0]
+                }
                 label="Font Family"
-                onChange={(e) =>
-                  handleStyleChange("fontFamily", e.target.value)
+                onChange={(event) =>
+                  applyTextCommand(() =>
+                    editor?.commands.setFontFamily(event.target.value as string)
+                  )
                 }
               >
                 {FontFamilies.map((font) => (
@@ -240,9 +307,15 @@ export default function TextComponent({
             <FormControl size="small" sx={{ minWidth: 80 }}>
               <InputLabel>Font Size</InputLabel>
               <Select
-                value={properties.style?.fontSize ?? ""}
+                value={
+                  editor?.getAttributes("textStyle")?.fontSize ?? FontSizes[0]
+                }
                 label="Font Size"
-                onChange={(e) => handleStyleChange("fontSize", e.target.value)}
+                onChange={(event) =>
+                  applyTextCommand(() =>
+                    editor?.commands.setFontSize(event.target.value as string)
+                  )
+                }
               >
                 {FontSizes.map((size) => (
                   <MenuItem key={size} value={size}>
@@ -257,12 +330,11 @@ export default function TextComponent({
               type="number"
               size="small"
               variant="outlined"
-              value={properties.zIndex}
+              value={component.zIndex}
               onChange={(e) =>
-                handleChange(
-                  "zIndex",
-                  Math.max(1, parseInt(e.target.value) || 0)
-                )
+                handleChange({
+                  zIndex: Math.max(1, parseInt(e.target.value) || 0),
+                })
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -353,9 +425,11 @@ export default function TextComponent({
             </IconButton>
 
             <ColorPicker
-              value={properties.style?.textColor ?? "#000000"}
+              value={
+                rgbToHex(editor?.getAttributes("textStyle")?.color) ?? "#000000"
+              }
               onChange={(color: string) =>
-                handleStyleChange("textColor", color)
+                applyTextCommand(() => editor?.commands.setColor(color))
               }
             />
 
@@ -416,11 +490,10 @@ export default function TextComponent({
             el.style.transform = getTransform(
               clampedX,
               clampedY,
-              properties.rotation
+              component.rotation
             );
 
-            handleChange("x", clampedX);
-            handleChange("y", clampedY);
+            handleChange({ x: clampedX, y: clampedY });
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
@@ -431,7 +504,7 @@ export default function TextComponent({
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = getTransform(x, y, properties.rotation);
+            el.style.transform = getTransform(x, y, component.rotation);
 
             const inner = el.querySelector("[data-sync-size]") as HTMLElement;
             if (inner) {
@@ -439,10 +512,7 @@ export default function TextComponent({
               inner.style.height = "100%";
             }
 
-            handleChange("width", width);
-            handleChange("height", height);
-            handleChange("x", x);
-            handleChange("y", y);
+            handleChange({ width, height, x, y });
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
@@ -453,9 +523,7 @@ export default function TextComponent({
 
             el.style.transform = getTransform(x, y, rotation);
 
-            handleChange("rotation", rotation);
-            handleChange("x", x);
-            handleChange("y", y);
+            handleChange({ rotation, x, y });
           }}
         />
       )}

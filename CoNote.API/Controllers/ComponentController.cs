@@ -36,6 +36,13 @@ public class ComponentController : ControllerBase
         return response;
     }
 
+    [HttpPut]
+    public async Task<ActionResult<Component>> UpdateComponent([FromBody] UpdateComponentRequest request)
+    {
+        var response = await _componentService.UpdateComponentAsync(request, _cancellationToken);
+        return response;
+    }
+
     [HttpDelete]
     public async Task<ActionResult<long>> DeleteComponent([FromQuery] long componentId)
     {

@@ -27,6 +27,14 @@ public class WorksheetHub : Hub
             .SendAsync("ReceiveComponentAdded", component);
     }
 
+    public async Task ComponentUpdated(ComponentUpdatedRequest request)
+    {
+        var worksheetId = request.WorksheetId.ToString();
+
+        await Clients.OthersInGroup(worksheetId)
+            .SendAsync("ReceiveComponentUpdated", request.Component);
+    }
+
     public async Task ComponentDeleted(ComponentDeletedRequest request)
     {
         var worksheetId = request.WorksheetId.ToString();

@@ -50,6 +50,29 @@ public class ComponentService : IComponentService
         return component;
     }
 
+    public async Task<Component> UpdateComponentAsync(UpdateComponentRequest request, CancellationToken cancellationToken)
+    {
+        var currentUserId = _httpContextService.GetCurrentUserId();
+        var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+        if (currentUser == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        var component = await _componentRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (component == null)
+        {
+            throw new ComponentNotFoundException();
+        }
+
+        component = _mapper.Map(request, component);
+        component.EditedBy = currentUser.Username;
+        component.EditedAt = DateTime.UtcNow;
+
+        await _componentRepository.UpdateAsync(component, cancellationToken);
+        return component;
+    }
+
     public async Task<long> DeleteComponentAsync(long componentId, CancellationToken cancellationToken)
     {
         var exists = await _componentRepository.ExistsByIdAsync(componentId, cancellationToken);
