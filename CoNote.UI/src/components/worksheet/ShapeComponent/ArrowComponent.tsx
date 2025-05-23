@@ -1,9 +1,4 @@
-import React, {
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  useCallback,
-} from "react";
+import React, { useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 //redux
 import { useDispatch, useSelector } from "react-redux";
@@ -107,7 +102,7 @@ const ArrowComponent = ({
           store.getState() as RootState,
           componentId
         );
-        if (latestComponent) {
+        if (latestComponent !== component) {
           const updateRequest: UpdateComponentRequest = {
             id: latestComponent.id,
             width: latestComponent.width,
@@ -335,7 +330,7 @@ const ArrowComponent = ({
 
             const rotation = beforeRotate;
             const [x, y] = drag.beforeTranslate;
-            
+
             el.style.transform = getTransform(x, y, rotation);
 
             handleChange({ rotation, x, y });

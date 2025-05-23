@@ -102,14 +102,14 @@ const MessageComponent = ({
           store.getState() as RootState,
           componentId
         );
-        if (latestComponent) {
+        if (latestComponent !== component) {
           const updateRequest: UpdateComponentRequest = {
             id: latestComponent.id,
             width: latestComponent.width,
             height: latestComponent.height,
             x: latestComponent.x,
             y: latestComponent.y,
-            rotation: Math.round(latestComponent.rotation), // Ensure integer rotation
+            rotation: Math.round(latestComponent.rotation), 
             zIndex: latestComponent.zIndex,
             content: latestComponent.content,
             style: latestComponent.style,

@@ -22,7 +22,7 @@ const VideoComponentDraggable = () => {
 
   return (
     <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <Box sx={{ width: 179, height: 100 }}>
+      <Box sx={{ width: "100%", height: 100 }}>
         <img
           src={require(`../../../../assets/images/placeholders/video-component-placeholder.png`)}
           alt="Video preview"

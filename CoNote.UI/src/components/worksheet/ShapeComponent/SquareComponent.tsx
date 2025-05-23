@@ -102,7 +102,7 @@ const SquareComponent = ({
           store.getState() as RootState,
           componentId
         );
-        if (latestComponent) {
+        if (latestComponent !== component) {
           const updateRequest: UpdateComponentRequest = {
             id: latestComponent.id,
             width: latestComponent.width,

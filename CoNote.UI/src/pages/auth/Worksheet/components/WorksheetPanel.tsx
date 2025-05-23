@@ -23,12 +23,12 @@ import TriangleComponentDraggable from "../../../../components/worksheet/ShapeCo
 import {
   Box,
   Divider,
+  Grid,
   IconButton,
   Stack,
   styled,
   Typography,
 } from "@mui/material";
-import Carousel from "../../../../components/ui/Carousel/Carousel";
 
 const WorksheetPanelContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -73,28 +73,154 @@ const WorksheetPanel = () => {
 
       <Stack direction="column" gap={1}>
         <Typography variant="subtitle2">Media</Typography>
-        <Carousel>
-          <ImageComponentDraggable />
-          <VideoComponentDraggable />
-        </Carousel>
+        <Grid container spacing={2}>
+          <Grid
+            size={{ sm: 4.5 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ImageComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 7.5 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <VideoComponentDraggable />
+          </Grid>
+        </Grid>
       </Stack>
 
       <Stack direction="column" gap={1}>
-        <Typography variant="subtitle2">Shape</Typography>
-        <Carousel>
-          <ArrowComponentDraggable />
-          <CircleComponentDraggable />
-          <CrossComponentDraggable />
-          <DiamondComponentDraggable />
-          <HeartComponentDraggable />
-          <MessageComponentDraggable />
-          <PlusComponentDraggable />
-          <PolygonComponentDraggable />
-          <RectangleComponentDraggable />
-          <SquareComponentDraggable />
-          <StarComponentDraggable />
-          <TriangleComponentDraggable />
-        </Carousel>
+        <Typography variant="subtitle2">Shapes</Typography>
+        <Grid container spacing={2}>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ArrowComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircleComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CrossComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <DiamondComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HeartComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MessageComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PlusComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PolygonComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <RectangleComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <SquareComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <StarComponentDraggable />
+          </Grid>
+          <Grid
+            size={{ sm: 3 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TriangleComponentDraggable />
+          </Grid>
+        </Grid>
       </Stack>
     </WorksheetPanelContainer>
   );

@@ -22,7 +22,7 @@ const PlusComponentDraggable = () => {
 
   return (
     <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <Box sx={{ width: 75, height: 75 }}>
+      <Box sx={{ width: "100%", height: "100%" }}>
         <svg
           width="100%"
           height="100%"

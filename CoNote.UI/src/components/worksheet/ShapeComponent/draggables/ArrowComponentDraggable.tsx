@@ -22,7 +22,7 @@ const ArrowComponentDraggable = () => {
 
   return (
     <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <Box sx={{ width: 112.5, height: 35 }}>
+      <Box sx={{ width: "100%", height: "100%" }}>
         <svg
           width="100%"
           height="100%"

@@ -22,7 +22,7 @@ const ImageComponentDraggable = () => {
 
   return (
     <Box ref={setNodeRef} {...listeners} {...attributes} sx={style}>
-      <Box sx={{ width: 106, height: 100 }}>
+      <Box sx={{ width: "100%", height: 100 }}>
         <img
           src={require(`../../../../assets/images/placeholders/image-component-placeholder.png`)}
           alt="Image preview"
