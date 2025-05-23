@@ -1,18 +1,26 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 //redux
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/store";
-import { deleteComponent } from "../../../features/component/slices/componentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState, store } from "../../../app/store";
+import {
+  componentSelectors,
+  deleteComponent,
+  updateComponent,
+  updateComponentInStore,
+} from "../../../features/component/slices/componentSlice";
 //moveable
 import Moveable from "react-moveable";
 //utils
 import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
+import { throttle } from "lodash";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
+import { ComponentUpdatedRequest } from "../../../models/hubs/worksheetHub/ComponentUpdatedRequest";
+import { UpdateComponentRequest } from "../../../api/Component/models/UpdateComponentRequest";
 //icons
 import LinkIcon from "@mui/icons-material/Link";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +37,38 @@ export const getImageByName = (filename: string) => {
     return `/assets/images/placeholders/image-component-placeholder.png`;
   }
 };
+
+const throttledSendLiveUpdate = throttle(
+  (
+    updatedProperties: ComponentView,
+    worksheetId: string,
+    hubConnection: any
+  ) => {
+    const request: ComponentUpdatedRequest = {
+      worksheetId: Number(worksheetId),
+      component: updatedProperties,
+    };
+    hubConnection.invoke("ComponentUpdated", request);
+  },
+  350,
+  { leading: false, trailing: true }
+);
+
+const throttledHandleChange = throttle(
+  (
+    dispatch: AppDispatch,
+    componentId: number,
+    component: ComponentView,
+    updates: Partial<ComponentView>,
+    sendLiveUpdate: (updatedProperties: ComponentView) => void
+  ) => {
+    dispatch(updateComponentInStore({ id: componentId, changes: updates }));
+    const updatedComponent = { ...component, ...updates };
+    sendLiveUpdate(updatedComponent);
+  },
+  100,
+  { leading: false, trailing: true }
+);
 
 type ImageComponentPropsType = {
   id: number;
@@ -50,27 +90,38 @@ const ImageComponent = ({
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [properties, setProperties] = useState<ComponentView>({
-    id: initialProperties.id,
-    width: initialProperties.width,
-    height: initialProperties.height,
-    x: initialProperties.x,
-    y: initialProperties.y,
-    rotation: initialProperties.rotation,
-    zIndex: initialProperties.zIndex,
-    type: initialProperties.type,
-    content: initialProperties.content,
-  });
+  const componentId = initialProperties.id;
+  const component = useSelector((state: RootState) =>
+    componentSelectors.selectById(state, componentId)
+  )!;
 
   useEffect(() => {
     if (selectedId !== id) return;
 
-    const handleClickOutside = (event: PointerEvent) => {
+    const handleClickOutside = async (event: PointerEvent) => {
       const target = event.target as HTMLElement;
       const isInside = targetRef.current?.contains(target);
       const isMoveable = !!target.closest(".moveable-control-box");
 
       if (!isInside && !isMoveable) {
+        const latestComponent = componentSelectors.selectById(
+          store.getState() as RootState,
+          componentId
+        );
+        if (latestComponent) {
+          const updateRequest: UpdateComponentRequest = {
+            id: latestComponent.id,
+            width: latestComponent.width,
+            height: latestComponent.height,
+            x: latestComponent.x,
+            y: latestComponent.y,
+            rotation: Math.round(latestComponent.rotation),
+            zIndex: latestComponent.zIndex,
+            content: latestComponent.content,
+            style: latestComponent.style,
+          };
+          await dispatch(updateComponent(updateRequest));
+        }
         setSelectedId(null);
       }
     };
@@ -78,24 +129,30 @@ const ImageComponent = ({
     document.addEventListener("pointerdown", handleClickOutside);
     return () =>
       document.removeEventListener("pointerdown", handleClickOutside);
-  }, [selectedId, id, setSelectedId]);
+  }, [selectedId, id, setSelectedId, dispatch, componentId]);
 
   useLayoutEffect(() => {
     if (selectedId === id) {
       moveableRef.current?.updateRect();
     }
-  }, [properties.width, properties.height]);
+  }, [component.width, component.height, selectedId, id]);
 
   const handleClick = () => {
     setSelectedId(id);
   };
 
-  const handleChange = (key: keyof ComponentView, value: any) => {
-    setProperties((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
+  const handleChange = useCallback(
+    (updates: Partial<ComponentView>) => {
+      throttledHandleChange(
+        dispatch,
+        componentId,
+        component,
+        updates,
+        sendLiveUpdate
+      );
+    },
+    [dispatch, componentId, component]
+  );
 
   const handleDelete = async () => {
     await dispatch(deleteComponent(initialProperties.id));
@@ -110,17 +167,26 @@ const ImageComponent = ({
     }
   };
 
-  const handleAddImage = () => {
+  const handleAddImage = useCallback(() => {
     const source = prompt("Enter image URL or filename (from assets/images)");
 
     if (!source) return;
 
     const isExternal = source.startsWith("http") || source.startsWith("data");
-
     const finalSrc = isExternal ? source : getImageByName(source);
 
-    handleChange("content", finalSrc);
-  };
+    handleChange({ content: finalSrc });
+  }, [handleChange]);
+
+  const sendLiveUpdate = useCallback(
+    (updatedProperties: ComponentView) => {
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+      if (hubConnection && worksheetId) {
+        throttledSendLiveUpdate(updatedProperties, worksheetId, hubConnection);
+      }
+    },
+    [worksheetId]
+  );
 
   return (
     <>
@@ -129,14 +195,10 @@ const ImageComponent = ({
         onClick={handleClick}
         style={{
           position: "absolute",
-          width: `${properties.width}px`,
-          height: `${properties.height}px`,
-          transform: getTransform(
-            properties.x,
-            properties.y,
-            properties.rotation
-          ),
-          zIndex: properties.zIndex,
+          width: `${component.width}px`,
+          height: `${component.height}px`,
+          transform: getTransform(component.x, component.y, component.rotation),
+          zIndex: component.zIndex,
           cursor: "move",
         }}
       >
@@ -147,9 +209,9 @@ const ImageComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={properties.width}
+              value={component.width}
               onChange={(e) =>
-                handleChange("width", parseInt(e.target.value) || 0)
+                handleChange({ width: parseInt(e.target.value) || 0 })
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -161,9 +223,9 @@ const ImageComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={properties.height}
+              value={component.height}
               onChange={(e) =>
-                handleChange("height", parseInt(e.target.value) || 0)
+                handleChange({ height: parseInt(e.target.value) || 0 })
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -175,12 +237,11 @@ const ImageComponent = ({
               type="number"
               size="small"
               variant="outlined"
-              value={properties.zIndex}
+              value={component.zIndex}
               onChange={(e) =>
-                handleChange(
-                  "zIndex",
-                  Math.max(1, parseInt(e.target.value) || 0)
-                )
+                handleChange({
+                  zIndex: Math.max(1, parseInt(e.target.value) || 0),
+                })
               }
               onKeyDown={(e) =>
                 e.key === "Enter" && (e.target as HTMLInputElement).blur()
@@ -203,11 +264,11 @@ const ImageComponent = ({
         <Box sx={{ width: "100%", height: "100%", objectFit: "fill" }}>
           <img
             src={
-              properties.content ??
+              component.content ??
               "/assets/images/placeholders/image-component-placeholder.png"
             }
             alt="Image not found"
-            style={{ width: properties.width, height: properties.height }}
+            style={{ width: component.width, height: component.height }}
           />
         </Box>
       </Box>
@@ -222,7 +283,7 @@ const ImageComponent = ({
           rotatable
           throttleDrag={1}
           throttleResize={1}
-          throttleRotate={1}
+          throttleRotate={0}
           rotationPosition="bottom"
           renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
           onDragStart={({ inputEvent }) => {
@@ -247,40 +308,34 @@ const ImageComponent = ({
             el.style.transform = getTransform(
               clampedX,
               clampedY,
-              properties.rotation
+              component.rotation
             );
 
-            handleChange("x", clampedX);
-            handleChange("y", clampedY);
+            handleChange({ x: clampedX, y: clampedY });
           }}
           onResize={({ width, height, drag }) => {
             const el = targetRef.current;
             const bounds = boundsRef.current?.getBoundingClientRect();
             if (!el || !bounds) return;
 
-            const [x, y] = drag.beforeTranslate;
+            let [x, y] = drag.beforeTranslate;
 
             el.style.width = `${width}px`;
             el.style.height = `${height}px`;
-            el.style.transform = getTransform(x, y, properties.rotation);
+            el.style.transform = getTransform(x, y, component.rotation);
 
-            handleChange("width", width);
-            handleChange("height", height);
-            handleChange("x", x);
-            handleChange("y", y);
+            handleChange({ width, height, x, y });
           }}
           onRotate={({ beforeRotate, drag }) => {
             const el = targetRef.current;
             if (!el) return;
 
-            const rotation = beforeRotate;
+            const rotation = Math.round(beforeRotate);
             const [x, y] = drag.beforeTranslate;
 
             el.style.transform = getTransform(x, y, rotation);
 
-            handleChange("rotation", rotation);
-            handleChange("x", x);
-            handleChange("y", y);
+            handleChange({ rotation, x, y });
           }}
         />
       )}

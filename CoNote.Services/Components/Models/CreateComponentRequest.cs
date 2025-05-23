@@ -10,7 +10,7 @@ public class CreateComponentRequest
     public int ZIndex { get; set; } = 1;
     public double X { get; set; }
     public double Y { get; set; }
-    public int Rotation { get; set; } = 0;
+    public double Rotation { get; set; } = 0;
     public ComponentType Type { get; set; }
     public string? Content { get; set; }
     public StyleProperties? Style { get; set; }

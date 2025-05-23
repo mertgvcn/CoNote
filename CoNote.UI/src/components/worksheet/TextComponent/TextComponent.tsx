@@ -29,6 +29,7 @@ import {
 import { getTransform } from "../../../utils/getTransform";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
 import { HUB_NAMES } from "../../../utils/SignalR/hubConstants";
+import { throttle } from "lodash";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
@@ -59,15 +60,6 @@ import {
 import IconButton from "../../ui/IconButton";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
-import { throttle } from "lodash";
-
-type TextComponentPropsType = {
-  id: number;
-  selectedId: number | null;
-  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
-  boundsRef: React.RefObject<HTMLElement | null>;
-  initialProperties: ComponentView;
-};
 
 const throttledSendLiveUpdate = throttle(
   (
@@ -100,6 +92,14 @@ const throttledHandleChange = throttle(
   100,
   { leading: false, trailing: true }
 );
+
+type TextComponentPropsType = {
+  id: number;
+  selectedId: number | null;
+  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
+  boundsRef: React.RefObject<HTMLElement | null>;
+  initialProperties: ComponentView;
+};
 
 export default function TextComponent({
   id,

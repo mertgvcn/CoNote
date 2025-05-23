@@ -9,7 +9,7 @@ public record UpdateComponentRequest
     public int ZIndex { get; init; }
     public double X { get; init; }
     public double Y { get; init; }
-    public int Rotation { get; init; }
+    public double Rotation { get; init; }
     public string? Content { get; init; }
     public StyleProperties? Style { get; init; }
 }
