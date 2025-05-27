@@ -2,6 +2,7 @@
 using System.Text.Json;
 using CoNote.Core.Entities;
 using CoNote.Core.Entities.Common;
+using CoNote.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Context;
@@ -15,16 +16,13 @@ public class CoNoteContext : DbContext
     public DbSet<AuditLog> AuditLogs { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Component> Components { get; set; }
-    public DbSet<ComponentGroup> ComponentGroups { get; set; }
     public DbSet<Invitation> Invitations { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Section> Sections { get; set; }
-    public DbSet<Style> Styles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Worksheet> Worksheets { get; set; }
-    public DbSet<WorksheetStyle> WorksheetStyles { get; set; }
     public DbSet<Workspace> Workspaces { get; set; }
     public DbSet<WorkspaceMember> WorkspaceMembers { get; set; }
 

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Data", "CoNote.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.Core", "CoNote.Core\CoNote.Core.csproj", "{DBA1694F-3E16-4540-8E1A-E6806428209F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoNote.SignalR", "CoNote.SignalR\CoNote.SignalR.csproj", "{377D4011-896A-4D23-80C0-2FDCD5B032CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBA1694F-3E16-4540-8E1A-E6806428209F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377D4011-896A-4D23-80C0-2FDCD5B032CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377D4011-896A-4D23-80C0-2FDCD5B032CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377D4011-896A-4D23-80C0-2FDCD5B032CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377D4011-896A-4D23-80C0-2FDCD5B032CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

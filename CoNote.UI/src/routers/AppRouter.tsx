@@ -11,6 +11,9 @@ import LoginPage from "../pages/public/Login/LoginPage";
 import RegisterPage from "../pages/public/Register/RegisterPage";
 //Protected Routes
 import DashboardPage from "../pages/auth/Dashboard/DashboardPage";
+import WorkspaceDetailsPage from "../pages/auth/WorkspaceDetails/WorkspaceDetailsPage";
+import WorksheetPage from "../pages/auth/Worksheet/WorksheetPage";
+import InvitationsPage from "../pages/auth/Invitation/InvitationsPage";
 
 const AppRouter = () => {
   return (
@@ -23,9 +26,11 @@ const AppRouter = () => {
       </Route>
 
       <Route element={<AuthLayout />}>
-        <Route path="/" element={<DashboardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-      </Route>
+        <Route path="/workspace/:id" element={<WorkspaceDetailsPage />} />
+        <Route path="/worksheet/:id" element={<WorksheetPage />} />
+        <Route path="/invitations" element={<InvitationsPage />} />
+      </Route>  
     </Routes>
   );
 };

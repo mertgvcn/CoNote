@@ -3,6 +3,7 @@ using CoNote.Core;
 using CoNote.Data;
 using CoNote.Infrastructure;
 using CoNote.Services;
+using CoNote.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,6 +20,7 @@ public static class ProgramExtension
         services.RegisterInfrastructure();
         services.RegisterData(configuration);
         services.RegisterCore();
+        services.RegisterSignalR();
     }
 
     public static void AddSwaggerGenWithAuth(this WebApplicationBuilder builder)

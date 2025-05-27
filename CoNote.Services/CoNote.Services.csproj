@@ -8,18 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Worksheet\" />
-    <Folder Include="Section\" />
-    <Folder Include="User\" />
+    <Compile Remove="Worksheet\**" />
+    <EmbeddedResource Remove="Worksheet\**" />
+    <None Remove="Worksheet\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CoNote.Infrastructure\CoNote.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Roles\Models\" />
   </ItemGroup>
 
 </Project>

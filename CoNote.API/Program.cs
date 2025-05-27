@@ -1,6 +1,7 @@
 using CoNote.API;
 using CoNote.Data.Context;
 using CoNote.Infrastructure.Middlewares;
+using CoNote.SignalR.Hubs.WorksheetHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +19,14 @@ builder.AddSwaggerGenWithAuth();
 builder.ConfigureAuthentication();
 
 //Enable CORS
-builder.Services.AddCors(c =>
+builder.Services.AddCors(options =>
 {
-    c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy(
+        name: "CorsPolicy",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+        });
 });
 
 var app = builder.Build();
@@ -33,9 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //Enable CORS
-app.UseCors(options =>
-    options.SetIsOriginAllowed(origin => true).AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
-);
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
@@ -48,5 +52,7 @@ app.UseAuthorization();
 app.AutoMigrateDatabase();
 
 app.MapControllers();
+
+app.MapHub<WorksheetHub>(WorksheetHub.HubURL);
 
 app.Run();

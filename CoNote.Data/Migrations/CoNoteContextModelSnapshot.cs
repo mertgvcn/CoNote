@@ -100,10 +100,7 @@ namespace CoNote.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("ComponentGroupId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ContentJson")
+                    b.Property<string>("Content")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -120,78 +117,38 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("Height")
+                    b.Property<int>("Height")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsLocked")
-                        .HasColumnType("boolean");
+                    b.Property<double>("Rotation")
+                        .HasColumnType("double precision");
 
-                    b.Property<long?>("StyleId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Style")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Width")
+                    b.Property<int>("Width")
                         .HasColumnType("integer");
 
                     b.Property<long>("WorksheetId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("X")
-                        .HasColumnType("integer");
+                    b.Property<double>("X")
+                        .HasColumnType("double precision");
 
-                    b.Property<int>("Y")
-                        .HasColumnType("integer");
+                    b.Property<double>("Y")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("ZIndex")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ComponentGroupId");
-
-                    b.HasIndex("StyleId");
-
                     b.HasIndex("WorksheetId");
 
                     b.ToTable("Components");
-                });
-
-            modelBuilder.Entity("CoNote.Core.Entities.ComponentGroup", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("WorksheetId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorksheetId");
-
-                    b.ToTable("ComponentGroups");
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.Invitation", b =>
@@ -209,7 +166,14 @@ namespace CoNote.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("ReceiverId")
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("ReceiverId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("RoleId")
@@ -219,6 +183,9 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<long>("WorkspaceId")
@@ -235,38 +202,6 @@ namespace CoNote.Data.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("Invitations");
-                });
-
-            modelBuilder.Entity("CoNote.Core.Entities.Notification", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.Permission", b =>
@@ -354,7 +289,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")
@@ -381,40 +315,6 @@ namespace CoNote.Data.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("Sections");
-                });
-
-            modelBuilder.Entity("CoNote.Core.Entities.Style", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("ComponentType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("StyleJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Styles");
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.User", b =>
@@ -483,7 +383,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")
@@ -512,47 +411,6 @@ namespace CoNote.Data.Migrations
                     b.ToTable("Worksheets");
                 });
 
-            modelBuilder.Entity("CoNote.Core.Entities.WorksheetStyle", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("EditedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("StyleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("WorksheetId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StyleId");
-
-                    b.HasIndex("WorksheetId");
-
-                    b.ToTable("WorksheetStyles");
-                });
-
             modelBuilder.Entity("CoNote.Core.Entities.Workspace", b =>
                 {
                     b.Property<long>("Id")
@@ -569,7 +427,6 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EditedAt")
@@ -631,6 +488,48 @@ namespace CoNote.Data.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("WorkspaceMembers");
+                });
+
+            modelBuilder.Entity("CoNote.Data.Entities.Notification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
@@ -699,31 +598,8 @@ namespace CoNote.Data.Migrations
 
             modelBuilder.Entity("CoNote.Core.Entities.Component", b =>
                 {
-                    b.HasOne("CoNote.Core.Entities.ComponentGroup", "ComponentGroup")
-                        .WithMany("Components")
-                        .HasForeignKey("ComponentGroupId");
-
-                    b.HasOne("CoNote.Core.Entities.Style", "Style")
-                        .WithMany()
-                        .HasForeignKey("StyleId");
-
                     b.HasOne("CoNote.Core.Entities.Worksheet", "Worksheet")
                         .WithMany("Components")
-                        .HasForeignKey("WorksheetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ComponentGroup");
-
-                    b.Navigation("Style");
-
-                    b.Navigation("Worksheet");
-                });
-
-            modelBuilder.Entity("CoNote.Core.Entities.ComponentGroup", b =>
-                {
-                    b.HasOne("CoNote.Core.Entities.Worksheet", "Worksheet")
-                        .WithMany("ComponentGroups")
                         .HasForeignKey("WorksheetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -736,8 +612,7 @@ namespace CoNote.Data.Migrations
                     b.HasOne("CoNote.Core.Entities.User", "Receiver")
                         .WithMany("ReceivedInvitations")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CoNote.Core.Entities.Role", "Role")
                         .WithMany()
@@ -764,17 +639,6 @@ namespace CoNote.Data.Migrations
                     b.Navigation("Sender");
 
                     b.Navigation("Workspace");
-                });
-
-            modelBuilder.Entity("CoNote.Core.Entities.Notification", b =>
-                {
-                    b.HasOne("CoNote.Core.Entities.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.Role", b =>
@@ -823,25 +687,6 @@ namespace CoNote.Data.Migrations
                     b.Navigation("Workspace");
                 });
 
-            modelBuilder.Entity("CoNote.Core.Entities.WorksheetStyle", b =>
-                {
-                    b.HasOne("CoNote.Core.Entities.Style", "Style")
-                        .WithMany()
-                        .HasForeignKey("StyleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CoNote.Core.Entities.Worksheet", "Worksheet")
-                        .WithMany("WorksheetStyles")
-                        .HasForeignKey("WorksheetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Style");
-
-                    b.Navigation("Worksheet");
-                });
-
             modelBuilder.Entity("CoNote.Core.Entities.WorkspaceMember", b =>
                 {
                     b.HasOne("CoNote.Core.Entities.Role", "Role")
@@ -867,6 +712,17 @@ namespace CoNote.Data.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("CoNote.Data.Entities.Notification", b =>
+                {
+                    b.HasOne("CoNote.Core.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
@@ -914,11 +770,6 @@ namespace CoNote.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CoNote.Core.Entities.ComponentGroup", b =>
-                {
-                    b.Navigation("Components");
-                });
-
             modelBuilder.Entity("CoNote.Core.Entities.Section", b =>
                 {
                     b.Navigation("Children");
@@ -943,11 +794,7 @@ namespace CoNote.Data.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("ComponentGroups");
-
                     b.Navigation("Components");
-
-                    b.Navigation("WorksheetStyles");
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.Workspace", b =>

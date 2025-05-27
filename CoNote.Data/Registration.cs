@@ -27,17 +27,14 @@ public static class Registration
     {
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
-        services.AddScoped<IComponentGroupRepository, ComponentGroupRepository>();
         services.AddScoped<IComponentRepository, ComponentRepository>();
         services.AddScoped<IInvitationRepository, InvitationRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ISectionRepository, SectionRepository>();
-        services.AddScoped<IStyleRepository, StyleRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorksheetRepository, WorksheetRepository>();
-        services.AddScoped<IWorksheetStyleRepository, WorksheetStyleRepository>();
         services.AddScoped<IWorkspaceMemberRepository, WorkspaceMemberRepository>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
     }

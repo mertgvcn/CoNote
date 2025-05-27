@@ -1,6 +1,11 @@
 //redux
-import { store } from "../../app/store";
-import { endSession } from "./authSlice";
+import { AppDispatch, store } from "../../app/store";
+import {
+  endSession,
+  setIsAppInitialized,
+  validateToken,
+} from "./slices/authSlice";
+import { getCurrentUserWorkspaces } from "../workspace/slices/workspaceSlice";
 //utils
 import { deleteCookie, getCookie, setCookie } from "../../utils/CookieManager";
 import AuthenticationAPI from "../../api/Authentication/AuthenticationAPI";
@@ -9,11 +14,12 @@ import {
   RenderSuccessToast,
 } from "../../utils/CustomToastManager";
 //models
+import { LoginForm } from "./models/LoginForm";
+import { RegisterForm } from "./models/RegisterForm";
 import { UserLoginRequest } from "../../api/Authentication/models/UserLoginRequest";
 import { UserLoginResponse } from "../../api/Authentication/models/UserLoginResponse";
 import { UserRegisterRequest } from "../../api/Authentication/models/UserRegisterRequest";
-import { LoginForm } from "./models/LoginForm";
-import { RegisterForm } from "./models/RegisterForm";
+import { getCurrentUserNotifications } from "../notification/slices/notificationSlice";
 
 const login = async (params: LoginForm) => {
   const userLoginRequest: UserLoginRequest = {
@@ -25,6 +31,7 @@ const login = async (params: LoginForm) => {
     const response = await AuthenticationAPI.Login(userLoginRequest);
     const data: UserLoginResponse = response.data;
     setCookie("access_token", data.accessToken, data.accessTokenExpireDate);
+    await store.dispatch(validateToken());
     RenderSuccessToast("Login successful.");
   } catch (error: any) {
     //TODO: any değiştir
@@ -63,7 +70,6 @@ const register = async (params: RegisterForm) => {
 const logout = (): void => {
   deleteCookie("access_token");
   store.dispatch(endSession());
-  window.location.href = "/login";
 };
 
 const isAuthenticated = async (): Promise<boolean> => {
@@ -79,11 +85,21 @@ const isAuthenticated = async (): Promise<boolean> => {
   }
 };
 
+const initializeAppData = () => async (dispatch: AppDispatch) => {
+  const isAuthenticated = (await dispatch(validateToken())).payload;
+
+  if (isAuthenticated) {
+    await dispatch(getCurrentUserWorkspaces());
+    await dispatch(getCurrentUserNotifications())
+  }
+  
+  dispatch(setIsAppInitialized(true));
+};
+
 export const authService = {
   login,
   register,
   logout,
   isAuthenticated,
+  initializeAppData,
 };
-
-

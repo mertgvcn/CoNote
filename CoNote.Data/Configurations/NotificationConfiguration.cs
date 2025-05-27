@@ -1,4 +1,4 @@
-﻿using CoNote.Core.Entities;
+﻿using CoNote.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
