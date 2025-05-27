@@ -103,9 +103,7 @@ export const GetRolesByWorkspaceId = async (workspaceId: number) => {
     if (error.response) {
       RenderErrorToast(error.response.data.Message);
     } else {
-      RenderErrorToast(
-        "An error occurred while fetching roles of workspace."
-      );
+      RenderErrorToast("An error occurred while fetching roles of workspace.");
     }
     throw error;
   }
@@ -132,6 +130,26 @@ export const CreateWorkspace = async (params: CreateWorkspaceForm) => {
   }
 };
 
+export const SearchWorkspacesByName = async (
+  searchValue: string,
+  limit?: number
+) => {
+  try {
+    var response = await WorkspaceAPI.SearchWorkspacesByName(
+      searchValue,
+      limit
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      RenderErrorToast(error.response.data.Message);
+    } else {
+      RenderErrorToast("An error occurred.");
+    }
+    throw error;
+  }
+};
+
 export const workspaceService = {
   GetCurrentUserWorkspaces,
   GetStructureByWorkspaceAndSectionId,
@@ -140,4 +158,5 @@ export const workspaceService = {
   GetSettingsByWorkspaceId,
   GetRolesByWorkspaceId,
   CreateWorkspace,
+  SearchWorkspacesByName,
 };

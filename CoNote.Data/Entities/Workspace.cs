@@ -8,6 +8,7 @@ public sealed class Workspace : BaseEntity, IEditable, ISoftDeletable
     public bool IsDeleted { get; set; }
     public string Name { get; set; } = default!;
     public string? Description { get; set; }
+    public bool IsPrivate { get; set; } = false;
     public List<Section> Sections { get; set; } = default!;
     public List<Worksheet> Worksheets { get; set; } = default!;
     public List<WorkspaceMember> Members { get; set; } = default!;

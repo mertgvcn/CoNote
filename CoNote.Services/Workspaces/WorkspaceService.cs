@@ -148,4 +148,17 @@ public class WorkspaceService : IWorkspaceService
 
         await transaction.CommitAsync(cancellationToken);
     }
+
+    public async Task<List<WorkspaceView>> SearchWorkspacesByNameAsync(string searchValue, int? limit, CancellationToken cancellationToken)
+    {
+        var searchedWorkspacesQueryable = _workspaceRepository.SearchByName(searchValue)
+            .ProjectTo<WorkspaceView>(_mapper.ConfigurationProvider);
+
+        if (limit.HasValue)
+        {
+            searchedWorkspacesQueryable = searchedWorkspacesQueryable.Take(limit.Value);
+        }
+
+        return await searchedWorkspacesQueryable.ToListAsync(cancellationToken);
+    }
 }

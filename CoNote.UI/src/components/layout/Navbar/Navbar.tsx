@@ -37,12 +37,14 @@ import {
 import NavSearchbar from "./components/NavSearchbar";
 import IconButton from "../../ui/IconButton";
 import NotificationsModal from "../../modals/NotificationsModal/NotificationsModal";
+import NavbarSearchModal from "../../modals/NavbarSearchModal/NavbarSearchModal";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showNavbarSearchModal, setShowNavbarSearchModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
 
   const theme = useTheme();
@@ -51,6 +53,10 @@ const Navbar = () => {
   const notifications = useSelector(notificationSelectors.selectAll);
   const notificationIds = useSelector(notificationSelectors.selectIds);
   const unreadNotificationCount = notifications.filter((n) => !n.isRead).length;
+
+  const handleNavbarSearchClick = async () => {
+    setShowNavbarSearchModal(true);
+  };
 
   const handleNotificationsClick = async () => {
     var request: MarkNotificationAsReadRequest = {
@@ -136,7 +142,7 @@ const Navbar = () => {
               )}
               {isAuthenticated && (
                 <>
-                  <NavSearchbar showTooltip />
+                  <NavSearchbar showTooltip onClick={handleNavbarSearchClick} />
 
                   <IconButton
                     size="small"
@@ -233,6 +239,11 @@ const Navbar = () => {
           </Toolbar>
         </Container>
       </AppBar>
+
+      <NavbarSearchModal
+        open={showNavbarSearchModal}
+        onClose={() => setShowNavbarSearchModal(false)}
+      />
 
       <NotificationsModal
         open={showNotificationsModal}

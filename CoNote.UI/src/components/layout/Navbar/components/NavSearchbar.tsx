@@ -40,13 +40,17 @@ const NavSearchInputWrapper = styled(Box)(({ theme }) => ({
 
 type NavSearchbarPropTypes = {
   showTooltip?: boolean;
+  onClick?: any;
 };
 
-const NavSearchbar = ({ showTooltip = false }: NavSearchbarPropTypes) => {
+const NavSearchbar = ({
+  showTooltip = false,
+  onClick,
+}: NavSearchbarPropTypes) => {
   return (
     <>
       {showTooltip ? (
-        <Tooltip title="Search for anything">
+        <Tooltip title="Search for anything" onClick={onClick}>
           <NavSearch>
             <NavSearchIconWrapper>
               <SearchRounded />

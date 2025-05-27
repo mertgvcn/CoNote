@@ -27,4 +27,10 @@ public sealed class WorkspaceRepository : BaseRepository<Workspace>, IWorkspaceR
 
         return workspaceName;
     }
+
+    public IQueryable<Workspace> SearchByName(string searchValue = "")
+    {
+        return GetAll()
+            .Where(w => w.Name.ToLower().Contains(searchValue.ToLower()) && w.IsDeleted == false && w.IsPrivate == false);
+    }
 }
