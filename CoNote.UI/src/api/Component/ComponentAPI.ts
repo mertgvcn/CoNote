@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import { BaseAPI } from "../BaseAPI";
 //models
 import { CreateComponentRequest } from "./models/CreateComponentRequest";
+import { UpdateComponentRequest } from "./models/UpdateComponentRequest";
 
 class ComponentAPI extends BaseAPI {
   private controllerExtension: string = "/api/Component";
@@ -20,11 +21,20 @@ class ComponentAPI extends BaseAPI {
   }
 
   public async CreateComponent(
-    params: CreateComponentRequest
+    request: CreateComponentRequest
   ): Promise<AxiosResponse> {
     return await this.post(
       this.controllerExtension + "/CreateComponent",
-      params
+      request
+    );
+  }
+
+  public async UpdateComponent(
+    request: UpdateComponentRequest
+  ): Promise<AxiosResponse> {
+    return await this.put(
+      this.controllerExtension + "/UpdateComponent",
+      request
     );
   }
 

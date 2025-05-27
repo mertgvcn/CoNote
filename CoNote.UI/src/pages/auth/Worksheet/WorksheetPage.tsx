@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 //redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../app/store";
 import { selectWorksheetLoading } from "../../../features/worksheet/slices/worksheetSlice";
+import {
+  addComponentToStore,
+  componentSelectors,
+  createComponent,
+  removeComponentFromStore,
+  updateComponentInStore,
+} from "../../../features/component/slices/componentSlice";
 //dnd-kit
 import {
   DndContext,
   DragEndEvent,
-  DragStartEvent,
   PointerSensor,
   pointerWithin,
   useSensor,
@@ -15,9 +22,11 @@ import {
 } from "@dnd-kit/core";
 //hooks
 import { useWorksheetData } from "../../../features/worksheet/hooks/useWorksheetData";
+import { useComponentData } from "../../../features/component/hooks/useComponentData";
 //utils
-import { componentService } from "../../../features/component/componentService";
 import { componentDefaults } from "../../../utils/ComponentDefaults";
+import { signalRManager } from "../../../utils/SignalR/signalRManager";
+import { HUB_ENDPOINTS, HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 //models
 import { ComponentView } from "../../../models/views/ComponentView";
 import { CreateComponentRequest } from "../../../api/Component/models/CreateComponentRequest";
@@ -35,24 +44,56 @@ interface DroppedComponentData {
 
 const WorksheetPage = () => {
   const { id } = useParams();
-  useWorksheetData(Number(id));
+  const worksheetId = Number(id);
+  const sensors = useSensors(useSensor(PointerSensor));
 
-  const loading = useSelector(selectWorksheetLoading);
+  const dispatch = useDispatch<AppDispatch>();
+  useWorksheetData(worksheetId);
+  useComponentData(worksheetId);
 
-  const [components, setComponents] = useState<ComponentView[]>([]);
+  const components = useSelector(componentSelectors.selectAll);
+  const worksheetSettingsLoading = useSelector(selectWorksheetLoading);
 
   useEffect(() => {
-    fetchComponents();
+    setupHubConnection();
+
+    return () => {
+      signalRManager.disconnect(HUB_NAMES.WORKSHEET);
+    };
   }, [id]);
 
-  const fetchComponents = async () => {
-    const response = await componentService.GetComponentsByWorksheetId(
-      Number(id)
-    );
-    setComponents(response);
-  };
+  const setupHubConnection = async () => {
+    try {
+      await signalRManager.connect(HUB_NAMES.WORKSHEET, {
+        hubEndpoints: HUB_ENDPOINTS.WORKSHEET,
+        onMessage: {
+          ReceiveComponentAdded: (component: ComponentView) => {
+            dispatch(addComponentToStore(component));
+          },
+          ReceiveComponentUpdated: (component: ComponentView) => {
+            dispatch(
+              updateComponentInStore({
+                id: component.id,
+                changes: component,
+              })
+            );
+          },
+          ReceiveComponentDeleted: (componentId: number) => {
+            dispatch(removeComponentFromStore(componentId));
+          },
+        },
+      });
 
-  const sensors = useSensors(useSensor(PointerSensor));
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+      if (hubConnection) {
+        await hubConnection.invoke("JoinWorksheet", {
+          WorksheetId: worksheetId,
+        });
+      }
+    } catch (e: any) {
+      console.error("Worksheet hub connection error:", e);
+    }
+  };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
@@ -75,14 +116,18 @@ const WorksheetPage = () => {
         y: relativeY,
       };
 
-      var returnedComponent: ComponentView =
-        await componentService.CreateComponent(newComponent);
+      const { payload: returnedComponent } = await dispatch(
+        createComponent(newComponent)
+      );
 
-      setComponents((prev) => [...prev, returnedComponent]);
+      const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
+      if (hubConnection) {
+        await hubConnection.invoke("ComponentAdded", returnedComponent);
+      }
     }
   };
 
-  if (loading) return <Loading />;
+  if (worksheetSettingsLoading) return <Loading />;
 
   return (
     <DndContext

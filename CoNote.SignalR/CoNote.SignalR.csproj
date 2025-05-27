@@ -12,7 +12,10 @@
 
   <ItemGroup>
     <Folder Include="Hubs\NotificationHub\" />
-    <Folder Include="Hubs\WorksheetHub\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoNote.Services\CoNote.Services.csproj" />
   </ItemGroup>
 
 </Project>

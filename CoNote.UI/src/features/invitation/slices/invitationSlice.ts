@@ -58,7 +58,6 @@ const invitationSlice = createSlice({
       })
       .addCase(updateInvitationStatus.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action);
         invitationAdapter.updateOne(state, {
           id: action.payload.invitationId,
           changes: { status: action.payload.status },

@@ -2,13 +2,13 @@ import { useEffect } from "react";
 //redux
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/store";
-import { getSettingsByWorksheetId } from "../slices/worksheetSlice";
+import { getComponentsByWorksheetId } from "../slices/componentSlice";
 
-export const useWorksheetData = (worksheetId: number) => {
+export const useComponentData = (worksheetId: number) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const fetchData = async () => {
-    await dispatch(getSettingsByWorksheetId(worksheetId));
+    await dispatch(getComponentsByWorksheetId(worksheetId));
   };
 
   useEffect(() => {
