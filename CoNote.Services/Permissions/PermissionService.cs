@@ -52,6 +52,10 @@ public class PermissionService : IPermissionService
                     Action = PermissionAction.View,
                     ObjectType = PermissionObjectType.Structure
                 },
+                new PermissionView {
+                    Action = PermissionAction.View,
+                    ObjectType = PermissionObjectType.Settings,
+                },
                 new PermissionView
                 {
                     Action = PermissionAction.View,
@@ -112,6 +116,7 @@ public class PermissionService : IPermissionService
     private bool IsPublicAccessAllowed(PermissionAction action, PermissionObjectType objectType)
     {
         return (action == PermissionAction.View && objectType == PermissionObjectType.Structure) ||
+               (action == PermissionAction.View && objectType == PermissionObjectType.Settings) ||
                (action == PermissionAction.View && objectType == PermissionObjectType.Worksheet);
     }
 }

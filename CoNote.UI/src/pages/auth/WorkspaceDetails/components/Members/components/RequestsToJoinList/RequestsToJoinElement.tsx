@@ -1,5 +1,7 @@
 //models
 import { WorkspaceInvitationView } from "../../../../../../../models/views/WorkspaceInvitationView";
+import { PermissionAction } from "../../../../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../../../../models/enums/PermissionObjectType";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,6 +15,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import PermissionGate from "../../../../../../../components/ui/PermissionGate";
 
 const RequestsToJoinElementContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -65,13 +68,25 @@ const RequestsToJoinElement = ({
           </Typography>
         </Stack>
       </Stack>
+
       <Stack direction="row" gap={1} alignItems="center">
-        <IconButton color="error" size="small">
-          <ClearIcon />
-        </IconButton>
-        <IconButton color="success" size="small">
-          <CheckIcon />
-        </IconButton>
+        <PermissionGate
+          action={PermissionAction.Edit}
+          objectType={PermissionObjectType.Invitations}
+        >
+          <IconButton color="error" size="small">
+            <ClearIcon />
+          </IconButton>
+        </PermissionGate>
+
+        <PermissionGate
+          action={PermissionAction.Edit}
+          objectType={PermissionObjectType.Invitations}
+        >
+          <IconButton color="success" size="small">
+            <CheckIcon />
+          </IconButton>
+        </PermissionGate>
       </Stack>
     </RequestsToJoinElementContainer>
   );

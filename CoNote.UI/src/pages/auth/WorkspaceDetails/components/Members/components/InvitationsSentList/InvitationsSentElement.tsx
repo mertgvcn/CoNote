@@ -9,6 +9,8 @@ import { getChipColorByInvitationStatus } from "../../../../../../../utils/getCh
 //models
 import { WorkspaceInvitationView } from "../../../../../../../models/views/WorkspaceInvitationView";
 import { InvitationStatus } from "../../../../../../../models/enums/InvitationStatus";
+import { PermissionAction } from "../../../../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../../../../models/enums/PermissionObjectType";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -22,6 +24,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import PermissionGate from "../../../../../../../components/ui/PermissionGate";
 
 const InvitationsSentElementContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -84,15 +87,22 @@ const InvitationsSentElement = ({
           </Typography>
         </Stack>
       </Stack>
+
       <Stack direction="row" gap={1} alignItems="center">
         <Chip
           label={InvitationStatus[invitationElement.status]}
           color={getChipColorByInvitationStatus(invitationElement.status)}
           size="small"
         />
-        <IconButton color="secondary" size="small" onClick={handleDelete}>
-          <ClearIcon />
-        </IconButton>
+
+        <PermissionGate
+          action={PermissionAction.Delete}
+          objectType={PermissionObjectType.Invitations}
+        >
+          <IconButton color="secondary" size="small" onClick={handleDelete}>
+            <ClearIcon />
+          </IconButton>
+        </PermissionGate>
       </Stack>
     </InvitationsSentElementContainer>
   );
