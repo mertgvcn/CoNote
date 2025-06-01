@@ -108,7 +108,7 @@ const WorksheetPage = () => {
       const hubConnection = signalRManager.getConnection(HUB_NAMES.WORKSHEET);
       if (hubConnection) {
         await hubConnection.invoke("JoinWorksheet", {
-          WorksheetId: worksheetId,
+          WorksheetId: worksheetIdParsed,
         });
       }
     } catch (e: any) {

@@ -82,7 +82,7 @@ const DiamondComponent = ({
   boundsRef,
   initialProperties,
 }: DiamondComponentProps) => {
-  const { id: worksheetId } = useParams();
+  const { worksheetId } = useParams();
   const targetRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch<AppDispatch>();
