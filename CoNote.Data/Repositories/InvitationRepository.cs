@@ -32,4 +32,12 @@ public sealed class InvitationRepository : BaseRepository<Invitation>, IInvitati
             .Include(i => i.Receiver)
             .Include(i => i.Role);
     }
+
+    public async Task<long> GetWorkspaceIdByIdAsync(long invitationId, CancellationToken cancellationToken)
+    {
+        return await GetAll()
+            .Where(w => w.Id == invitationId)
+            .Select(w => w.WorkspaceId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

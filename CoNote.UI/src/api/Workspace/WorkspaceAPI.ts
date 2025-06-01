@@ -56,10 +56,9 @@ class WorkspaceAPI extends BaseAPI {
   public async GetRolesByWorkspaceId(
     workspaceId: number
   ): Promise<AxiosResponse> {
-    return await this.get(
-      this.controllerExtension + "/GetRolesByWorkspaceId",
-      { workspaceId }
-    );
+    return await this.get(this.controllerExtension + "/GetRolesByWorkspaceId", {
+      workspaceId,
+    });
   }
 
   public async CreateWorkspace(
@@ -69,6 +68,16 @@ class WorkspaceAPI extends BaseAPI {
       this.controllerExtension + "/CreateWorkspace",
       params
     );
+  }
+
+  public async SearchWorkspacesByName(
+    searchValue: string,
+    limit?: number
+  ): Promise<AxiosResponse> {
+    return await this.get(this.controllerExtension + "/SearchWorkspacesByName", {
+      searchValue,
+      limit,
+    });
   }
 }
 

@@ -1,52 +1,52 @@
 using AutoMapper;
 using CoNote.Core.Entities;
+using CoNote.Core.Enums;
 using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
-using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Infrastructure.Utilities.Transaction.Interfaces;
+using CoNote.Services.Permissions.Interfaces;
 using CoNote.Services.Sections.Interfaces;
 using CoNote.Services.Sections.Models;
+using CoNote.Services.Users.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Services.Sections;
 public class SectionService : ISectionService
 {
     private readonly ISectionRepository _sectionRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IWorkspaceRepository _workspaceRepository;
-    private readonly IHttpContextService _httpContextService;
+    private readonly IUserService _userService;
+    private readonly IPermissionService _permissionService;
     private readonly ITransactionService _transactionService;
     private readonly IMapper _mapper;
 
     public SectionService(
         ISectionRepository sectionRepository,
-        IUserRepository userRepository,
         IWorkspaceRepository workspaceRepository,
-        IHttpContextService httpContextService,
+        IUserService userService,
+        IPermissionService permissionService,
         ITransactionService transactionService,
         IMapper mapper)
     {
         _sectionRepository = sectionRepository;
-        _userRepository = userRepository;
+        _userService = userService;
         _workspaceRepository = workspaceRepository;
-        _httpContextService = httpContextService;
+        _permissionService = permissionService;
         _transactionService = transactionService;
         _mapper = mapper;
     }
 
     public async Task CreateSectionAsync(CreateSectionRequest request, CancellationToken cancellationToken)
     {
-        var currentUserId = _httpContextService.GetCurrentUserId();
-        var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+        var hasPermission = await _permissionService.HasCurrentUserSpecificPermissionOnWorkspaceAsync(
+            request.WorkspaceId,
+            PermissionAction.Add,
+            PermissionObjectType.Section,
+            cancellationToken);
 
-        if (currentUser == null)
+        if (!hasPermission)
         {
-            throw new UserNotFoundException();
-        }
-
-        if (await _workspaceRepository.ExistsByIdAsync(request.WorkspaceId, cancellationToken) == false)
-        {
-            throw new WorkspaceNotFoundException();
+            throw new UnauthorizedUserAccessException();
         }
 
         if (request.ParentId.HasValue)
@@ -59,11 +59,14 @@ public class SectionService : ISectionService
 
         using var transaction = await _transactionService.CreateTransactionAsync(cancellationToken);
 
+        var currentUser = await _userService.GetCurrentUserAsync(cancellationToken);
+
         var section = _mapper.Map<Section>(request);
         section.CreatedBy = currentUser.Username;
         section.EditedBy = currentUser.Username;
 
         await _sectionRepository.AddAsync(section, cancellationToken);
+
         await transaction.CommitAsync(cancellationToken);
     }
 

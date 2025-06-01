@@ -40,6 +40,6 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
     public IQueryable<User> SearchByUsername(string searchValue = "")
     {
         return GetAll()
-            .Where(u => u.Username.ToLower().Contains(searchValue.ToLower()));
+            .Where(u => u.Username.ToLower().Contains(searchValue.ToLower()) && u.IsDeleted == false);
     }
 }

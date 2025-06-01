@@ -79,7 +79,7 @@ const StructureElement = ({
       dispatch(updateClickedSections(sectionId));
       dispatch(getStructureByWorkspaceAndSectionId({ workspaceId, sectionId }));
     } else if (structureElement.type === StructureType.Worksheet) {
-      navigate(`/worksheet/${structureElement.id}`);
+      navigate(`/workspace/${workspaceId}/worksheet/${structureElement.id}`);
     }
   };
 

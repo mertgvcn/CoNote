@@ -1,5 +1,7 @@
 //models
 import { MemberView } from "../../../../../../../models/views/MemberView";
+import { PermissionAction } from "../../../../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../../../../models/enums/PermissionObjectType";
 //icons
 import PersonIcon from "@mui/icons-material/Person";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,6 +15,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import PermissionGate from "../../../../../../../components/ui/PermissionGate";
 
 const MemberElementContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -66,9 +69,15 @@ const MemberElement = ({
 
       <Stack direction="row" gap={1} alignItems="center">
         <Chip label={memberElement.roleName} />
-        <IconButton color="secondary" size="small">
-          <EditIcon />
-        </IconButton>
+
+        <PermissionGate
+          action={PermissionAction.Edit}
+          objectType={PermissionObjectType.Members}
+        >
+          <IconButton color="secondary" size="small">
+            <EditIcon />
+          </IconButton>
+        </PermissionGate>
       </Stack>
     </MemberElementContainer>
   );

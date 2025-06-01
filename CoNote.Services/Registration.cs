@@ -7,6 +7,8 @@ using CoNote.Services.Invitations;
 using CoNote.Services.Invitations.Interfaces;
 using CoNote.Services.Notifications;
 using CoNote.Services.Notifications.Interfaces;
+using CoNote.Services.Permissions;
+using CoNote.Services.Permissions.Interfaces;
 using CoNote.Services.Roles;
 using CoNote.Services.Roles.Interfaces;
 using CoNote.Services.Sections;
@@ -34,14 +36,15 @@ public static class Registration
     private static void AddServices(IServiceCollection services)
     {
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IWorkspaceService, WorkspaceService>();
-        services.AddScoped<ISectionService, SectionService>();
-        services.AddScoped<IWorksheetService, WorksheetService>();
-        services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IComponentService, ComponentService>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvitationService, InvitationService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<ISectionService, SectionService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IWorksheetService, WorksheetService>();
         services.AddScoped<IWorkspaceMemberService, WorkspaceMemberService>();
+        services.AddScoped<IWorkspaceService, WorkspaceService>();
     }
 }

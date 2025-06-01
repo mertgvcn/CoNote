@@ -7,6 +7,8 @@ import { useFormik } from "formik";
 //models
 import { SettingsForm } from "../../../../../features/workspace/models/SettingsForm";
 import { settingsFormSchema } from "../../../../../features/workspace/schemas/SettingsFormSchema";
+import { PermissionAction } from "../../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../../models/enums/PermissionObjectType";
 //components
 import {
   Stack,
@@ -15,8 +17,10 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
+import PermissionGate from "../../../../../components/ui/PermissionGate";
 
-const Settings = () => { //TODO: Rolleri ayarlama kısmını da burda yap
+const Settings = () => {
+  //TODO: Rolleri ayarlama kısmını da burda yap
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector(selectWorkspaceDetailsSettings);
 
@@ -70,12 +74,27 @@ const Settings = () => { //TODO: Rolleri ayarlama kısmını da burda yap
           spacing={2}
           sx={{ width: "100%" }}
         >
-          <Button variant="text" color="error" onClick={handleDeleteWorkspace}>
-            Delete Workspace
-          </Button>
-          <Button variant="contained" color="secondary" type="submit">
-            Save Changes
-          </Button>
+          <PermissionGate
+            action={PermissionAction.Delete}
+            objectType={PermissionObjectType.Workspace}
+          >
+            <Button
+              variant="text"
+              color="error"
+              onClick={handleDeleteWorkspace}
+            >
+              Delete Workspace
+            </Button>
+          </PermissionGate>
+
+          <PermissionGate
+            action={PermissionAction.Edit}
+            objectType={PermissionObjectType.Settings}
+          >
+            <Button variant="contained" color="secondary" type="submit">
+              Save Changes
+            </Button>
+          </PermissionGate>
         </Stack>
       </Stack>
     </form>

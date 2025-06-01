@@ -28,7 +28,7 @@ const AppRouter = () => {
       <Route element={<AuthLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/workspace/:id" element={<WorkspaceDetailsPage />} />
-        <Route path="/worksheet/:id" element={<WorksheetPage />} />
+        <Route path="/workspace/:workspaceId/worksheet/:worksheetId" element={<WorksheetPage />} />
         <Route path="/invitations" element={<InvitationsPage />} />
       </Route>  
     </Routes>

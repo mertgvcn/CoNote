@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 import { selectWorksheetSettings } from "../../../../features/worksheet/slices/worksheetSlice";
 //icons
 import SettingsIcon from "@mui/icons-material/Settings";
+//models
+import { PermissionAction } from "../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../models/enums/PermissionObjectType";
 //draggable components
 import TextComponentDraggable from "../../../../components/worksheet/TextComponent/draggables/TextComponentDraggable";
 import ImageComponentDraggable from "../../../../components/worksheet/MediaComponent/draggables/ImageComponentDraggable";
@@ -29,6 +32,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import PermissionGate from "../../../../components/ui/PermissionGate";
 
 const WorksheetPanelContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -59,9 +63,15 @@ const WorksheetPanel = () => {
         <Typography variant="h6" fontWeight={500}>
           {worksheet?.name || "MyWorksheet"}
         </Typography>
-        <IconButton color="secondary" size="small">
-          <SettingsIcon />
-        </IconButton>
+
+        <PermissionGate
+          action={PermissionAction.Edit}
+          objectType={PermissionObjectType.Worksheet}
+        >
+          <IconButton color="secondary" size="small">
+            <SettingsIcon />
+          </IconButton>
+        </PermissionGate>
       </Stack>
 
       <Divider />

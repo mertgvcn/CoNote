@@ -24,6 +24,8 @@ import {
 import { ComponentDeletedRequest } from "../../../models/hubs/worksheetHub/ComponentDeletedRequest";
 import { ComponentUpdatedRequest } from "../../../models/hubs/worksheetHub/ComponentUpdatedRequest";
 import { UpdateComponentRequest } from "../../../api/Component/models/UpdateComponentRequest";
+import { PermissionAction } from "../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../models/enums/PermissionObjectType";
 //icons
 import DeleteIcon from "@mui/icons-material/Delete";
 //components
@@ -31,6 +33,7 @@ import { TextField, Box } from "@mui/material";
 import ColorPicker from "../../ui/ColorPicker";
 import TextEditorContainer from "../TextEditorContainer";
 import IconButton from "../../ui/IconButton";
+import PermissionGate from "../../ui/PermissionGate";
 
 const throttledSendLiveUpdate = throttle(
   (
@@ -192,54 +195,67 @@ const SquareComponent = ({
           cursor: "move",
         }}
       >
-        {selectedId === id && (
-          <TextEditorContainer>
-            <TextField
-              label="Size"
-              type="number"
-              size="small"
-              variant="outlined"
-              value={component.width}
-              onChange={(e) => {
-                const value = parseInt(e.target.value) || 0;
-                handleChange({ width: value, height: value });
-              }}
-              onKeyDown={(e) =>
-                e.key === "Enter" && (e.target as HTMLInputElement).blur()
-              }
-              sx={{ width: 100 }}
-            />
-            <TextField
-              label="Z-Index"
-              type="number"
-              size="small"
-              variant="outlined"
-              value={component.zIndex}
-              onChange={(e) =>
-                handleChange({
-                  zIndex: Math.max(1, parseInt(e.target.value) || 0),
-                })
-              }
-              onKeyDown={(e) =>
-                e.key === "Enter" && (e.target as HTMLInputElement).blur()
-              }
-              sx={{ width: 100 }}
-            />
-            <ColorPicker
-              value={component.style?.fillColor ?? "#000000"}
-              onChange={(color: string) =>
-                handleStyleChange("fillColor", color)
-              }
-            />
-            <IconButton
-              color="error"
-              tooltipTitle="Delete"
-              onClick={handleDelete}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </TextEditorContainer>
-        )}
+        <PermissionGate
+          action={PermissionAction.Edit}
+          objectType={PermissionObjectType.Component}
+        >
+          {selectedId === id && (
+            <TextEditorContainer>
+              <TextField
+                label="Size"
+                type="number"
+                size="small"
+                variant="outlined"
+                value={component.width}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 0;
+                  handleChange({ width: value, height: value });
+                }}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.target as HTMLInputElement).blur()
+                }
+                sx={{ width: 100 }}
+              />
+
+              <TextField
+                label="Z-Index"
+                type="number"
+                size="small"
+                variant="outlined"
+                value={component.zIndex}
+                onChange={(e) =>
+                  handleChange({
+                    zIndex: Math.max(1, parseInt(e.target.value) || 0),
+                  })
+                }
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.target as HTMLInputElement).blur()
+                }
+                sx={{ width: 100 }}
+              />
+
+              <ColorPicker
+                value={component.style?.fillColor ?? "#000000"}
+                onChange={(color: string) =>
+                  handleStyleChange("fillColor", color)
+                }
+              />
+
+              <PermissionGate
+                action={PermissionAction.Delete}
+                objectType={PermissionObjectType.Component}
+              >
+                <IconButton
+                  color="error"
+                  tooltipTitle="Delete"
+                  onClick={handleDelete}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </PermissionGate>
+            </TextEditorContainer>
+          )}
+        </PermissionGate>
 
         <svg
           width="100%"
@@ -257,73 +273,78 @@ const SquareComponent = ({
         </svg>
       </Box>
 
-      {selectedId === id && (
-        <Moveable
-          ref={moveableRef}
-          target={targetRef}
-          origin={false}
-          draggable
-          resizable
-          rotatable
-          throttleDrag={1}
-          throttleResize={1}
-          throttleRotate={0}
-          rotationPosition="bottom"
-          renderDirections={["nw", "ne", "sw", "se"]}
-          onDragStart={({ inputEvent }) => {
-            const target = inputEvent?.target as HTMLElement;
-            if (target.closest(".text-editor-container")) {
-              inputEvent.stopPropagation();
-              return false;
-            }
-          }}
-          onDrag={({ beforeTranslate }) => {
-            const el = targetRef.current;
-            const bounds = boundsRef.current?.getBoundingClientRect();
-            const comp = el?.getBoundingClientRect();
-            if (!el || !bounds || !comp) return;
+      <PermissionGate
+        action={PermissionAction.Edit}
+        objectType={PermissionObjectType.Component}
+      >
+        {selectedId === id && (
+          <Moveable
+            ref={moveableRef}
+            target={targetRef}
+            origin={false}
+            draggable
+            resizable
+            rotatable
+            throttleDrag={1}
+            throttleResize={1}
+            throttleRotate={0}
+            rotationPosition="bottom"
+            renderDirections={["nw", "ne", "sw", "se"]}
+            onDragStart={({ inputEvent }) => {
+              const target = inputEvent?.target as HTMLElement;
+              if (target.closest(".text-editor-container")) {
+                inputEvent.stopPropagation();
+                return false;
+              }
+            }}
+            onDrag={({ beforeTranslate }) => {
+              const el = targetRef.current;
+              const bounds = boundsRef.current?.getBoundingClientRect();
+              const comp = el?.getBoundingClientRect();
+              if (!el || !bounds || !comp) return;
 
-            const [x, y] = beforeTranslate;
-            const maxX = bounds.width - comp.width;
-            const maxY = bounds.height - comp.height;
-            const clampedX = Math.max(0, Math.min(x, maxX));
-            const clampedY = Math.max(0, Math.min(y, maxY));
+              const [x, y] = beforeTranslate;
+              const maxX = bounds.width - comp.width;
+              const maxY = bounds.height - comp.height;
+              const clampedX = Math.max(0, Math.min(x, maxX));
+              const clampedY = Math.max(0, Math.min(y, maxY));
 
-            el.style.transform = getTransform(
-              clampedX,
-              clampedY,
-              component.rotation
-            );
+              el.style.transform = getTransform(
+                clampedX,
+                clampedY,
+                component.rotation
+              );
 
-            handleChange({ x: clampedX, y: clampedY });
-          }}
-          onResize={({ width, height, drag }) => {
-            const el = targetRef.current;
-            const bounds = boundsRef.current?.getBoundingClientRect();
-            if (!el || !bounds) return;
+              handleChange({ x: clampedX, y: clampedY });
+            }}
+            onResize={({ width, height, drag }) => {
+              const el = targetRef.current;
+              const bounds = boundsRef.current?.getBoundingClientRect();
+              if (!el || !bounds) return;
 
-            const [x, y] = drag.beforeTranslate;
-            const size = Math.min(width, height); // Ensure square proportions
+              const [x, y] = drag.beforeTranslate;
+              const size = Math.min(width, height); // Ensure square proportions
 
-            el.style.width = `${size}px`;
-            el.style.height = `${size}px`;
-            el.style.transform = getTransform(x, y, component.rotation);
+              el.style.width = `${size}px`;
+              el.style.height = `${size}px`;
+              el.style.transform = getTransform(x, y, component.rotation);
 
-            handleChange({ width: size, height: size, x, y });
-          }}
-          onRotate={({ beforeRotate, drag }) => {
-            const el = targetRef.current;
-            if (!el) return;
+              handleChange({ width: size, height: size, x, y });
+            }}
+            onRotate={({ beforeRotate, drag }) => {
+              const el = targetRef.current;
+              if (!el) return;
 
-            const rotation = Math.round(beforeRotate);
-            const [x, y] = drag.beforeTranslate;
+              const rotation = Math.round(beforeRotate);
+              const [x, y] = drag.beforeTranslate;
 
-            el.style.transform = getTransform(x, y, rotation);
+              el.style.transform = getTransform(x, y, rotation);
 
-            handleChange({ rotation, x, y });
-          }}
-        />
-      )}
+              handleChange({ rotation, x, y });
+            }}
+          />
+        )}
+      </PermissionGate>
     </>
   );
 };

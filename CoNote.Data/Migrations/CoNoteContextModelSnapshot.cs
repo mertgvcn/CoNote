@@ -235,6 +235,268 @@ namespace CoNote.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6952),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6953),
+                            EditedBy = "System",
+                            ObjectType = 0
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6957),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6957),
+                            EditedBy = "System",
+                            ObjectType = 1
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6959),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6960),
+                            EditedBy = "System",
+                            ObjectType = 1
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6962),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6962),
+                            EditedBy = "System",
+                            ObjectType = 1
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6964),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6965),
+                            EditedBy = "System",
+                            ObjectType = 1
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6968),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6968),
+                            EditedBy = "System",
+                            ObjectType = 2
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6970),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6971),
+                            EditedBy = "System",
+                            ObjectType = 2
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6972),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6973),
+                            EditedBy = "System",
+                            ObjectType = 2
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6975),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6975),
+                            EditedBy = "System",
+                            ObjectType = 2
+                        },
+                        new
+                        {
+                            Id = 10L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6978),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6978),
+                            EditedBy = "System",
+                            ObjectType = 3
+                        },
+                        new
+                        {
+                            Id = 11L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6980),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6981),
+                            EditedBy = "System",
+                            ObjectType = 3
+                        },
+                        new
+                        {
+                            Id = 12L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6983),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6983),
+                            EditedBy = "System",
+                            ObjectType = 3
+                        },
+                        new
+                        {
+                            Id = 13L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6985),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6985),
+                            EditedBy = "System",
+                            ObjectType = 3
+                        },
+                        new
+                        {
+                            Id = 14L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6987),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6988),
+                            EditedBy = "System",
+                            ObjectType = 4
+                        },
+                        new
+                        {
+                            Id = 15L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6990),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6990),
+                            EditedBy = "System",
+                            ObjectType = 4
+                        },
+                        new
+                        {
+                            Id = 16L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6992),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6993),
+                            EditedBy = "System",
+                            ObjectType = 5
+                        },
+                        new
+                        {
+                            Id = 17L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6994),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6995),
+                            EditedBy = "System",
+                            ObjectType = 5
+                        },
+                        new
+                        {
+                            Id = 18L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6997),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6998),
+                            EditedBy = "System",
+                            ObjectType = 5
+                        },
+                        new
+                        {
+                            Id = 19L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7000),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7000),
+                            EditedBy = "System",
+                            ObjectType = 5
+                        },
+                        new
+                        {
+                            Id = 20L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7002),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7003),
+                            EditedBy = "System",
+                            ObjectType = 6
+                        },
+                        new
+                        {
+                            Id = 21L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7005),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7005),
+                            EditedBy = "System",
+                            ObjectType = 6
+                        },
+                        new
+                        {
+                            Id = 22L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7007),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7008),
+                            EditedBy = "System",
+                            ObjectType = 6
+                        },
+                        new
+                        {
+                            Id = 23L,
+                            Action = 0,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7009),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7010),
+                            EditedBy = "System",
+                            ObjectType = 7
+                        },
+                        new
+                        {
+                            Id = 24L,
+                            Action = 1,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7012),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7012),
+                            EditedBy = "System",
+                            ObjectType = 7
+                        },
+                        new
+                        {
+                            Id = 25L,
+                            Action = 2,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7014),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7015),
+                            EditedBy = "System",
+                            ObjectType = 7
+                        },
+                        new
+                        {
+                            Id = 26L,
+                            Action = 3,
+                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7016),
+                            CreatedBy = "System",
+                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7017),
+                            EditedBy = "System",
+                            ObjectType = 7
+                        });
                 });
 
             modelBuilder.Entity("CoNote.Core.Entities.Role", b =>
@@ -437,6 +699,9 @@ namespace CoNote.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPrivate")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")

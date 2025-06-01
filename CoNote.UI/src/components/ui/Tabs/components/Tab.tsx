@@ -10,6 +10,7 @@ const TabContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   boxSizing: "content-box",
   gap: theme.spacing(1),
+  userSelect: "none",
   cursor: "pointer",
   transition: "color 0.2s ease",
   "&:hover": {
