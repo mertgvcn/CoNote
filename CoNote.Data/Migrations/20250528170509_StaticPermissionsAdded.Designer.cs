@@ -3,6 +3,7 @@ using System;
 using CoNote.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoNote.Data.Migrations
 {
     [DbContext(typeof(CoNoteContext))]
-    partial class CoNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20250528170509_StaticPermissionsAdded")]
+    partial class StaticPermissionsAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,9 +244,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 1L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6952),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9174),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6953),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9175),
                             EditedBy = "System",
                             ObjectType = 0
                         },
@@ -251,9 +254,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 2L,
                             Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6957),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9178),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6957),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9179),
                             EditedBy = "System",
                             ObjectType = 1
                         },
@@ -261,9 +264,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 3L,
                             Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6959),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9181),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6960),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9181),
                             EditedBy = "System",
                             ObjectType = 1
                         },
@@ -271,9 +274,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 4L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6962),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9183),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6962),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9184),
                             EditedBy = "System",
                             ObjectType = 1
                         },
@@ -281,9 +284,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 5L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6964),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9186),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6965),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9186),
                             EditedBy = "System",
                             ObjectType = 1
                         },
@@ -291,9 +294,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 6L,
                             Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6968),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9190),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6968),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9190),
                             EditedBy = "System",
                             ObjectType = 2
                         },
@@ -301,9 +304,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 7L,
                             Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6970),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9192),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6971),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9192),
                             EditedBy = "System",
                             ObjectType = 2
                         },
@@ -311,9 +314,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 8L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6972),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9194),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6973),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9195),
                             EditedBy = "System",
                             ObjectType = 2
                         },
@@ -321,9 +324,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 9L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6975),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9197),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6975),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9197),
                             EditedBy = "System",
                             ObjectType = 2
                         },
@@ -331,9 +334,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 10L,
                             Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6978),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9200),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6978),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9200),
                             EditedBy = "System",
                             ObjectType = 3
                         },
@@ -341,9 +344,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 11L,
                             Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6980),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9202),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6981),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9202),
                             EditedBy = "System",
                             ObjectType = 3
                         },
@@ -351,9 +354,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 12L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6983),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9204),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6983),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9205),
                             EditedBy = "System",
                             ObjectType = 3
                         },
@@ -361,9 +364,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 13L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6985),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9206),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6985),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9207),
                             EditedBy = "System",
                             ObjectType = 3
                         },
@@ -371,9 +374,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 14L,
                             Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6987),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9209),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6988),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9209),
                             EditedBy = "System",
                             ObjectType = 4
                         },
@@ -381,9 +384,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 15L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6990),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9211),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6990),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9212),
                             EditedBy = "System",
                             ObjectType = 4
                         },
@@ -391,9 +394,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 16L,
                             Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6992),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9214),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6993),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9214),
                             EditedBy = "System",
                             ObjectType = 5
                         },
@@ -401,9 +404,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 17L,
                             Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6994),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9216),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6995),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9216),
                             EditedBy = "System",
                             ObjectType = 5
                         },
@@ -411,9 +414,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 18L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6997),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9219),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(6998),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9219),
                             EditedBy = "System",
                             ObjectType = 5
                         },
@@ -421,9 +424,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 19L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7000),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9221),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7000),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9222),
                             EditedBy = "System",
                             ObjectType = 5
                         },
@@ -431,9 +434,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 20L,
                             Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7002),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9224),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7003),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9224),
                             EditedBy = "System",
                             ObjectType = 6
                         },
@@ -441,9 +444,9 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 21L,
                             Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7005),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9226),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7005),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9226),
                             EditedBy = "System",
                             ObjectType = 6
                         },
@@ -451,51 +454,11 @@ namespace CoNote.Data.Migrations
                         {
                             Id = 22L,
                             Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7007),
+                            CreatedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9228),
                             CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7008),
+                            EditedAt = new DateTime(2025, 5, 28, 20, 5, 8, 203, DateTimeKind.Local).AddTicks(9229),
                             EditedBy = "System",
                             ObjectType = 6
-                        },
-                        new
-                        {
-                            Id = 23L,
-                            Action = 0,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7009),
-                            CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7010),
-                            EditedBy = "System",
-                            ObjectType = 7
-                        },
-                        new
-                        {
-                            Id = 24L,
-                            Action = 1,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7012),
-                            CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7012),
-                            EditedBy = "System",
-                            ObjectType = 7
-                        },
-                        new
-                        {
-                            Id = 25L,
-                            Action = 2,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7014),
-                            CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7015),
-                            EditedBy = "System",
-                            ObjectType = 7
-                        },
-                        new
-                        {
-                            Id = 26L,
-                            Action = 3,
-                            CreatedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7016),
-                            CreatedBy = "System",
-                            EditedAt = new DateTime(2025, 5, 31, 2, 22, 35, 860, DateTimeKind.Local).AddTicks(7017),
-                            EditedBy = "System",
-                            ObjectType = 7
                         });
                 });
 

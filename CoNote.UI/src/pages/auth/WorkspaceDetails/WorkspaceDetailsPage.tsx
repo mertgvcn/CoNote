@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //redux
 import { useSelector } from "react-redux";
-import { selectWorkspaceDetailsLoading } from "../../../features/workspace/slices/workspaceDetailsSlice";
+import {
+  selectWorkspaceDetailsLoading,
+  selectWorkspaceDetailsSettings,
+} from "../../../features/workspace/slices/workspaceDetailsSlice";
 //models
 import { WorkspaceDetailsTab } from "./models/WorkspaceDetailsTab";
 //icons
@@ -33,11 +36,16 @@ const WorkspaceDetailsPage = () => {
 
   useWorkspaceDetails(Number(id));
 
+  const workspaceSettings = useSelector(selectWorkspaceDetailsSettings);
   const loading = useSelector(selectWorkspaceDetailsLoading);
 
   const [selectedTab, setSelectedTab] = useState<WorkspaceDetailsTab>(
     WorkspaceDetailsTab.Structure
   );
+
+  useEffect(() => {
+    setSelectedTab(WorkspaceDetailsTab.Structure);
+  }, [id]);
 
   if (loading) return <Loading />;
 
@@ -56,11 +64,10 @@ const WorkspaceDetailsPage = () => {
           maxHeight={150}
         >
           <Typography variant="h2" fontWeight={500}>
-            MyWorkspace
+            {workspaceSettings?.name}
           </Typography>
           <Typography variant="h6" color="grey.500">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam
-            dolores quibusdam veniam praesentium.
+            {workspaceSettings?.description}
           </Typography>
           <Stack
             direction="row"

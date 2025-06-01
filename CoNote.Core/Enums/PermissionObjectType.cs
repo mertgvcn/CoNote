@@ -1,10 +1,12 @@
 ﻿namespace CoNote.Core.Enums;
 public enum PermissionObjectType
 {
-    User = 0,
-    Workspace = 1,
-    Section = 2,
-    Worksheet = 3,
-    Comment = 4,
-    Component = 5,
+    Workspace = 0,
+    Structure = 1,
+    Members = 2,
+    Invitations = 3,
+    Settings = 4,
+    Worksheet = 5,
+    Section = 6,
+    Component = 7,
 }
