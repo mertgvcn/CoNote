@@ -1,46 +1,71 @@
 ﻿using AutoMapper;
 using CoNote.Core.Entities;
+using CoNote.Core.Enums;
 using CoNote.Core.Exceptions;
 using CoNote.Data.Repositories.Interfaces;
-using CoNote.Infrastructure.Utilities.HttpContext.Interfaces;
 using CoNote.Services.Components.Interfaces;
 using CoNote.Services.Components.Models;
+using CoNote.Services.Permissions.Interfaces;
+using CoNote.Services.Users.Interfaces;
 
 namespace CoNote.Services.Components;
 public class ComponentService : IComponentService
 {
     private readonly IComponentRepository _componentRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IHttpContextService _httpContextService;
+    private readonly IWorksheetRepository _worksheetRepositry;
+    private readonly IUserService _userService;
+    private readonly IPermissionService _permissionService;
     private readonly IMapper _mapper;
 
     public ComponentService(
         IComponentRepository componentRepository,
-        IUserRepository userRepository,
-        IHttpContextService httpContextService,
+        IWorksheetRepository worksheetRepositry,
+        IUserService userService,
+        IPermissionService permissionService,
         IMapper mapper)
     {
         _componentRepository = componentRepository;
-        _userRepository = userRepository;
-        _httpContextService = httpContextService;
+        _worksheetRepositry = worksheetRepositry;
+        _userService = userService;
+        _permissionService = permissionService;
         _mapper = mapper;
     }
 
     public async Task<List<Component>> GetComponentsByWorksheetIdAsync(long worksheetId, CancellationToken cancellationToken)
     {
+        var workspaceId = await _worksheetRepositry.GetWorkspaceIdByIdAsnyc(worksheetId, cancellationToken);
+
+        var hasPermission = await _permissionService.HasCurrentUserSpecificPermissionOnWorkspaceAsync(
+            workspaceId,
+            PermissionAction.View,
+            PermissionObjectType.Component,
+            cancellationToken);
+
+        if (!hasPermission)
+        {
+            throw new UnauthorizedUserAccessException();
+        }
+
         var components = await _componentRepository.GetListByWorksheetId(worksheetId, cancellationToken);
         return components;
     }
 
     public async Task<Component> CreateComponentAsync(CreateComponentRequest request, CancellationToken cancellationToken)
     {
-        var currentUserId = _httpContextService.GetCurrentUserId();
-        var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+        var workspaceId = await _worksheetRepositry.GetWorkspaceIdByIdAsnyc(request.WorksheetId, cancellationToken);
 
-        if (currentUser == null)
+        var hasPermission = await _permissionService.HasCurrentUserSpecificPermissionOnWorkspaceAsync(
+            workspaceId,
+            PermissionAction.Add,
+            PermissionObjectType.Component,
+            cancellationToken);
+
+        if (!hasPermission)
         {
-            throw new UserNotFoundException();
+            throw new UnauthorizedUserAccessException();
         }
+
+        var currentUser = await _userService.GetCurrentUserAsync(cancellationToken);
 
         var newComponent = _mapper.Map<Component>(request);
         newComponent.CreatedBy = currentUser.Username;
@@ -52,12 +77,20 @@ public class ComponentService : IComponentService
 
     public async Task<Component> UpdateComponentAsync(UpdateComponentRequest request, CancellationToken cancellationToken)
     {
-        var currentUserId = _httpContextService.GetCurrentUserId();
-        var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
-        if (currentUser == null)
+        var workspaceId = await _componentRepository.GetWorkspaceIdById(request.Id, cancellationToken);
+
+        var hasPermission = await _permissionService.HasCurrentUserSpecificPermissionOnWorkspaceAsync(
+            workspaceId,
+            PermissionAction.Edit,
+            PermissionObjectType.Component,
+            cancellationToken);
+
+        if (!hasPermission)
         {
-            throw new UserNotFoundException();
+            throw new UnauthorizedUserAccessException();
         }
+
+        var currentUser = await _userService.GetCurrentUserAsync(cancellationToken);
 
         var component = await _componentRepository.GetByIdAsync(request.Id, cancellationToken);
         if (component == null)
@@ -75,10 +108,23 @@ public class ComponentService : IComponentService
 
     public async Task<long> DeleteComponentAsync(long componentId, CancellationToken cancellationToken)
     {
-        var exists = await _componentRepository.ExistsByIdAsync(componentId, cancellationToken);
-        if (!exists)
+        var componentExists = await _componentRepository.ExistsByIdAsync(componentId, cancellationToken);
+        if (!componentExists)
         {
             throw new ComponentNotFoundException();
+        }
+
+        var workspaceId = await _componentRepository.GetWorkspaceIdById(componentId, cancellationToken);
+
+        var hasPermission = await _permissionService.HasCurrentUserSpecificPermissionOnWorkspaceAsync(
+            workspaceId,
+            PermissionAction.Delete,
+            PermissionObjectType.Component,
+            cancellationToken);
+
+        if (!hasPermission)
+        {
+            throw new UnauthorizedUserAccessException();
         }
 
         await _componentRepository.DeleteAsync(componentId, cancellationToken);

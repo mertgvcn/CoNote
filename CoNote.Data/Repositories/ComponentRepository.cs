@@ -24,4 +24,12 @@ public sealed class ComponentRepository : BaseRepository<Component>, IComponentR
             .Where(c => c.WorksheetId == worksheetId)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<long> GetWorkspaceIdById(long componentId, CancellationToken cancellationToken = default)
+    {
+        return await GetById(componentId)
+            .Include(c => c.Worksheet)
+            .Select(c => c.Worksheet.WorkspaceId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

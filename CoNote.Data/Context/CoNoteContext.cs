@@ -3,6 +3,7 @@ using System.Text.Json;
 using CoNote.Core.Entities;
 using CoNote.Core.Entities.Common;
 using CoNote.Data.Entities;
+using CoNote.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Context;
@@ -30,6 +31,8 @@ public class CoNoteContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        modelBuilder.Entity<Permission>().HasData(PermissionSeedData.GetPermissions());
     }
 
     public override int SaveChanges()

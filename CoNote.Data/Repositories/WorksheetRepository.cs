@@ -1,6 +1,7 @@
 ﻿using CoNote.Core.Entities;
 using CoNote.Data.Context;
 using CoNote.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoNote.Data.Repositories;
 public sealed class WorksheetRepository : BaseRepository<Worksheet>, IWorksheetRepository
@@ -16,6 +17,14 @@ public sealed class WorksheetRepository : BaseRepository<Worksheet>, IWorksheetR
     {
         return GetAll()
             .Where(w => w.WorkspaceId == workspaceId && w.SectionId == sectionId);
+    }
+
+    public async Task<long> GetWorkspaceIdByIdAsnyc(long worksheetId, CancellationToken cancellationToken)
+    {
+        return await GetAll()
+            .Where(w => w.Id == worksheetId)
+            .Select(w => w.WorkspaceId)
+            .SingleOrDefaultAsync(cancellationToken);
     }
 }
 

@@ -10,4 +10,5 @@ public interface IWorkspaceService
     Task<WorkspaceSettingsView> GetSettingsByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
     Task<List<RoleView>> GetRolesByWorkspaceIdAsync(long workspaceId, CancellationToken cancellationToken);
     Task CreateWorkspaceAsync(CreateWorkspaceRequest request, CancellationToken cancellationToken);
+    Task<List<WorkspaceView>> SearchWorkspacesByNameAsync(string searchValue, int? limit, CancellationToken cancellationToken);
 }

@@ -68,4 +68,11 @@ public class WorkspaceController : ControllerBase
         await _workspaceService.CreateWorkspaceAsync(request, _cancellationToken);
         return Ok();
     }
+
+    [HttpGet]
+    public async Task<ActionResult<List<WorkspaceView>>> SearchWorkspacesByName([FromQuery] string searchValue, [FromQuery] int? limit)
+    {
+        var response = await _workspaceService.SearchWorkspacesByNameAsync(searchValue, limit, _cancellationToken);
+        return response;
+    }
 }

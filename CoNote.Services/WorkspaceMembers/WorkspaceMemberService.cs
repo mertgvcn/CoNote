@@ -12,7 +12,10 @@ public class WorkspaceMemberService : IWorkspaceMemberService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public WorkspaceMemberService(IWorkspaceMemberRepository workspaceMemberRepository, IUserRepository userRepository, IMapper mapper)
+    public WorkspaceMemberService(
+        IWorkspaceMemberRepository workspaceMemberRepository,
+        IUserRepository userRepository,
+        IMapper mapper)
     {
         _workspaceMemberRepository = workspaceMemberRepository;
         _userRepository = userRepository;

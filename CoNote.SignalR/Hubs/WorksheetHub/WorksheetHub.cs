@@ -21,6 +21,11 @@ public class WorksheetHub : Hub
 
     public async Task ComponentAdded(Component component)
     {
+        if (component == null)
+        {
+            throw new Exception("An error occured while adding component.");
+        }
+
         var worksheetId = component.WorksheetId.ToString();
 
         await Clients.OthersInGroup(worksheetId)

@@ -5,6 +5,4 @@ public enum PermissionAction
     Add = 1,
     Edit = 2,
     Delete = 3,
-    Invite = 4,
-    Kick = 5,
 }
