@@ -22,6 +22,9 @@ import invitationReducer, {
 import componentReducer, {
   componentInitialState,
 } from "../features/component/slices/componentSlice";
+import permissionReducer, {
+  permissionInitialState,
+} from "../features/permission/slices/permissionSlice";
 
 export const appReducer = combineReducers({
   auth: authReducer,
@@ -31,6 +34,7 @@ export const appReducer = combineReducers({
   notification: notificationReducer,
   invitation: invitationReducer,
   component: componentReducer,
+  permission: permissionReducer,
 });
 
 const initialStates = {
@@ -41,6 +45,7 @@ const initialStates = {
   notification: notificationInitialState,
   invitation: invitationInitialState,
   component: componentInitialState,
+  permission: permissionInitialState,
 };
 
 export const rootReducer: Reducer = (state, action) => {

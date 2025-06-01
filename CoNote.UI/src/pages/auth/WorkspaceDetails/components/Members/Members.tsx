@@ -1,6 +1,8 @@
 import { useState } from "react";
 //models
 import { MembersTab } from "./models/MembersTab";
+import { PermissionAction } from "../../../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../../../models/enums/PermissionObjectType";
 //components
 import { Button, Stack } from "@mui/material";
 import Searchbar from "../../../../../components/ui/Searchbar";
@@ -9,6 +11,7 @@ import MemberList from "./components/MemberList/MemberList";
 import InvitationsSentList from "./components/InvitationsSentList/InvitationsSentList";
 import RequestsToJoinList from "./components/RequestsToJoinList/RequestsToJoinList";
 import AddPeopleModal from "./components/AddPeopleModal/AddPeopleModal";
+import PermissionGate from "../../../../../components/ui/PermissionGate";
 
 const Members = () => {
   const [showAddPeopleModal, setShowAddPeopleModal] = useState<boolean>(false);
@@ -28,14 +31,20 @@ const Members = () => {
         <Stack direction="column" gap={2} flex={1}>
           <Stack direction="row" gap={2}>
             <Searchbar color="secondary" value={searchValue} />
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ flexShrink: 0 }}
-              onClick={() => setShowAddPeopleModal(true)}
+
+            <PermissionGate
+              action={PermissionAction.Add}
+              objectType={PermissionObjectType.Members}
             >
-              Add people
-            </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ flexShrink: 0 }}
+                onClick={() => setShowAddPeopleModal(true)}
+              >
+                Add people
+              </Button>
+            </PermissionGate>
           </Stack>
 
           {selectedTab === MembersTab.Members && <MemberList />}
@@ -46,7 +55,10 @@ const Members = () => {
         </Stack>
       </Stack>
 
-      <AddPeopleModal open={showAddPeopleModal} onClose={() => setShowAddPeopleModal(false)}/>
+      <AddPeopleModal
+        open={showAddPeopleModal}
+        onClose={() => setShowAddPeopleModal(false)}
+      />
     </>
   );
 };
