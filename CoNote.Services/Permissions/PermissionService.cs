@@ -60,7 +60,11 @@ public class PermissionService : IPermissionService
                 {
                     Action = PermissionAction.View,
                     ObjectType = PermissionObjectType.Worksheet
-                }
+                },
+                new PermissionView {
+                    Action = PermissionAction.View,
+                    ObjectType = PermissionObjectType.Component
+                },
             ];
         }
 

@@ -11,6 +11,10 @@ import {
   removeComponentFromStore,
   updateComponentInStore,
 } from "../../../features/component/slices/componentSlice";
+import {
+  selectPermissions,
+  selectPermissionsLoading,
+} from "../../../features/permission/slices/permissionSlice";
 //dnd-kit
 import {
   DndContext,
@@ -23,6 +27,7 @@ import {
 //hooks
 import { useWorksheetData } from "../../../features/worksheet/hooks/useWorksheetData";
 import { useComponentData } from "../../../features/component/hooks/useComponentData";
+import useHasPermission from "../../../features/permission/hooks/useHasPermission";
 //utils
 import { componentDefaults } from "../../../utils/ComponentDefaults";
 import { signalRManager } from "../../../utils/SignalR/signalRManager";
@@ -31,11 +36,17 @@ import { HUB_ENDPOINTS, HUB_NAMES } from "../../../utils/SignalR/hubConstants";
 import { ComponentView } from "../../../models/views/ComponentView";
 import { CreateComponentRequest } from "../../../api/Component/models/CreateComponentRequest";
 import { ComponentType } from "../../../models/enums/ComponentType";
+import { PermissionAction } from "../../../models/enums/PermissionAction";
+import { PermissionObjectType } from "../../../models/enums/PermissionObjectType";
+//icons
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 //components
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import Loading from "../../../components/ui/Loading";
 import WorksheetPanel from "./components/WorksheetPanel";
 import WorksheetDroppable from "./components/WorksheetDroppable";
+import PermissionGate from "../../../components/ui/PermissionGate";
+import { RenderErrorToast } from "../../../utils/CustomToastManager";
 
 interface DroppedComponentData {
   type: ComponentType;
@@ -43,16 +54,26 @@ interface DroppedComponentData {
 }
 
 const WorksheetPage = () => {
-  const { id } = useParams();
-  const worksheetId = Number(id);
+  const { workspaceId, worksheetId } = useParams();
+  const workspaceIdParsed = Number(workspaceId);
+  const worksheetIdParsed = Number(worksheetId);
+
   const sensors = useSensors(useSensor(PointerSensor));
 
   const dispatch = useDispatch<AppDispatch>();
-  useWorksheetData(worksheetId);
-  useComponentData(worksheetId);
+  useWorksheetData(workspaceIdParsed, worksheetIdParsed);
+  useComponentData(worksheetIdParsed);
 
   const components = useSelector(componentSelectors.selectAll);
   const worksheetSettingsLoading = useSelector(selectWorksheetLoading);
+
+  const permissions = useSelector(selectPermissions);
+  const permissionsLoading = useSelector(selectPermissionsLoading);
+
+  const canEditComponents = useHasPermission(
+    PermissionAction.Edit,
+    PermissionObjectType.Component
+  );
 
   useEffect(() => {
     setupHubConnection();
@@ -60,7 +81,7 @@ const WorksheetPage = () => {
     return () => {
       signalRManager.disconnect(HUB_NAMES.WORKSHEET);
     };
-  }, [id]);
+  }, [worksheetIdParsed]);
 
   const setupHubConnection = async () => {
     try {
@@ -99,6 +120,11 @@ const WorksheetPage = () => {
     const { over, active } = event;
     if (!over || over.id !== "worksheet-dropzone") return;
 
+    if (!canEditComponents) {
+      RenderErrorToast("You do not have permission to add components to the worksheet.")
+      return;
+    }
+
     const droppedComponentProperties = active.data
       ?.current as DroppedComponentData;
     const finalX = active.rect.current.translated?.left;
@@ -111,7 +137,7 @@ const WorksheetPage = () => {
     if (droppedComponentProperties) {
       const newComponent: CreateComponentRequest = {
         ...componentDefaults[droppedComponentProperties.type],
-        worksheetId: Number(id),
+        worksheetId: worksheetIdParsed,
         x: relativeX,
         y: relativeY,
       };
@@ -127,19 +153,44 @@ const WorksheetPage = () => {
     }
   };
 
-  if (worksheetSettingsLoading) return <Loading />;
+  if (worksheetSettingsLoading || permissionsLoading) return <Loading />;
+
+  if (permissions.length === 0)
+    return (
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{ width: "100%", height: "100%" }}
+      >
+        <SearchOffIcon fontSize="large" color="error" />
+        <Typography variant="h6" color="error">
+          Worksheet not found
+        </Typography>
+      </Stack>
+    );
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      collisionDetection={pointerWithin}
-      sensors={sensors}
+    <PermissionGate
+      action={PermissionAction.View}
+      objectType={PermissionObjectType.Worksheet}
     >
-      <Stack direction="row" gap={2} sx={{ width: "100%", height: "100%" }}>
-        <WorksheetPanel />
-        <WorksheetDroppable components={components} />
-      </Stack>
-    </DndContext>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        collisionDetection={pointerWithin}
+        sensors={sensors}
+      >
+        <Stack direction="row" gap={2} sx={{ width: "100%", height: "100%" }}>
+          <WorksheetPanel />
+
+          <PermissionGate
+            action={PermissionAction.View}
+            objectType={PermissionObjectType.Component}
+          >
+            <WorksheetDroppable components={components} />
+          </PermissionGate>
+        </Stack>
+      </DndContext>
+    </PermissionGate>
   );
 };
 
